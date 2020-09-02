@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationClient.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{659BD7F3-3DD9-4A17-8516-B34BD496C435}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MitaLite.UIAutomationClient</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>UIAutomationClient</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Variant.cs" />
+    <Compile Include="IUIAutomation.cs" />
+    <Compile Include="IUIAutomationElement.cs" />
+    <Compile Include="tagPOINT.cs" />
+    <Compile Include="IUIAutomationCacheRequest.cs" />
+    <Compile Include="IUIAutomationTreeWalker.cs" />
+    <Compile Include="IUIAutomationCondition.cs" />
+    <Compile Include="PropertyConditionFlags.cs" />
+    <Compile Include="TreeScope.cs" />
+    <Compile Include="IUIAutomationEventHandler.cs" />
+    <Compile Include="IUIAutomationPropertyChangedEventHandler.cs" />
+    <Compile Include="IUIAutomationStructureChangedEventHandler.cs" />
+    <Compile Include="IUIAutomationFocusChangedEventHandler.cs" />
+    <Compile Include="tagRECT.cs" />
+    <Compile Include="IUIAutomationProxyFactoryEntry.cs" />
+    <Compile Include="IUIAutomationProxyFactory.cs" />
+    <Compile Include="IUIAutomationProxyFactoryMapping.cs" />
+    <Compile Include="IAccessible.cs" />
+    <Compile Include="CUIAutomation.cs" />
+    <Compile Include="CUIAutomationClass.cs" />
+    <Compile Include="IUIAutomation2.cs" />
+    <Compile Include="CUIAutomation8.cs" />
+    <Compile Include="IUIAutomation3.cs" />
+    <Compile Include="TextEditChangeType.cs" />
+    <Compile Include="IUIAutomationTextEditTextChangedEventHandler.cs" />
+    <Compile Include="CUIAutomation8Class.cs" />
+    <Compile Include="IUIAutomationElementArray.cs" />
+    <Compile Include="OrientationType.cs" />
+    <Compile Include="AutomationElementMode.cs" />
+    <Compile Include="StructureChangeType.cs" />
+    <Compile Include="IRawElementProviderSimple.cs" />
+    <Compile Include="UIA_PatternIds.cs" />
+    <Compile Include="UIA_EventIds.cs" />
+    <Compile Include="UIA_PropertyIds.cs" />
+    <Compile Include="UIA_TextAttributeIds.cs" />
+    <Compile Include="UIA_ControlTypeIds.cs" />
+    <Compile Include="UIA_AnnotationTypes.cs" />
+    <Compile Include="UIA_StyleIds.cs" />
+    <Compile Include="UIA_LandmarkTypeIds.cs" />
+    <Compile Include="IUIAutomationBoolCondition.cs" />
+    <Compile Include="IUIAutomationPropertyCondition.cs" />
+    <Compile Include="IUIAutomationAndCondition.cs" />
+    <Compile Include="IUIAutomationOrCondition.cs" />
+    <Compile Include="IUIAutomationNotCondition.cs" />
+    <Compile Include="IUIAutomationInvokePattern.cs" />
+    <Compile Include="IUIAutomationDockPattern.cs" />
+    <Compile Include="DockPosition.cs" />
+    <Compile Include="IUIAutomationExpandCollapsePattern.cs" />
+    <Compile Include="ExpandCollapseState.cs" />
+    <Compile Include="IUIAutomationGridPattern.cs" />
+    <Compile Include="IUIAutomationGridItemPattern.cs" />
+    <Compile Include="IUIAutomationMultipleViewPattern.cs" />
+    <Compile Include="IUIAutomationObjectModelPattern.cs" />
+    <Compile Include="IUIAutomationRangeValuePattern.cs" />
+    <Compile Include="IUIAutomationScrollPattern.cs" />
+    <Compile Include="ScrollAmount.cs" />
+    <Compile Include="IUIAutomationScrollItemPattern.cs" />
+    <Compile Include="IUIAutomationSelectionPattern.cs" />
+    <Compile Include="IUIAutomationSelectionItemPattern.cs" />
+    <Compile Include="IUIAutomationSynchronizedInputPattern.cs" />
+    <Compile Include="SynchronizedInputType.cs" />
+    <Compile Include="IUIAutomationTablePattern.cs" />
+    <Compile Include="RowOrColumnMajor.cs" />
+    <Compile Include="IUIAutomationTableItemPattern.cs" />
+    <Compile Include="IUIAutomationTogglePattern.cs" />
+    <Compile Include="ToggleState.cs" />
+    <Compile Include="IUIAutomationTransformPattern.cs" />
+    <Compile Include="IUIAutomationValuePattern.cs" />
+    <Compile Include="IUIAutomationWindowPattern.cs" />
+    <Compile Include="WindowVisualState.cs" />
+    <Compile Include="WindowInteractionState.cs" />
+    <Compile Include="IUIAutomationTextRange.cs" />
+    <Compile Include="TextPatternRangeEndpoint.cs" />
+    <Compile Include="TextUnit.cs" />
+    <Compile Include="IUIAutomationTextRange2.cs" />
+    <Compile Include="IUIAutomationTextRangeArray.cs" />
+    <Compile Include="IUIAutomationTextPattern.cs" />
+    <Compile Include="SupportedTextSelection.cs" />
+    <Compile Include="IUIAutomationTextPattern2.cs" />
+    <Compile Include="IUIAutomationTextEditPattern.cs" />
+    <Compile Include="IUIAutomationCustomNavigationPattern.cs" />
+    <Compile Include="NavigateDirection.cs" />
+    <Compile Include="IUIAutomationLegacyIAccessiblePattern.cs" />
+    <Compile Include="IUIAutomationItemContainerPattern.cs" />
+    <Compile Include="IUIAutomationVirtualizedItemPattern.cs" />
+    <Compile Include="IUIAutomationAnnotationPattern.cs" />
+    <Compile Include="IUIAutomationStylesPattern.cs" />
+    <Compile Include="ExtendedProperty.cs" />
+    <Compile Include="IUIAutomationSpreadsheetPattern.cs" />
+    <Compile Include="IUIAutomationSpreadsheetItemPattern.cs" />
+    <Compile Include="IUIAutomationTransformPattern2.cs" />
+    <Compile Include="ZoomUnit.cs" />
+    <Compile Include="IUIAutomationTextChildPattern.cs" />
+    <Compile Include="IUIAutomationDragPattern.cs" />
+    <Compile Include="IUIAutomationDropTargetPattern.cs" />
+    <Compile Include="IUIAutomationElement2.cs" />
+    <Compile Include="LiveSetting.cs" />
+    <Compile Include="IUIAutomationElement3.cs" />
+    <Compile Include="IUIAutomationElement4.cs" />
+    <Compile Include="IUIAutomationElement5.cs" />
+    <Compile Include="ProviderOptions.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

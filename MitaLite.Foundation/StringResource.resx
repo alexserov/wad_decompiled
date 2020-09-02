@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MissingPublicConstructor_1" xml:space="preserve">
+    <value>The Generic type '{0}' must be public in order to produce an IFactory implementation.</value>
+  </data>
+  <data name="UnableToCreateIFactoryNoSuitableConstructor" xml:space="preserve">
+    <value>Unable to create the required IFactory implementation since the Generic type doesn't have the appropriate constructor</value>
+  </data>
+  <data name="CaretNotFoundError_1" xml:space="preserve">
+    <value>A caret was not found (Error: {0}).</value>
+  </data>
+  <data name="DelegateFilter_ToString" xml:space="preserve">
+    <value>DelegateFilter.</value>
+  </data>
+  <data name="InvalidProviderEntry" xml:space="preserve">
+    <value>Invalid Provider entry.</value>
+  </data>
+  <data name="SiblingsNavigator_ToString_3" xml:space="preserve">
+    <value>Siblings of '{0}' ('{1}') matching: {2}.</value>
+  </data>
+  <data name="PatternPresentFilter_ToString_1" xml:space="preserve">
+    <value>PatternPresentFilter:  Checking for the presence of {0}.</value>
+  </data>
+  <data name="CompositeAllWaiterTimedOut_1" xml:space="preserve">
+    <value>Timed out waiting for all of these waiters: {0}.</value>
+  </data>
+  <data name="CompositeAnyWaiterTimedOut_1" xml:space="preserve">
+    <value>Timed out waiting for any of these waiters: {0}.</value>
+  </data>
+  <data name="CreateBitmapFailed" xml:space="preserve">
+    <value>The conversion from an HBITMAP to an IWICBitmap failed.</value>
+  </data>
+  <data name="IncorrectThreadAttemptingToHalt" xml:space="preserve">
+    <value>An attempt was made to halt the progress of the ActionHandler on a thread other than the one that invoked it.</value>
+  </data>
+  <data name="UnableToCreateBitmap" xml:space="preserve">
+    <value>Unable to create a bitmap compatible with the display's.</value>
+  </data>
+  <data name="StaticListNavigator_ToString_1" xml:space="preserve">
+    <value>A fixed list of items matching {0}.</value>
+  </data>
+  <data name="HighlighterWindowName" xml:space="preserve">
+    <value>Highlighter</value>
+  </data>
+  <data name="RetryingNavigator_ToString_1" xml:space="preserve">
+    <value>A retrying Navigator around '{0}'.</value>
+  </data>
+  <data name="CannotSelectBitmapIntoDC" xml:space="preserve">
+    <value>Cannot select the bitmap into the compatible device context.</value>
+  </data>
+  <data name="ChildrenNavigator_ToString_3" xml:space="preserve">
+    <value>Children of '{0}' ('{1}') matching: {2}.</value>
+  </data>
+  <data name="RectangleMustBeNonEmpty" xml:space="preserve">
+    <value>The rectangle must be non-empty, i.e. width and height must have positive values.</value>
+  </data>
+  <data name="AncestorsNavigator_ToString_3" xml:space="preserve">
+    <value>Ancestors of '{0}' ('{1}') matching: {2}.</value>
+  </data>
+  <data name="UICollection_ToString_2" xml:space="preserve">
+    <value>A collection of {0} instances in the set defined as {1}.</value>
+  </data>
+  <data name="RegexFilter_ToString_2" xml:space="preserve">
+    <value>RegexFilter; {0} matches {1}.</value>
+  </data>
+  <data name="DepthFirstDescendantsNavigator_ToString_2" xml:space="preserve">
+    <value>'Depth-First' Descendants of '{0}' matching: {1}.</value>
+  </data>
+  <data name="ParameterCannotBeNULL" xml:space="preserve">
+    <value>The given parameter cannot be null.</value>
+  </data>
+  <data name="MustResetWaiter" xml:space="preserve">
+    <value>This Waiter has been waited on previously. You should call 'Reset' to re-use this Waiter.</value>
+  </data>
+  <data name="BitBlitFailed" xml:space="preserve">
+    <value>The Bit blit from the display to the compatible device context failed.</value>
+  </data>
+  <data name="StringParameterCannotBeNULLOrEmpty" xml:space="preserve">
+    <value>The given string parameter cannot be null or empty.</value>
+  </data>
+  <data name="CaretNotFoundError" xml:space="preserve">
+    <value>A caret was not found.</value>
+  </data>
+  <data name="DescendantsNavigator_ToString_3" xml:space="preserve">
+    <value>Descendants of '{0}' (Custom Tree '{1}') matching: {2}.</value>
+  </data>
+  <data name="UnableToGetDC" xml:space="preserve">
+    <value>Unable to get the display's device context.</value>
+  </data>
+  <data name="SendKeysStringMalformed" xml:space="preserve">
+    <value>SendKeys string is malformed</value>
+  </data>
+  <data name="DoubleTooLarge" xml:space="preserve">
+    <value>Double constant is too large.</value>
+  </data>
+  <data name="WaiterTimedOut_1" xml:space="preserve">
+    <value>Timed out waiting on {0}.</value>
+  </data>
+  <data name="InvalidMouseButtonEnum" xml:space="preserve">
+    <value>Invalid Enumeration Member in MouseButtons Enum.</value>
+  </data>
+  <data name="BreadthFirstDescendantsNavigator_ToString_2" xml:space="preserve">
+    <value>'Breadth-First' Descendants of '{0}' matching: {1}.</value>
+  </data>
+  <data name="UnableToCreateDC" xml:space="preserve">
+    <value>Unable to create a device context compatible with the display's.</value>
+  </data>
+  <data name="ParameterMustBeGreaterThanZero" xml:space="preserve">
+    <value>The given parameter must be greater than or equal to 0</value>
+  </data>
+  <data name="FindItemByProperty_ArgumentException" xml:space="preserve">
+    <value>FindItemByProperty: value should be null when searching with UIProperty = SearchVirtualItems</value>
+  </data>
+  <data name="InvalidIndex" xml:space="preserve">
+    <value>Index (zero based) must be greater than or equal to zero and less than the size of the argument list.</value>
+  </data>
+  <data name="PatternNotFound_1" xml:space="preserve">
+    <value>Pattern '{0}' not found.</value>
+  </data>
+  <data name="PatternNotFound_2" xml:space="preserve">
+    <value>The pattern '{0}' was not found on the UIObject '{1}'</value>
+  </data>
+  <data name="UnableToLoadProvider" xml:space="preserve">
+    <value>The Provider could not be loaded.</value>
+  </data>
+  <data name="UnableToCreateIFactory" xml:space="preserve">
+    <value>Unable to create the required IFactory implementation</value>
+  </data>
+  <data name="UnableToWaitAnyOnGivenWaiter" xml:space="preserve">
+    <value>Unable to WaitAny on a Waiter that doesn't have a WaitHandle.</value>
+  </data>
+  <data name="EnumerableNavigator_ToString_1" xml:space="preserve">
+    <value>A list of items provided by an IEnumerable implementation matching {0}.</value>
+  </data>
+  <data name="IntegralTooLarge" xml:space="preserve">
+    <value>Integral constant is too large.</value>
+  </data>
+  <data name="InvalidEnumerationValue" xml:space="preserve">
+    <value>An attempt was made to set the value outside of the defined enumeration.</value>
+  </data>
+  <data name="UIObjectNotFound_2" xml:space="preserve">
+    <value>Unable to find the given UIObject.
+Search criteria:'{0}'
+Search domain:'{1}'</value>
+  </data>
+  <data name="ItemContainerChildrenNavigator_ToString_1" xml:space="preserve">
+    <value>Item Container Children of '{0}'</value>
+  </data>
+  <data name="ScrollItemPatternNotSupported" xml:space="preserve">
+    <value>The specified item does not implement the 'ScrollItemPattern'</value>
+  </data>
+  <data name="ParameterTypeMismatch_2" xml:space="preserve">
+    <value>Type mismatch; The given property expects a value of Type {0}, but a {1} Type was passed.</value>
+  </data>
+  <data name="UIObjectNotFound" xml:space="preserve">
+    <value>A UIObject instance was not found.</value>
+  </data>
+  <data name="PropertyNotFoundInPattern_2" xml:space="preserve">
+    <value>Property '{0}' not found in Pattern '{1}'</value>
+  </data>
+  <data name="CannotModifyCollection" xml:space="preserve">
+    <value>You cannot modify a read-only collection</value>
+  </data>
+  <data name="PropertyNotFound_1" xml:space="preserve">
+    <value>Property '{0}' not found.</value>
+  </data>
+</root>

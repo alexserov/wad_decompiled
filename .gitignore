@@ -1,0 +1,469 @@
+#################
+## DevExpress
+#################
+
+*.mdb
+
+*_wpftmp.csproj
+*.temp
+/netcoredesktopdemos/
+launchSettings.json
+## Ignore patched vstemplates
+*_patched.vstemplate
+## Ignore vcs repo specific files
+*.vsf
+[Dd]ebugTest/
+
+/Logs
+/Git
+
+.vscode/
+/XPF/Utils/ClickOnceExeGenerator/com/
+/XPF/Utils/ClickOnceExeGenerator/Engine/
+/Demos.Xpf/DemoLauncher/DemoLauncher/DataDebugTest/
+## Ignore themes specific 
+obj.Temp/
+obj.Temp.NetCore/
+Templates.bin
+XPF/DevExpress.Xpf.Themes/**/generic/
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Core/DevExpress.Xpf.Core/Editors/Themes/Office2007Generic
+XPF/DevExpress.Xpf.Themes/*/Core/Core/Editors/Themes/Office2007Generic
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.DeepBlue/
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/DeepBlue.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/Office2007Generic.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/Office2007Black.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/Office2007Blue.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/Office2007Silver.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Carousel/Themes/GenericResources.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/DeepBlue.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/Office2007Generic.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/Office2007Black.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/Office2007Blue.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/Office2007Silver.xaml
+XPF/DevExpress.Xpf.Themes/Base/Carousel/Themes/GenericResources.xaml
+XPF/DevExpress.Xpf.Themes/*/Themes/Office2007Generic.xaml
+XPF/DevExpress.Xpf.Themes/*/Themes/Office2007Silver.xaml
+XPF/DevExpress.Xpf.Themes/*/Core/Core/TabControl/Themes/DeepBlue.xaml
+XPF/DevExpress.Xpf.Themes/*/Core/Core/TabControl/Themes/Generic.Window.xaml
+XPF/DevExpress.Xpf.Themes/*/Core/Core/TabControl/Themes/Generic.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Core/DevExpress.Xpf.Core/TabControl/Themes/DeepBlue.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Core/DevExpress.Xpf.Core/TabControl/Themes/Generic.Window.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Core/DevExpress.Xpf.Core/TabControl/Themes/Generic.xaml
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.PivotGrid/OfficeGeneric/
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.PivotGrid/OldGeneric/
+XPF/DevExpress.Xpf.Themes/*/PivotGrid/OfficeGeneric/
+XPF/DevExpress.Xpf.Themes/*/PivotGrid/OldGeneric/
+XPF/DevExpress.Xpf.Themes/ColorSchemes/*/*.colors
+XPF/DevExpress.Xpf.CreateLayoutWizard/CreateLayoutWizard/obj.2013
+XPF/DevExpress.Xpf.CreateLayoutWizard/CreateLayoutWizard/obj.2015
+XPF/DevExpress.Xpf.CreateLayoutWizard/CreateLayoutWizard/obj.2017
+XPF/DevExpress.Xpf.CreateLayoutWizard/CreateLayoutWizard/obj.2019
+XPF/DevExpress.Xpf.Themes/*/Scheduling/UIPreset.Generic/
+XPF/DevExpress.Xpf.Themes/*/DevExpress.Xpf.Scheduling/UIPreset.Generic/
+XPF/DevExpress.Xpf.Spreadsheet/DevExpress.Xpf.Spreadsheet/obj.WpfRelease/
+XPF/DevExpress.Xpf.Spreadsheet/DevExpress.Xpf.Spreadsheet/obj.WpfDebugTest/
+XPF/DevExpress.Xpf.Spreadsheet/DevExpress.Xpf.Spreadsheet/obj.WpfDebug/
+XPF/DevExpress.Mvvm/DevExpress.Mvvm.Tests/obj.WPFDebug/
+XPF/DevExpress.Mvvm/*/obj.NetCore.Desktop*/
+XPF/DevExpress.Xpf.Core/DevExpress.Xpf.Core/DXBinding/Parser.cs.old
+XPF/DevExpress.Xpf.Core/DevExpress.Xpf.Core/DXBinding/Scanner.cs.old
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.MetropolisLight/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2010Blue/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2010Silver/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2013DarkGray/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2013LightGray/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2016Black/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2016Colorful/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.Office2016White/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.VisualStudio2015Blue/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.VisualStudio2015Dark/
+XPF/DevExpress.Xpf.Themes/DevExpress.Xpf.Themes.VisualStudio2015Light/
+XPF/DevExpress.Xpf.Themes/Super/
+XPF/DevExpress.Xpf.Themes/VS2017Dark/
+XPF/DevExpress.Xpf.Themes/VS2017Light/
+XPF/DevExpress.Xpf.Themes/VS2017Blue/
+XPF/DevExpress.Xpf.Themes/Office2016WhiteSE/
+XPF/DevExpress.Xpf.Themes/Office2016DarkGraySE/
+XPF/DevExpress.Xpf.Themes/Office2016ColorfulSE/
+XPF/DevExpress.Xpf.Themes/Office2016BlackSE/
+XPF/DevExpress.Xpf.Themes/Office2019White/
+XPF/DevExpress.Xpf.Themes/Office2019DarkGray/
+XPF/DevExpress.Xpf.Themes/Office2019Colorful/
+XPF/DevExpress.Xpf.Themes/Office2019Black/
+XPF/DevExpress.Xpf.Themes/Office2019HighContrast/
+XPF/DevExpress.Xpf.Themes/Dracula/
+XPF/DevExpress.Xpf.Themes/Helsing/
+XPF/DevExpress.Xpf.Themes/VS2019Dark/
+XPF/DevExpress.Xpf.Themes/VS2019Light/
+XPF/DevExpress.Xpf.Themes/VS2019Blue/
+
+**/__temp_file__*.xaml
+
+## WinForms
+project.json
+templates.auto
+Win/DevExpress.Images/DevExpress.Images/ImageList.cs
+Win/DevExpress.Images/DevExpress.Images/XAFImageList.cs
+/Demos.Win/SchedulerOutlookDemos/Instant*
+/Demos.Win/SchedulerOutlookDemos/VB
+/Demos.Win/SchedulerOutlookDemos/SchedulerOutlookSamples_VB.sln
+/Demos.Win/SchedulerDemos/VB
+Win/DevExpress.Utils/DevExpress.Utils/AutoSave
+/Demos.Win/SchedulerDemos/SchedulerSamples_VB.sln
+/Demos.Win/SchedulerDemos/Instant*
+Win/DevExpress.Utils/DevExpress.Utils/AutoSave
+Win/DevExpress.XtraScheduler/DevExpress.XtraScheduler/Properties/launchSettings.json
+/Win/DevExpress.XtraSpreadsheet/_files
+Win/DevExpress.Win.LayoutAssistant/LayoutAssistant/obj.2012
+Win/DevExpress.Win.LayoutAssistant/LayoutAssistant/obj.2013
+Win/DevExpress.Win.LayoutAssistant/LayoutAssistant/obj.2015
+Win/DevExpress.Win.LayoutAssistant/LayoutAssistant/obj.2017
+Win/DevExpress.Win.LayoutAssistant/LayoutAssistant/obj.2019
+Win/DevExpress.SvgIconBuilder/UwpPackage/win32/SvgIconBuilder.exe.config
+
+## Ignore asp specific files
+ASP/DevExpress.Web.ASPxRichEdit/Scripts/compiled.d.ts
+ASP/DevExpress.Web.ASPxRichEdit/_references.js
+ASP/DevExpress.Web.ASPxRichEdit/_references.js.map
+
+ASP/DevExpress.Web.ASPxRichEdit/Css/System.css
+ASP/DevExpress.Web.ASPxRichEdit/Css/Default.css
+
+ASP/DevExpress.Web.ASPxRichEdit/Scripts/**/*.js
+ASP/DevExpress.Web.ASPxRichEdit/Scripts/**/*.js.map
+
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/Localization.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/Dialogs.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/FileManager.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/FolderManager.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/QuickSearchPanel.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/UploadControl.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/UI/FileManagerUploadControl.js
+!ASP/DevExpress.Web.ASPxRichEdit/Scripts/RichEdit.js
+
+ASP/DevExpress.Web.ASPxRichEdit.Tests/_generated/**/*.js
+ASP/DevExpress.Web.ASPxRichEdit.Tests/chutzpah-ts-files.txt
+
+ASP/DevExpress.Web.ASPxRichEdit.Tests/Scripts/**/*.js
+ASP/DevExpress.Web.ASPxRichEdit.Tests/Scripts/**/*.js.map
+
+*.test.html
+
+## Ignore ThemeBuilder files
+ASP/ASPxThemeBuilder/*.dll
+ASP/ASPxThemeBuilder/*.exe
+ASP/ASPxThemeBuilder/*.manifest
+ASP/ASPxThemeBuilder/*.xml
+ASP/ASPxThemeBuilder/Site/App_Themes/
+ASP/DevExpress.Web.ASPxThemes/ScssCompiler/packages/libsassnet.3.3.7/lib/net40/LibSass.NET.dll
+ASP/DevExpress.Web.ASPxThemes/ScssCompiler/packages/libsassnet.3.3.7/libsassnet.3.3.7.nupkg
+ASP/DevExpress.Web.ASPxThemes/App_Themes/**/styles*.css
+ASP/DevExpress.Web.ASPxThemes/App_Themes/**/NewStyle.css
+ASP/DevExpress.Web.ASPxThemes/node_modules
+ASP/DevExpress.Web.ASPxThemes/Gulpfile.js
+ASP/DevExpress.Web.ASPxThemes/package.json
+
+
+ASP/DevExpress.Web.Bootstrap/Css/system-v3.css
+ASP/DevExpress.Web.Bootstrap/Css/system-v4.css
+ASP/DevExpress.Web.Bootstrap/Css/DesignMode/system-v3.css
+ASP/DevExpress.Web.Bootstrap/Css/DesignMode/system-v4.css
+ASP/DevExpress.Web.Bootstrap/Css/Office/system-v3.css
+ASP/DevExpress.Web.Bootstrap/Css/Office/system-v4.css
+ASP/DevExpress.Web.Bootstrap/Css/system-v3.designmode.css
+ASP/DevExpress.Web.Bootstrap/Css/system-v4.designmode.css
+ASP/Script.Tests/.idea/
+
+ASP/DevExpress.Web.Resources/Css/DevExtreme/
+ASP/DevExpress.Web.Resources/Css/DxDesigner/
+ASP/DevExpress.Web.Resources/Css/RichEdit/
+ASP/DevExpress.Web.Resources/Scripts/DevExtreme/
+ASP/DevExpress.Web.Resources/Scripts/DxDesigner/
+ASP/DevExpress.Web.Resources/Scripts/RichEdit/
+ASP/DevExpress.Web.Resources/package.json
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/package.json
+/Win/DevExpress.XtraSpreadsheet/DevExpress.XtraSpreadsheet/obj.NCD
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Css/dx-reportdesigner.css
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Css/dx-webdocumentviewer.css
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Scripts/dx-reportdesigner.js
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Scripts/dx-reportdesigner.min.js
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Scripts/dx-webdocumentviewer.js
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Scripts/dx-webdocumentviewer.min.js
+ASP/DevExpress.XtraReports.Web/DevExpress.AspNetCore.Reporting.Azure.Tests/obj.NetCore3/
+ASP/DevExpress.XtraReports.Web/DevExpress.Blazor.Reporting/wwwroot/
+ASP/DevExpress.Dashboard.Web/DevExpress.Dashboard.Web/ClientResources/
+
+ASP/**/node_modules/
+
+//svg sprite generator
+.lastGenerationDate.txt
+ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.Tests/obj.NetCore3
+
+
+
+## Localization
+Localization/DevExpress.Dll
+
+## UWP
+UWP/Logs
+obj.WinRT
+
+## WPF demos
+/Demos.XPF/DemoLauncher/Data/*.db
+
+## XPF/DevExpress.Xpf.Gantt/DevExpress.Xpf.Gantt/Meta/GanttTask.generated.original.temp.cs
+*.temp.cs
+
+## MetaSharp
+*.meta.designer.cs
+*.meta.designer.xaml
+
+## NuGet packages
+packages/
+*.nupkg
+!Win/DevExpress.Xpo/UnitTest/NuGetPackages/*.nupkg
+
+## Diff files
+#################
+*.orig
+
+#################
+## Rider
+#################
+**/.idea/
+
+#################
+## Eclipse
+#################
+
+*.pydevproject
+.project
+.metadata
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+
+#################
+## Visual Studio
+#################
+
+## Ignore Visual Studio temporary files, build results, and
+## files generated by popular Visual Studio add-ons.
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Build results
+
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Bb]in.NetCore/
+[Oo]bj/
+[Oo]bj_netFW/
+[Oo]bj_Wasm/
+[Oo]bj.NetCore.Desktop/
+[Oo]bj.NC/
+[Oo]bj.NCD/
+[Oo]bj.NetCore/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.log
+*.scc
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+
+# Guidance Automation Toolkit
+*.gpState
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# TeamCity is a build add-in
+_TeamCity*
+
+# DotCover is a Code Coverage Tool
+*.dotCover
+
+# NCrunch
+*.ncrunch*
+.*crunch*.local.xml
+
+# Installshield output folder
+[Ee]xpress/
+
+# DocProject is a documentation generator add-in
+DocProject/buildhelp/
+DocProject/Help/*.HxT
+DocProject/Help/*.HxC
+DocProject/Help/*.hhc
+DocProject/Help/*.hhk
+DocProject/Help/*.hhp
+DocProject/Help/Html2
+DocProject/Help/html
+
+# Click-Once directory
+publish/
+
+# Publish Web Output
+*.Publish.xml
+*.pubxml
+*.publishproj
+
+# NuGet Packages Directory
+## TODO: If you have NuGet Package Restore enabled, uncomment the next line
+#packages/
+
+# Windows Azure Build Output
+csx
+*.build.csdef
+
+# Windows Store app package directory
+AppPackages/
+
+# Others
+*.Cache
+ClientBin/
+[Ss]tyle[Cc]op.*
+~$*
+*~
+*.dbmdl
+*.[Pp]ublish.xml
+*.publishsettings
+
+# RIA/Silverlight projects
+Generated_Code/
+
+#Demos generated code
+Demos.XPF/SchedulingDemo/SchedulingDemoVB
+
+
+# Backup & report files from converting an old project file to a newer
+# Visual Studio version. Backup files are not needed, because we have git ;-)
+_UpgradeReport_Files/
+Backup*/
+UpgradeLog*.XML
+UpgradeLog*.htm
+
+#############
+## Windows detritus
+#############
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Mac crap
+.DS_Store
+
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+
+#Translations
+*.mo
+
+#Mr Developer
+.mr.developer.cfg
+
+.vs
+obj.Wpf
+*.stackdump
+
+# CodeRush settings
+**/.cr/
+
+# nunit output
+*.nunit.xml
+
+# Rider
+**/.idea/
+
+Utils/ClickOnceExeGenerator/Engine
+Utils/ClickOnceExeGenerator/com
+
+/Build*.bat
+*.DotSettings
+/Win/DevExpress.XtraLayout/DevExpress.XtraLayout/obj_netFW/Tests
+
+__pycache__/
+obj.Desktop
+/UWP/Logs/devenv_messages.SDK
+/Demos.UWP/FeatureDemo/FeatureDemo/BundleArtifacts
+/Demos.UWP/FeatureDemo/FeatureDemo/_pkginfo.txt
+/Demos.UWP/FeatureDemo/FeatureDemo/Package.StoreAssociation.xml
+/Demos.UWP/FeatureDemo/FeatureDemo/DevExpressDemoKey.pfx
+/Win/DevExpress.Utils/TestUtilsAndData/TestUtilsAndData.sln
+/ASP/DevExpress.XtraReports.Web/DevExpress.XtraReports.Web.WebForms/Css/dx-reporting-skeleton-screen.css
+/ASP/DevExpress.RichEdit.Web/DevExpress.Web.ASPxRichEdit/Images/package-lock.json
+/ASP/DevExpress.Web.ASPxHtmlEditor/Images/package-lock.json
+/ASP/DevExpress.Web.ASPxSpreadsheet/Images/package-lock.json

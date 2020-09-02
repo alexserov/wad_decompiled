@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{1E7D75B3-86A8-4A8C-B65E-205082C25125}</ProjectGuid>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <RootNamespace>MS.Internal.Mita.Foundation</RootNamespace>
+    <AssemblyTitle>MitaLite.Foundation</AssemblyTitle>
+    <Company>Microsoft Corporation</Company>
+    <Product>Microsoft Test Automation Framework - MitaLite</Product>
+    <Description>MitaLite.Foundation.dll</Description>
+    <FileVersion>1.0.1910.02002</FileVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.10" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MitaLite.AppModel\MitaLite.AppModel.csproj" />
+    <ProjectReference Include="..\MitaLite.Localization\MitaLite.Localization.csproj" />
+    <ProjectReference Include="..\MitaLite.UIAutomationAdapter\MitaLite.UIAutomationAdapter.csproj" />
+    <ProjectReference Include="..\MitaLite.UIAutomationClient\MitaLite.UIAutomationClient.csproj" />
+  </ItemGroup>
+</Project>

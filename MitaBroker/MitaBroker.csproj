@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Program Files (x86)\Windows Application Driver\MitaBroker.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1BF1F7F2-AB01-42CA-9D89-3D9CD8093461}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>MitaBroker</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <ApplicationVersion>1.2.0.0</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MitaLite.Foundation">
+      <HintPath>lib\MitaLite.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="MitaLite.UIAutomationAdapter">
+      <HintPath>lib\MitaLite.UIAutomationAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Device" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Microsoft\Diagnostics\Telemetry\TelemetryGroup.cs" />
+    <Compile Include="Microsoft\Diagnostics\Telemetry\TelemetryEventSource.cs" />
+    <Compile Include="Microsoft\Diagnostics\Telemetry\PrivTags.cs" />
+    <Compile Include="Microsoft\Diagnostics\Telemetry\PrivTagsAdvanced.cs" />
+    <Compile Include="Microsoft\Diagnostics\Telemetry\Internal\PartA_PrivTags.cs" />
+    <Compile Include="MitaBroker\ApplicationActivation.cs" />
+    <Compile Include="MitaBroker\Capabilities.cs" />
+    <Compile Include="MitaBroker\CompareMethod.cs" />
+    <Compile Include="MitaBroker\CompareMethodValue.cs" />
+    <Compile Include="MitaBroker\FindElementByAbsoluteXPath.cs" />
+    <Compile Include="MitaBroker\KeyboardInput.cs" />
+    <Compile Include="MitaBroker\Telemetry.cs" />
+    <Compile Include="MitaBroker\Utilities.cs" />
+    <Compile Include="MitaBroker\KnownElements.cs" />
+    <Compile Include="MitaBroker\MultipleWindows.cs" />
+    <Compile Include="MitaBroker\PositionAdapter.cs" />
+    <Compile Include="MitaBroker\IRequestHandler.cs" />
+    <Compile Include="MitaBroker\RequestHandler.cs" />
+    <Compile Include="MitaBroker\ResponseStatus.cs" />
+    <Compile Include="MitaBroker\MouseHandler.cs" />
+    <Compile Include="MitaBroker\TouchHandler.cs" />
+    <Compile Include="MitaBroker\UIXmlDom.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\ActionObject.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\ActionsByTick.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\ActionSequence.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\ActionsHandler.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Constants.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\NoSuchWindowException.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\InternalErrorException.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\NoSuchElementException.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\StaleElementException.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Keys.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\PointerIdCollections.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\InputSource.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\PointerInputSource.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\KeyInputSource.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\NullInputSource.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\IInputSourceState.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\KeyInputState.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\NullInputState.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\PointerInputState.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Enums\InputActionType.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Enums\InputSourceType.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Enums\OriginType.cs" />
+    <Compile Include="MitaBroker\WebDriver\Actions\Enums\PointerType.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

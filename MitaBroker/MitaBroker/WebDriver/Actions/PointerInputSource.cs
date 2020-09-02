@@ -1,0 +1,31 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MitaBroker.WebDriver.Actions.PointerInputSource
+// Assembly: MitaBroker, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null
+// MVID: 04F1F240-3A91-44F5-8C6F-E562756B4D74
+// Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaBroker.dll
+
+using MitaBroker.WebDriver.Actions.Enums;
+using System;
+
+namespace MitaBroker.WebDriver.Actions
+{
+  internal class PointerInputSource : InputSource
+  {
+    public PointerType PointerType { get; private set; }
+
+    public PointerInputSource(string id, PointerType pointerType)
+    {
+      this.Id = id;
+      this.Type = InputSourceType.Pointer;
+      this.PointerType = pointerType;
+    }
+
+    public void PointerDown() => throw new NotImplementedException("PointerInputSource PointerDown is not implemented");
+
+    public void PointerUp() => throw new NotImplementedException("PointerInputSource PointerUp is not implemented");
+
+    public void PointerMove() => throw new NotImplementedException("PointerInputSource PointerMove is not implemented");
+
+    public void PointerCancel() => throw new NotImplementedException("PointerInputSource PointerCancel is not implemented");
+  }
+}

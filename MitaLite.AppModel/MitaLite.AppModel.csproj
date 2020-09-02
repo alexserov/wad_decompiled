@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{4BB9C1DB-41E9-410A-8006-6C4B529DFC61}</ProjectGuid>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <RootNamespace>MS.Internal.Mita.AppModel</RootNamespace>
+    <AssemblyTitle>MitaLite.AppModel</AssemblyTitle>
+    <Company>Microsoft Corporation</Company>
+    <Product>Microsoft Test Automation Framework - MitaLite</Product>
+    <Description>MitaLite.AppModel.dll</Description>
+    <FileVersion>1.0.1910.02002</FileVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{AAAEB0E6-EAA6-4961-A2C1-D6B0F647DE46}</ProjectGuid>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <RootNamespace>MS.Internal.Mita.Localization</RootNamespace>
+    <AssemblyTitle>MitaLite.Localization</AssemblyTitle>
+    <Company>Microsoft Corporation</Company>
+    <Product>Microsoft Test Automation Framework - MitaLite</Product>
+    <Description>MitaLite.Localization.dll</Description>
+    <FileVersion>1.0.1910.02002</FileVersion>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Collections" />
+    <Reference Include="System.Globalization" />
+    <Reference Include="System.IO" />
+    <Reference Include="System.Reflection" />
+    <Reference Include="System.Resources.ResourceManager" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Threading" />
+    <Reference Include="System.Threading.Thread" />
+    <Reference Include="System.Xml.ReaderWriter" />
+  </ItemGroup>
+</Project>
