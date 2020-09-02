@@ -7,37 +7,51 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("1DC7B570-1F54-4BAD-BCDA-D36A722FB7BD")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationDragPattern
-  {
-    [DispId(1610678272)]
-    int CurrentIsGrabbed { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+namespace UIAutomationClient {
+    [Guid(guid: "1DC7B570-1F54-4BAD-BCDA-D36A722FB7BD"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationDragPattern {
+        [DispId(dispId: 1610678272)]
+        int CurrentIsGrabbed {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [DispId(1610678273)]
-    int CachedIsGrabbed { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+        [DispId(dispId: 1610678273)]
+        int CachedIsGrabbed {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [DispId(1610678274)]
-    string CurrentDropEffect { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
+        [DispId(dispId: 1610678274)]
+        string CurrentDropEffect {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
 
-    [DispId(1610678275)]
-    string CachedDropEffect { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
+        [DispId(dispId: 1610678275)]
+        string CachedDropEffect {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
 
-    [DispId(1610678276)]
-    string[] CurrentDropEffects { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)] get; }
+        [DispId(dispId: 1610678276)]
+        string[] CurrentDropEffects {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)]
+            get;
+        }
 
-    [DispId(1610678277)]
-    string[] CachedDropEffects { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)] get; }
+        [DispId(dispId: 1610678277)]
+        string[] CachedDropEffects {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_BSTR)]
+            get;
+        }
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElementArray GetCurrentGrabbedItems();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElementArray GetCurrentGrabbedItems();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElementArray GetCachedGrabbedItems();
-  }
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElementArray GetCachedGrabbedItems();
+    }
 }

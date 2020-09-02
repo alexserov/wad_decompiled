@@ -7,74 +7,91 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("4042C624-389C-4AFC-A630-9DF854A541FC")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationTreeWalker
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetParentElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+namespace UIAutomationClient {
+    [Guid(guid: "4042C624-389C-4AFC-A630-9DF854A541FC"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationTreeWalker {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetParentElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                              IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetFirstChildElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetFirstChildElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                                  IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetLastChildElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetLastChildElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                                 IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetNextSiblingElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetNextSiblingElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                                   IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetPreviousSiblingElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetPreviousSiblingElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                                       IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement NormalizeElement([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement NormalizeElement([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                              IUIAutomationElement element);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetParentElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetParentElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetFirstChildElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetFirstChildElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetLastChildElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetLastChildElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetNextSiblingElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetNextSiblingElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetPreviousSiblingElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetPreviousSiblingElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement NormalizeElementBuildCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement element,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement NormalizeElementBuildCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement element,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
 
-    [DispId(1610678284)]
-    IUIAutomationCondition condition { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-  }
+        [DispId(dispId: 1610678284)]
+        IUIAutomationCondition condition {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+    }
 }

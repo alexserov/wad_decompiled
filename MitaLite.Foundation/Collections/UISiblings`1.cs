@@ -6,28 +6,22 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UISiblings<T> : UICollection<T> where T : UIObject
-  {
-    public UISiblings(UIObject root, IFactory<T> factory)
-      : base((UINavigator) new SiblingsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UISiblings<T> : UICollection<T> where T : UIObject {
+        public UISiblings(UIObject root, IFactory<T> factory)
+            : base(navigator: new SiblingsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UISiblings(AutomationElement root, IFactory<T> factory)
-      : base((UINavigator) new SiblingsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UISiblings(AutomationElement root, IFactory<T> factory)
+            : base(navigator: new SiblingsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UISiblings(UIObject root, UICondition treeCondition, IFactory<T> factory)
-      : base((UINavigator) new SiblingsNavigator(root, treeCondition), factory)
-    {
-    }
+        public UISiblings(UIObject root, UICondition treeCondition, IFactory<T> factory)
+            : base(navigator: new SiblingsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UISiblings(AutomationElement root, UICondition treeCondition, IFactory<T> factory)
-      : base((UINavigator) new SiblingsNavigator(root, treeCondition), factory)
-    {
+        internal UISiblings(AutomationElement root, UICondition treeCondition, IFactory<T> factory)
+            : base(navigator: new SiblingsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

@@ -7,32 +7,28 @@
 using System;
 using System.Globalization;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  public class DisplayException : MitaException
-  {
-    private int _nativeErrorCode;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    public class DisplayException : MitaException {
+        public DisplayException() {
+        }
 
-    public DisplayException()
-    {
+        public DisplayException(string message)
+            : base(message: message) {
+        }
+
+        public DisplayException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
+
+        public DisplayException(string message, int windowsError)
+            : base(message: message) {
+            Win32Error = windowsError;
+        }
+
+        public override string Message {
+            get { return string.IsNullOrEmpty(value: base.Message) ? "Error: " + Win32Error.ToString(provider: CultureInfo.InvariantCulture) : base.Message + " : " + Win32Error.ToString(provider: CultureInfo.InvariantCulture); }
+        }
+
+        public int Win32Error { get; }
     }
-
-    public DisplayException(string message)
-      : base(message)
-    {
-    }
-
-    public DisplayException(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
-
-    public DisplayException(string message, int windowsError)
-      : base(message)
-      => this._nativeErrorCode = windowsError;
-
-    public override string Message => string.IsNullOrEmpty(base.Message) ? "Error: " + this._nativeErrorCode.ToString((IFormatProvider) CultureInfo.InvariantCulture) : base.Message + " : " + this._nativeErrorCode.ToString((IFormatProvider) CultureInfo.InvariantCulture);
-
-    public int Win32Error => this._nativeErrorCode;
-  }
 }

@@ -4,57 +4,49 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
 using System.Text;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class CompositeAnyWaiter : Waiter
-  {
-    private CompositableWaiter[] _waiters;
-    private CompositableWaiter _source;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class CompositeAnyWaiter : Waiter {
+        readonly CompositableWaiter[] _waiters;
 
-    public CompositeAnyWaiter(params CompositableWaiter[] waiters)
-    {
-      Validate.ArgumentNotNull((object) waiters, nameof (waiters));
-      this._waiters = waiters;
-      this._source = (CompositableWaiter) null;
+        public CompositeAnyWaiter(params CompositableWaiter[] waiters) {
+            Validate.ArgumentNotNull(parameter: waiters, parameterName: nameof(waiters));
+            this._waiters = waiters;
+            this.Source = null;
+        }
+
+        public CompositableWaiter Source { get; set; }
+
+        public override bool TryWait(TimeSpan timeout) {
+            this.Source = CompositableWaiter.TryWaitAny(timeout: timeout, waiters: this._waiters);
+            return this.Source != null;
+        }
+
+        public override string ToString() {
+            var stringBuilder = new StringBuilder(value: "CompositeAllWaiter with sub-waiters:  ");
+            for (var index = 0; index < this._waiters.Length; ++index) {
+                stringBuilder.Append(value: this._waiters[index]);
+                if (index != this._waiters.Length - 1)
+                    stringBuilder.Append(value: ", ");
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public override void Reset() {
+            foreach (Waiter waiter in this._waiters)
+                waiter.Reset();
+        }
+
+        public override void Dispose() {
+            foreach (Waiter waiter in this._waiters)
+                waiter.Dispose();
+            if (this.Source != null)
+                this.Source.Dispose();
+            GC.SuppressFinalize(obj: this);
+        }
     }
-
-    public override bool TryWait(TimeSpan timeout)
-    {
-      this._source = CompositableWaiter.TryWaitAny(timeout, this._waiters);
-      return this._source != null;
-    }
-
-    public override string ToString()
-    {
-      StringBuilder stringBuilder = new StringBuilder("CompositeAllWaiter with sub-waiters:  ");
-      for (int index = 0; index < this._waiters.Length; ++index)
-      {
-        stringBuilder.Append(this._waiters[index].ToString());
-        if (index != this._waiters.Length - 1)
-          stringBuilder.Append(", ");
-      }
-      return stringBuilder.ToString();
-    }
-
-    public override void Reset()
-    {
-      foreach (Waiter waiter in this._waiters)
-        waiter.Reset();
-    }
-
-    public CompositableWaiter Source => this._source;
-
-    public override void Dispose()
-    {
-      foreach (Waiter waiter in this._waiters)
-        waiter.Dispose();
-      if (this._source != null)
-        this._source.Dispose();
-      GC.SuppressFinalize((object) this);
-    }
-  }
 }

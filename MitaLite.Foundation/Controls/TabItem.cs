@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class TabItem : TabItem<Tab>
-  {
-    private static IFactory<TabItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class TabItem : TabItem<Tab> {
+        static IFactory<TabItem> _factory;
 
-    public TabItem(UIObject uiObject)
-      : base(uiObject, Tab.Factory)
-    {
-    }
+        public TabItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: Tab.Factory) {
+        }
 
-    internal TabItem(AutomationElement element)
-      : base(element, Tab.Factory)
-    {
-    }
+        internal TabItem(AutomationElement element)
+            : base(element: element, containerFactory: Tab.Factory) {
+        }
 
-    public static IFactory<TabItem> Factory
-    {
-      get
-      {
-        if (TabItem._factory == null)
-          TabItem._factory = (IFactory<TabItem>) new TabItem.TabItemFactory();
-        return TabItem._factory;
-      }
-    }
+        public static IFactory<TabItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new TabItemFactory();
+                return _factory;
+            }
+        }
 
-    private class TabItemFactory : IFactory<TabItem>
-    {
-      public TabItem Create(UIObject element) => new TabItem(element);
+        class TabItemFactory : IFactory<TabItem> {
+            public TabItem Create(UIObject element) {
+                return new TabItem(uiObject: element);
+            }
+        }
     }
-  }
 }

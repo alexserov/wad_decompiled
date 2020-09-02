@@ -6,14 +6,12 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class SelectionPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<SelectionPattern, IUIAutomationSelectionPattern>(10001, "SelectionPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationSelectionPattern, SelectionPattern>(SelectionPattern.Wrap));
-    public static readonly AutomationEvent InvalidatedEvent = new AutomationEvent(20013, "SelectionPatternIdentifiers.InvalidatedEvent");
-    public static readonly AutomationProperty CanSelectMultipleProperty = new AutomationProperty(30060, "SelectionPatternIdentifiers.CanSelectMultipleProperty");
-    public static readonly AutomationProperty IsSelectionRequiredProperty = new AutomationProperty(30061, "SelectionPatternIdentifiers.IsSelectionRequiredProperty");
-    public static readonly AutomationProperty SelectionProperty = new AutomationProperty(30059, "SelectionPatternIdentifiers.SelectionProperty");
-  }
+namespace System.Windows.Automation {
+    public static class SelectionPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<SelectionPattern, IUIAutomationSelectionPattern>(id: 10001, programmaticName: "SelectionPatternIdentifiers.Pattern", wrap: SelectionPattern.Wrap);
+        public static readonly AutomationEvent InvalidatedEvent = new AutomationEvent(id: 20013, programmaticName: "SelectionPatternIdentifiers.InvalidatedEvent");
+        public static readonly AutomationProperty CanSelectMultipleProperty = new AutomationProperty(id: 30060, programmaticName: "SelectionPatternIdentifiers.CanSelectMultipleProperty");
+        public static readonly AutomationProperty IsSelectionRequiredProperty = new AutomationProperty(id: 30061, programmaticName: "SelectionPatternIdentifiers.IsSelectionRequiredProperty");
+        public static readonly AutomationProperty SelectionProperty = new AutomationProperty(id: 30059, programmaticName: "SelectionPatternIdentifiers.SelectionProperty");
+    }
 }

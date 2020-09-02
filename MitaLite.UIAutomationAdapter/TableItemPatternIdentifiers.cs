@@ -6,12 +6,10 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class TableItemPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TableItemPattern, IUIAutomationTableItemPattern>(10013, "TableItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTableItemPattern, TableItemPattern>(TableItemPattern.Wrap));
-    public static readonly AutomationProperty ColumnHeaderItemsProperty = new AutomationProperty(30085, "TableItemPatternIdentifiers.ColumnHeaderItemsProperty");
-    public static readonly AutomationProperty RowHeaderItemsProperty = new AutomationProperty(30084, "TableItemPatternIdentifiers.RowHeaderItemsProperty");
-  }
+namespace System.Windows.Automation {
+    public static class TableItemPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<TableItemPattern, IUIAutomationTableItemPattern>(id: 10013, programmaticName: "TableItemPatternIdentifiers.Pattern", wrap: TableItemPattern.Wrap);
+        public static readonly AutomationProperty ColumnHeaderItemsProperty = new AutomationProperty(id: 30085, programmaticName: "TableItemPatternIdentifiers.ColumnHeaderItemsProperty");
+        public static readonly AutomationProperty RowHeaderItemsProperty = new AutomationProperty(id: 30084, programmaticName: "TableItemPatternIdentifiers.RowHeaderItemsProperty");
+    }
 }

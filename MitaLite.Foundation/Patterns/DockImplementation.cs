@@ -6,35 +6,26 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class DockImplementation : PatternImplementation<DockPattern>, IDock
-  {
-    public DockImplementation(UIObject uiObject)
-      : base(uiObject, DockPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class DockImplementation : PatternImplementation<DockPattern>, IDock {
+        public DockImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: DockPattern.Pattern) {
+        }
 
-    public void SetDockPosition(DockPosition position)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (SetDockPosition), new object[1]
-      {
-        (object) position
-      })) == ActionResult.Unhandled)
-        this.Pattern.SetDockPosition(position);
-      int num3 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void SetDockPosition(DockPosition position) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(SetDockPosition), position)) == ActionResult.Unhandled)
+                Pattern.SetDockPosition(dockPosition: position);
+            var num3 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public DockPosition DockPosition
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (DockPosition)), out overridden) == ActionResult.Handled ? (DockPosition) overridden : DockPosition.None;
-      }
+        public DockPosition DockPosition {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(DockPosition)), overridden: out overridden) == ActionResult.Handled ? (DockPosition) overridden : DockPosition.None;
+            }
+        }
     }
-  }
 }

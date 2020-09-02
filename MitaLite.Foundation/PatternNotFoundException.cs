@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class PatternNotFoundException : MitaException
-  {
-    public PatternNotFoundException()
-    {
-    }
+namespace MS.Internal.Mita.Foundation {
+    public class PatternNotFoundException : MitaException {
+        public PatternNotFoundException() {
+        }
 
-    public PatternNotFoundException(string message)
-      : base(message)
-    {
-    }
+        public PatternNotFoundException(string message)
+            : base(message: message) {
+        }
 
-    public PatternNotFoundException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public PatternNotFoundException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

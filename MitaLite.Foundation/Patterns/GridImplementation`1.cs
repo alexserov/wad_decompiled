@@ -5,50 +5,39 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class GridImplementation<I> : PatternImplementation<GridPattern>, IGrid<I>
-    where I : UIObject
-  {
-    private IFactory<I> _itemFactory;
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class GridImplementation<I> : PatternImplementation<GridPattern>, IGrid<I>
+        where I : UIObject {
+        readonly IFactory<I> _itemFactory;
 
-    public GridImplementation(UIObject uiObject, IFactory<I> itemFactory)
-      : base(uiObject, GridPattern.Pattern)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) itemFactory, nameof (itemFactory));
-      this._itemFactory = itemFactory;
+        public GridImplementation(UIObject uiObject, IFactory<I> itemFactory)
+            : base(uiObject: uiObject, patternIdentifier: GridPattern.Pattern) {
+            Validate.ArgumentNotNull(parameter: itemFactory, parameterName: nameof(itemFactory));
+            this._itemFactory = itemFactory;
+        }
+
+        public I GetCell(int row, int column) {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(GetCell), row, (object) column), overridden: out overridden) == ActionResult.Handled ? this._itemFactory.Create(element: (UIObject) overridden) : this._itemFactory.Create(element: new UIObject(element: Pattern.GetItem(row: row, column: column)));
+        }
+
+        public int RowCount {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(RowCount)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.RowCount;
+            }
+        }
+
+        public int ColumnCount {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(ColumnCount)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.ColumnCount;
+            }
+        }
     }
-
-    public I GetCell(int row, int column)
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (GetCell), new object[2]
-      {
-        (object) row,
-        (object) column
-      }), out overridden) == ActionResult.Handled ? this._itemFactory.Create((UIObject) overridden) : this._itemFactory.Create(new UIObject(this.Pattern.GetItem(row, column)));
-    }
-
-    public int RowCount
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (RowCount)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.RowCount;
-      }
-    }
-
-    public int ColumnCount
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (ColumnCount)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.ColumnCount;
-      }
-    }
-  }
 }

@@ -6,14 +6,12 @@
 
 using System.Runtime.InteropServices;
 
-namespace MS.Internal.Mita.Localization
-{
-  internal interface INativeMethods
-  {
-    void SetUserGeoID([In] int geoId);
+namespace MS.Internal.Mita.Localization {
+    internal interface INativeMethods {
+        void SetUserGeoID([In] int geoId);
 
-    string GetUserLanguages([In] char languageDelimiter);
+        string GetUserLanguages([In] char languageDelimiter);
 
-    void SetUserLanguages([In] string languages, [In] char languageDelimiter);
-  }
+        void SetUserLanguages([In] string languages, [In] char languageDelimiter);
+    }
 }

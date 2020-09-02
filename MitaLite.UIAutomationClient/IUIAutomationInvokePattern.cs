@@ -7,14 +7,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("FB377FBE-8EA6-46D5-9C73-6499642D3059")]
-  [ComImport]
-  public interface IUIAutomationInvokePattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void Invoke();
-  }
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "FB377FBE-8EA6-46D5-9C73-6499642D3059"), ComImport]
+    public interface IUIAutomationInvokePattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void Invoke();
+    }
 }

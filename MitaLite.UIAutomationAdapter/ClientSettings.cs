@@ -6,17 +6,16 @@
 
 using System.Reflection;
 
-namespace System.Windows.Automation
-{
-  public static class ClientSettings
-  {
-    public static void RegisterClientSideProviderAssembly(AssemblyName assemblyName) => throw new NotImplementedException();
+namespace System.Windows.Automation {
+    public static class ClientSettings {
+        public static void RegisterClientSideProviderAssembly(AssemblyName assemblyName) {
+            throw new NotImplementedException();
+        }
 
-    public static void RegisterClientSideProviders(
-      ClientSideProviderDescription[] clientSideProviderDescription)
-    {
-      foreach (ClientSideProviderDescription proxyDescription in clientSideProviderDescription)
-        new AdapterProxyFactory(proxyDescription).Register();
+        public static void RegisterClientSideProviders(
+            ClientSideProviderDescription[] clientSideProviderDescription) {
+            foreach (var proxyDescription in clientSideProviderDescription)
+                new AdapterProxyFactory(proxyDescription: proxyDescription).Register();
+        }
     }
-  }
 }

@@ -4,83 +4,81 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Utilities;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ToggleButton : UIObject, IToggle
-  {
-    private IToggle _togglePattern;
-    private static IFactory<ToggleButton> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ToggleButton : UIObject, IToggle {
+        static IFactory<ToggleButton> _factory;
+        IToggle _togglePattern;
 
-    public ToggleButton(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
-
-    public ToggleButton(AutomationElement element)
-      : base(element)
-      => this.Initialize();
-
-    private void Initialize() => this._togglePattern = (IToggle) new ToggleImplementation((UIObject) this);
-
-    public ToggleState ToggleState => this._togglePattern.ToggleState;
-
-    public virtual void Toggle() => this._togglePattern.Toggle();
-
-    public UIEventWaiter GetToggledWaiter() => this._togglePattern.GetToggledWaiter();
-
-    public void Check()
-    {
-      int num = (int) ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("Toggle")) != ActionResult.Handled && !this.SetToggleState(ToggleState.On))
-        throw new ActionException(StringResource.Get("ToggleButton_CheckFailed", (object) UIObject.SafeGetName((UIObject) this)));
-    }
-
-    public void Uncheck()
-    {
-      int num = (int) ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("Toggle")) != ActionResult.Handled && !this.SetToggleState(ToggleState.Off))
-        throw new ActionException(StringResource.Get("ToggleButton_UncheckFailed", (object) UIObject.SafeGetName((UIObject) this)));
-    }
-
-    public static IFactory<ToggleButton> Factory
-    {
-      get
-      {
-        if (ToggleButton._factory == null)
-          ToggleButton._factory = (IFactory<ToggleButton>) new ToggleButton.ToggleButtonFactory();
-        return ToggleButton._factory;
-      }
-    }
-
-    private bool SetToggleState(ToggleState toggleState)
-    {
-      for (int index = 0; index < 3; ++index)
-      {
-        if (this._togglePattern.ToggleState == toggleState)
-          return true;
-        if (index < 2)
-        {
-          using (PropertyChangedEventWaiter changedEventWaiter = new PropertyChangedEventWaiter((UIObject) this, Scope.Element, new UIProperty[1]
-          {
-            UIProperty.Get("Toggle.ToggleState")
-          }))
-          {
-            this.Toggle();
-            if (!changedEventWaiter.TryWait())
-              Log.Out("ToggleState did not change before timeout.");
-          }
+        public ToggleButton(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
         }
-      }
-      return false;
-    }
 
-    private class ToggleButtonFactory : IFactory<ToggleButton>
-    {
-      public ToggleButton Create(UIObject element) => new ToggleButton(element);
+        public ToggleButton(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
+
+        public static IFactory<ToggleButton> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ToggleButtonFactory();
+                return _factory;
+            }
+        }
+
+        public ToggleState ToggleState {
+            get { return this._togglePattern.ToggleState; }
+        }
+
+        public virtual void Toggle() {
+            this._togglePattern.Toggle();
+        }
+
+        public UIEventWaiter GetToggledWaiter() {
+            return this._togglePattern.GetToggledWaiter();
+        }
+
+        void Initialize() {
+            this._togglePattern = new ToggleImplementation(uiObject: this);
+        }
+
+        public void Check() {
+            var num = (int) ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "Toggle")) != ActionResult.Handled && !SetToggleState(toggleState: ToggleState.On))
+                throw new ActionException(message: StringResource.Get(id: "ToggleButton_CheckFailed", (object) SafeGetName(uiObject: this)));
+        }
+
+        public void Uncheck() {
+            var num = (int) ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "Toggle")) != ActionResult.Handled && !SetToggleState(toggleState: ToggleState.Off))
+                throw new ActionException(message: StringResource.Get(id: "ToggleButton_UncheckFailed", (object) SafeGetName(uiObject: this)));
+        }
+
+        bool SetToggleState(ToggleState toggleState) {
+            for (var index = 0; index < 3; ++index) {
+                if (this._togglePattern.ToggleState == toggleState)
+                    return true;
+                if (index < 2)
+                    using (var changedEventWaiter = new PropertyChangedEventWaiter(root: this, scope: Scope.Element, UIProperty.Get(name: "Toggle.ToggleState"))) {
+                        Toggle();
+                        if (!changedEventWaiter.TryWait())
+                            Log.Out(msg: "ToggleState did not change before timeout.");
+                    }
+            }
+
+            return false;
+        }
+
+        class ToggleButtonFactory : IFactory<ToggleButton> {
+            public ToggleButton Create(UIObject element) {
+                return new ToggleButton(uiObject: element);
+            }
+        }
     }
-  }
 }

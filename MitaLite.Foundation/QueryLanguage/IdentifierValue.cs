@@ -9,42 +9,40 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class IdentifierValue : Value
-  {
-    private string _identifierName;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class IdentifierValue : Value {
+        readonly string _identifierName;
 
-    public IdentifierValue(string lexeme) => this._identifierName = lexeme;
+        public IdentifierValue(string lexeme) {
+            this._identifierName = lexeme;
+        }
 
-    public override bool Validate(Type requiredType, StringBuilder errors)
-    {
-      bool flag = false;
-      if (this._identifierName.Equals("null"))
-      {
-        if (requiredType.GetTypeInfo().IsValueType || requiredType.Equals(typeof (ControlType)))
-          errors.AppendLine(StringResource.Get("ParameterTypeMismatch_2", (object) requiredType.FullName, (object) "null"));
-        else
-          flag = true;
-        return flag;
-      }
-      if (requiredType.Equals(typeof (object)))
-        return true;
-      FieldInfo fieldInfo = !requiredType.Equals(typeof (ControlType)) ? TypeExtensions.GetField(requiredType, this._identifierName, BindingFlags.IgnoreCase | BindingFlags.Static | BindingFlags.Public) : TypeExtensions.GetField(requiredType, this._identifierName, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-      if ((object) fieldInfo != null && fieldInfo.FieldType.Equals(requiredType))
-        flag = true;
-      errors.AppendLine(StringResource.Get("Passed_Type_NotAllowed", (object) requiredType.FullName));
-      return flag;
+        public override bool Validate(Type requiredType, StringBuilder errors) {
+            var flag = false;
+            if (this._identifierName.Equals(value: "null")) {
+                if (requiredType.GetTypeInfo().IsValueType || requiredType.Equals(o: typeof(ControlType)))
+                    errors.AppendLine(value: StringResource.Get(id: "ParameterTypeMismatch_2", (object) requiredType.FullName, (object) "null"));
+                else
+                    flag = true;
+                return flag;
+            }
+
+            if (requiredType.Equals(o: typeof(object)))
+                return true;
+            var fieldInfo = !requiredType.Equals(o: typeof(ControlType)) ? TypeExtensions.GetField(type: requiredType, name: this._identifierName, bindingAttr: BindingFlags.IgnoreCase | BindingFlags.Static | BindingFlags.Public) : TypeExtensions.GetField(type: requiredType, name: this._identifierName, bindingAttr: BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            if ((object) fieldInfo != null && fieldInfo.FieldType.Equals(o: requiredType))
+                flag = true;
+            errors.AppendLine(value: StringResource.Get(id: "Passed_Type_NotAllowed", (object) requiredType.FullName));
+            return flag;
+        }
+
+        public override object GetValueObject(Type requiredType) {
+            if (requiredType.GetTypeInfo().IsEnum) {
+                TypeExtensions.GetField(type: requiredType, name: this._identifierName, bindingAttr: BindingFlags.IgnoreCase | BindingFlags.Static | BindingFlags.Public);
+                return Enum.Parse(enumType: requiredType, value: this._identifierName, ignoreCase: true);
+            }
+
+            return requiredType.Equals(o: typeof(ControlType)) ? TypeExtensions.GetField(type: requiredType, name: this._identifierName, bindingAttr: BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy).GetValue(obj: null) as ControlType : (object) null;
+        }
     }
-
-    public override object GetValueObject(Type requiredType)
-    {
-      if (requiredType.GetTypeInfo().IsEnum)
-      {
-        TypeExtensions.GetField(requiredType, this._identifierName, BindingFlags.IgnoreCase | BindingFlags.Static | BindingFlags.Public);
-        return Enum.Parse(requiredType, this._identifierName, true);
-      }
-      return requiredType.Equals(typeof (ControlType)) ? (object) (TypeExtensions.GetField(requiredType, this._identifierName, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy).GetValue((object) null) as ControlType) : (object) null;
-    }
-  }
 }

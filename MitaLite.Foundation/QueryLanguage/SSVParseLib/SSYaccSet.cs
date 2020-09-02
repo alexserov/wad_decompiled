@@ -6,18 +6,17 @@
 
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib
-{
-  internal class SSYaccSet : Queue<object>
-  {
-    public bool add(object q_object)
-    {
-      if (this.Contains(q_object))
-        return false;
-      this.Enqueue(q_object);
-      return true;
-    }
+namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib {
+    internal class SSYaccSet : Queue<object> {
+        public bool add(object q_object) {
+            if (Contains(item: q_object))
+                return false;
+            Enqueue(item: q_object);
+            return true;
+        }
 
-    public bool locate(int q_locate) => this.Contains((object) q_locate);
-  }
+        public bool locate(int q_locate) {
+            return Contains(item: q_locate);
+        }
+    }
 }

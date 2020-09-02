@@ -8,22 +8,20 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("8753F032-3DB1-47B5-A1FC-6E34A266C712")]
-  [ComConversionLoss]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationOrCondition : IUIAutomationCondition
-  {
-    [DispId(1610743808)]
-    int ChildCount { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+namespace UIAutomationClient {
+    [Guid(guid: "8753F032-3DB1-47B5-A1FC-6E34A266C712"), ComConversionLoss, InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationOrCondition : IUIAutomationCondition {
+        [DispId(dispId: 1610743808)]
+        int ChildCount {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void GetChildrenAsNativeArray([Out] IntPtr childArray, out int childArrayCount);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void GetChildrenAsNativeArray([Out] IntPtr childArray, out int childArrayCount);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UNKNOWN)]
-    IUIAutomationCondition[] GetChildren();
-  }
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UNKNOWN)]
+        IUIAutomationCondition[] GetChildren();
+    }
 }

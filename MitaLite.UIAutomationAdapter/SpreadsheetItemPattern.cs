@@ -6,24 +6,25 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class SpreadsheetItemPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<SpreadsheetItemPattern, IUIAutomationSpreadsheetItemPattern>(10027, "SpreadsheetItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationSpreadsheetItemPattern, SpreadsheetItemPattern>(SpreadsheetItemPattern.Wrap));
-    public static readonly AutomationProperty FormulaProperty = new AutomationProperty(30129, "SpreadsheetItemPatternIdentifiers.FormulaProperty");
-    public static readonly AutomationProperty AnnotationObjectsProperty = new AutomationProperty(30130, "SpreadsheetItemPatternIdentifiers.AnnotationObjectsProperty");
-    public static readonly AutomationProperty AnnotationTypesProperty = new AutomationProperty(30131, "SpreadsheetItemPatternIdentifiers.AnnotationTypesProperty");
-    private readonly IUIAutomationSpreadsheetItemPattern _spreadsheetItemPattern;
+namespace System.Windows.Automation {
+    public class SpreadsheetItemPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<SpreadsheetItemPattern, IUIAutomationSpreadsheetItemPattern>(id: 10027, programmaticName: "SpreadsheetItemPatternIdentifiers.Pattern", wrap: Wrap);
+        public static readonly AutomationProperty FormulaProperty = new AutomationProperty(id: 30129, programmaticName: "SpreadsheetItemPatternIdentifiers.FormulaProperty");
+        public static readonly AutomationProperty AnnotationObjectsProperty = new AutomationProperty(id: 30130, programmaticName: "SpreadsheetItemPatternIdentifiers.AnnotationObjectsProperty");
+        public static readonly AutomationProperty AnnotationTypesProperty = new AutomationProperty(id: 30131, programmaticName: "SpreadsheetItemPatternIdentifiers.AnnotationTypesProperty");
+        readonly IUIAutomationSpreadsheetItemPattern _spreadsheetItemPattern;
 
-    private SpreadsheetItemPattern(
-      AutomationElement element,
-      IUIAutomationSpreadsheetItemPattern spreadsheetItemPattern)
-      : base(element)
-      => this._spreadsheetItemPattern = spreadsheetItemPattern;
+        SpreadsheetItemPattern(
+            AutomationElement element,
+            IUIAutomationSpreadsheetItemPattern spreadsheetItemPattern)
+            : base(el: element) {
+            this._spreadsheetItemPattern = spreadsheetItemPattern;
+        }
 
-    internal static SpreadsheetItemPattern Wrap(
-      AutomationElement element,
-      IUIAutomationSpreadsheetItemPattern spreadsheetItemPattern) => new SpreadsheetItemPattern(element, spreadsheetItemPattern);
-  }
+        internal static SpreadsheetItemPattern Wrap(
+            AutomationElement element,
+            IUIAutomationSpreadsheetItemPattern spreadsheetItemPattern) {
+            return new SpreadsheetItemPattern(element: element, spreadsheetItemPattern: spreadsheetItemPattern);
+        }
+    }
 }

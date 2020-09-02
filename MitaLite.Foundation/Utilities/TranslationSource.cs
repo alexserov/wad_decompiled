@@ -6,23 +6,21 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal class TranslationSource
-  {
-    private ILocalizedStrings _localizedStrings;
-    private long _translationIndex;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal class TranslationSource {
+        readonly ILocalizedStrings _localizedStrings;
+        readonly long _translationIndex;
 
-    private TranslationSource()
-    {
+        TranslationSource() {
+        }
+
+        public TranslationSource(ILocalizedStrings localizedStrings, long translationIndex) {
+            this._localizedStrings = localizedStrings;
+            this._translationIndex = translationIndex;
+        }
+
+        public void MatchFound(AutomationElement element) {
+            this._localizedStrings.TranslationMatchFound(element: element, index: this._translationIndex);
+        }
     }
-
-    public TranslationSource(ILocalizedStrings localizedStrings, long translationIndex)
-    {
-      this._localizedStrings = localizedStrings;
-      this._translationIndex = translationIndex;
-    }
-
-    public void MatchFound(AutomationElement element) => this._localizedStrings.TranslationMatchFound(element, this._translationIndex);
-  }
 }

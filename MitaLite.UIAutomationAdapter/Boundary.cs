@@ -6,67 +6,46 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation
-{
-  internal static class Boundary
-  {
-    internal static void NoExceptions(Action a)
-    {
-      try
-      {
-        a();
-      }
-      catch (Exception ex)
-      {
-      }
-    }
-
-    internal static void NoExceptions(Action a, Action<Exception> c)
-    {
-      try
-      {
-        a();
-      }
-      catch (Exception ex1)
-      {
-        try
-        {
-          c(ex1);
+namespace System.Windows.Automation {
+    internal static class Boundary {
+        internal static void NoExceptions(Action a) {
+            try {
+                a();
+            } catch (Exception ex) {
+            }
         }
-        catch (Exception ex2)
-        {
+
+        internal static void NoExceptions(Action a, Action<Exception> c) {
+            try {
+                a();
+            } catch (Exception ex1) {
+                try {
+                    c(obj: ex1);
+                } catch (Exception ex2) {
+                }
+            }
         }
-      }
-    }
 
-    internal static void UIAutomation(Action a)
-    {
-      try
-      {
-        a();
-      }
-      catch (COMException ex)
-      {
-        Exception exception;
-        if (UiaConvert.ConvertException(ex, out exception))
-          throw exception;
-        throw;
-      }
-    }
+        internal static void UIAutomation(Action a) {
+            try {
+                a();
+            } catch (COMException ex) {
+                Exception exception;
+                if (UiaConvert.ConvertException(e: ex, newException: out exception))
+                    throw exception;
+                throw;
+            }
+        }
 
-    internal static R UIAutomation<R>(Func<R> f)
-    {
-      try
-      {
-        return f();
-      }
-      catch (COMException ex)
-      {
-        Exception exception;
-        if (UiaConvert.ConvertException(ex, out exception))
-          throw exception;
-        throw;
-      }
+        internal static R UIAutomation<R>(Func<R> f) {
+            try {
+                return f();
+            } catch (COMException ex) {
+                Exception exception;
+                if (UiaConvert.ConvertException(e: ex, newException: out exception))
+                    throw exception;
+                throw;
+            }
+        }
     }
-  }
 }

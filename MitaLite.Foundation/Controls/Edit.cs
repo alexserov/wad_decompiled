@@ -4,63 +4,79 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Patterns;
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
+using MS.Internal.Mita.Foundation.Patterns;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class Edit : UIObject, IText, IValue
-  {
-    private IText _textPattern;
-    private IValue _valuePattern;
-    private static IFactory<Edit> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class Edit : UIObject, IText, IValue {
+        static IFactory<Edit> _factory;
+        IText _textPattern;
+        IValue _valuePattern;
 
-    public Edit(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public Edit(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal Edit(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal Edit(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize()
-    {
-      this._textPattern = (IText) new TextImplementation((UIObject) this);
-      this._valuePattern = (IValue) new ValueImplementation((UIObject) this);
+        public static IFactory<Edit> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new EditFactory();
+                return _factory;
+            }
+        }
+
+        public virtual bool SupportsTextSelection {
+            get { return this._textPattern.SupportsTextSelection; }
+        }
+
+        public virtual TextPatternRange DocumentRange {
+            get { return this._textPattern.DocumentRange; }
+        }
+
+        public virtual TextPatternRange GetSelection() {
+            return this._textPattern.GetSelection();
+        }
+
+        public virtual TextPatternRange RangeFromPoint(PointI screenLocation) {
+            return this._textPattern.RangeFromPoint(screenLocation: screenLocation);
+        }
+
+        public virtual TextPatternRange RangeFromChild(UIObject childElement) {
+            return this._textPattern.RangeFromChild(childElement: childElement);
+        }
+
+        public virtual TextPatternRange GetVisibleRange() {
+            return this._textPattern.GetVisibleRange();
+        }
+
+        public virtual void SetValue(string value) {
+            this._valuePattern.SetValue(value: value);
+        }
+
+        public virtual string Value {
+            get { return this._valuePattern.Value; }
+        }
+
+        public bool IsReadOnly {
+            get { return this._valuePattern.IsReadOnly; }
+        }
+
+        void Initialize() {
+            this._textPattern = new TextImplementation(uiObject: this);
+            this._valuePattern = new ValueImplementation(uiObject: this);
+        }
+
+        class EditFactory : IFactory<Edit> {
+            public Edit Create(UIObject element) {
+                return new Edit(uiObject: element);
+            }
+        }
     }
-
-    public virtual bool SupportsTextSelection => this._textPattern.SupportsTextSelection;
-
-    public virtual TextPatternRange DocumentRange => this._textPattern.DocumentRange;
-
-    public virtual TextPatternRange GetSelection() => this._textPattern.GetSelection();
-
-    public virtual TextPatternRange RangeFromPoint(PointI screenLocation) => this._textPattern.RangeFromPoint(screenLocation);
-
-    public virtual TextPatternRange RangeFromChild(UIObject childElement) => this._textPattern.RangeFromChild(childElement);
-
-    public virtual TextPatternRange GetVisibleRange() => this._textPattern.GetVisibleRange();
-
-    public virtual void SetValue(string value) => this._valuePattern.SetValue(value);
-
-    public virtual string Value => this._valuePattern.Value;
-
-    public bool IsReadOnly => this._valuePattern.IsReadOnly;
-
-    public static IFactory<Edit> Factory
-    {
-      get
-      {
-        if (Edit._factory == null)
-          Edit._factory = (IFactory<Edit>) new Edit.EditFactory();
-        return Edit._factory;
-      }
-    }
-
-    private class EditFactory : IFactory<Edit>
-    {
-      public Edit Create(UIObject element) => new Edit(element);
-    }
-  }
 }

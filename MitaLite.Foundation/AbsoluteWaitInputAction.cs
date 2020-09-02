@@ -6,14 +6,16 @@
 
 using System.Threading;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class AbsoluteWaitInputAction : IInputAction
-  {
-    public int duration;
+namespace MS.Internal.Mita.Foundation {
+    internal class AbsoluteWaitInputAction : IInputAction {
+        public int duration;
 
-    public void Execute(IInputDevice inputDevice, int elapsedMs) => Thread.Sleep(this.duration);
+        public void Execute(IInputDevice inputDevice, int elapsedMs) {
+            Thread.Sleep(millisecondsTimeout: this.duration);
+        }
 
-    public InputActionType GetActionType() => InputActionType.AbsoluteWaitInputAction;
-  }
+        public InputActionType GetActionType() {
+            return InputActionType.AbsoluteWaitInputAction;
+        }
+    }
 }

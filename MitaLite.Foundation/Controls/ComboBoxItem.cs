@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ComboBoxItem : ListItem<ComboBox>
-  {
-    private static IFactory<ComboBoxItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ComboBoxItem : ListItem<ComboBox> {
+        static IFactory<ComboBoxItem> _factory;
 
-    public ComboBoxItem(UIObject uiObject)
-      : base(uiObject, ComboBox.Factory)
-    {
-    }
+        public ComboBoxItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: ComboBox.Factory) {
+        }
 
-    internal ComboBoxItem(AutomationElement element)
-      : base(element, ComboBox.Factory)
-    {
-    }
+        internal ComboBoxItem(AutomationElement element)
+            : base(element: element, containerFactory: ComboBox.Factory) {
+        }
 
-    public static IFactory<ComboBoxItem> Factory
-    {
-      get
-      {
-        if (ComboBoxItem._factory == null)
-          ComboBoxItem._factory = (IFactory<ComboBoxItem>) new ComboBoxItem.ComboBoxItemFactory();
-        return ComboBoxItem._factory;
-      }
-    }
+        public static IFactory<ComboBoxItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ComboBoxItemFactory();
+                return _factory;
+            }
+        }
 
-    private class ComboBoxItemFactory : IFactory<ComboBoxItem>
-    {
-      public ComboBoxItem Create(UIObject element) => new ComboBoxItem(element);
+        class ComboBoxItemFactory : IFactory<ComboBoxItem> {
+            public ComboBoxItem Create(UIObject element) {
+                return new ComboBoxItem(uiObject: element);
+            }
+        }
     }
-  }
 }

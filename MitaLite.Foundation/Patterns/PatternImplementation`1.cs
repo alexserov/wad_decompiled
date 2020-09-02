@@ -5,50 +5,43 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class PatternImplementation<P> where P : class
-  {
-    private AutomationPattern _patternIdentifier;
-    private UIObject _uiObject;
-    private P _pattern;
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class PatternImplementation<P> where P : class {
+        P _pattern;
+        readonly AutomationPattern _patternIdentifier;
 
-    public PatternImplementation(UIObject uiObject, AutomationPattern patternIdentifier)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) uiObject, nameof (uiObject));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) patternIdentifier, nameof (patternIdentifier));
-      this._uiObject = uiObject;
-      this._patternIdentifier = patternIdentifier;
-    }
-
-    public bool IsAvailable
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (IsAvailable)), out overridden) == ActionResult.Handled ? (bool) overridden : this.UIObject.AutomationElement.TryGetCurrentPattern(this._patternIdentifier, out object _);
-      }
-    }
-
-    protected P Pattern
-    {
-      get
-      {
-        if ((object) this._pattern == null)
-        {
-          object patternObject;
-          if (!this.UIObject.AutomationElement.TryGetCurrentPattern(this._patternIdentifier, out patternObject))
-            throw new PatternNotFoundException(StringResource.Get("PatternNotFound_2", (object) typeof (P).Name, (object) this._uiObject.ToString()));
-          this._pattern = patternObject as P;
-          if ((object) this._pattern == null)
-            throw new PatternNotFoundException(StringResource.Get("PatternNotFound_2", (object) typeof (P).Name, (object) this._uiObject.ToString()));
+        public PatternImplementation(UIObject uiObject, AutomationPattern patternIdentifier) {
+            Validate.ArgumentNotNull(parameter: uiObject, parameterName: nameof(uiObject));
+            Validate.ArgumentNotNull(parameter: patternIdentifier, parameterName: nameof(patternIdentifier));
+            UIObject = uiObject;
+            this._patternIdentifier = patternIdentifier;
         }
-        return this._pattern;
-      }
-    }
 
-    protected UIObject UIObject => this._uiObject;
-  }
+        public bool IsAvailable {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsAvailable)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : UIObject.AutomationElement.TryGetCurrentPattern(pattern: this._patternIdentifier, patternObject: out var _);
+            }
+        }
+
+        protected P Pattern {
+            get {
+                if (this._pattern == null) {
+                    object patternObject;
+                    if (!UIObject.AutomationElement.TryGetCurrentPattern(pattern: this._patternIdentifier, patternObject: out patternObject))
+                        throw new PatternNotFoundException(message: StringResource.Get(id: "PatternNotFound_2", (object) typeof(P).Name, (object) UIObject.ToString()));
+                    this._pattern = patternObject as P;
+                    if (this._pattern == null)
+                        throw new PatternNotFoundException(message: StringResource.Get(id: "PatternNotFound_2", (object) typeof(P).Name, (object) UIObject.ToString()));
+                }
+
+                return this._pattern;
+            }
+        }
+
+        protected UIObject UIObject { get; }
+    }
 }

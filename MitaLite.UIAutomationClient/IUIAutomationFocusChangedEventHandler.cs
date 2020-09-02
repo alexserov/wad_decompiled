@@ -7,15 +7,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("C270F6B5-5C69-4290-9745-7A7F97169468")]
-  [TypeLibType(TypeLibTypeFlags.FHidden)]
-  [ComImport]
-  public interface IUIAutomationFocusChangedEventHandler
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void HandleFocusChangedEvent([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement sender);
-  }
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "C270F6B5-5C69-4290-9745-7A7F97169468"), TypeLibType(flags: TypeLibTypeFlags.FHidden), ComImport]
+    public interface IUIAutomationFocusChangedEventHandler {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void HandleFocusChangedEvent([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                     IUIAutomationElement sender);
+    }
 }

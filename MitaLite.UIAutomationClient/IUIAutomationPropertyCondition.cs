@@ -7,20 +7,25 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("99EBF2CB-5578-4267-9AD4-AFD6EA77E94B")]
-  [ComImport]
-  public interface IUIAutomationPropertyCondition : IUIAutomationCondition
-  {
-    [DispId(1610743808)]
-    int propertyId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "99EBF2CB-5578-4267-9AD4-AFD6EA77E94B"), ComImport]
+    public interface IUIAutomationPropertyCondition : IUIAutomationCondition {
+        [DispId(dispId: 1610743808)]
+        int propertyId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [DispId(1610743809)]
-    Variant PropertyValue { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Struct)] get; }
+        [DispId(dispId: 1610743809)]
+        Variant PropertyValue {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+            get;
+        }
 
-    [DispId(1610743810)]
-    PropertyConditionFlags PropertyConditionFlags { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-  }
+        [DispId(dispId: 1610743810)]
+        PropertyConditionFlags PropertyConditionFlags {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+    }
 }

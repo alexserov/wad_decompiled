@@ -6,57 +6,53 @@
 
 using System.Collections.Generic;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class AncestorsNavigator : UINavigator
-  {
-    private AutomationElement _root;
-    private TreeWalker _treeWalker;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class AncestorsNavigator : UINavigator {
+        AutomationElement _root;
+        TreeWalker _treeWalker;
 
-    public AncestorsNavigator(UIObject root, UICondition treeCondition)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) treeCondition, nameof (treeCondition));
-      this.Initialize(root.AutomationElement, new TreeWalker(treeCondition.Condition));
+        public AncestorsNavigator(UIObject root, UICondition treeCondition) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Validate.ArgumentNotNull(parameter: treeCondition, parameterName: nameof(treeCondition));
+            Initialize(root: root.AutomationElement, treeWalker: new TreeWalker(condition: treeCondition.Condition));
+        }
+
+        public AncestorsNavigator(AutomationElement root, UICondition treeCondition) {
+            Validate.ArgumentNotNull(parameter: treeCondition, parameterName: nameof(treeCondition));
+            Initialize(root: root, treeWalker: new TreeWalker(condition: treeCondition.Condition));
+        }
+
+        public AncestorsNavigator(AncestorsNavigator previous)
+            : base(previous: previous) {
+            Validate.ArgumentNotNull(parameter: previous, parameterName: nameof(previous));
+            Initialize(root: previous._root, treeWalker: previous._treeWalker);
+        }
+
+        void Initialize(AutomationElement root, TreeWalker treeWalker) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Validate.ArgumentNotNull(parameter: treeWalker, parameterName: nameof(treeWalker));
+            this._root = root;
+            this._treeWalker = treeWalker;
+        }
+
+        public override UINavigator Duplicate() {
+            return new AncestorsNavigator(previous: this);
+        }
+
+        public override IEnumerator<AutomationElement> GetEnumerator() {
+            var ancestorsNavigator = this;
+            var filter = ancestorsNavigator.Filter;
+            AutomationElement current;
+            for (current = ancestorsNavigator._treeWalker.GetParent(element: ancestorsNavigator._root); current != (AutomationElement) null; current = ancestorsNavigator._treeWalker.GetParent(element: current))
+                if (filter.Matches(element: current))
+                    yield return current;
+            current = null;
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "AncestorsNavigator_ToString_3", (object) new UIObject(element: this._root).ToString(), (object) UICondition.ToString(condition: this._treeWalker.Condition), (object) Filter.ToString());
+        }
     }
-
-    public AncestorsNavigator(AutomationElement root, UICondition treeCondition)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) treeCondition, nameof (treeCondition));
-      this.Initialize(root, new TreeWalker(treeCondition.Condition));
-    }
-
-    public AncestorsNavigator(AncestorsNavigator previous)
-      : base((UINavigator) previous)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) previous, nameof (previous));
-      this.Initialize(previous._root, previous._treeWalker);
-    }
-
-    private void Initialize(AutomationElement root, TreeWalker treeWalker)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) treeWalker, nameof (treeWalker));
-      this._root = root;
-      this._treeWalker = treeWalker;
-    }
-
-    public override UINavigator Duplicate() => (UINavigator) new AncestorsNavigator(this);
-
-    public override IEnumerator<AutomationElement> GetEnumerator()
-    {
-      AncestorsNavigator ancestorsNavigator = this;
-      UIObjectFilter filter = ancestorsNavigator.Filter;
-      AutomationElement current;
-      for (current = ancestorsNavigator._treeWalker.GetParent(ancestorsNavigator._root); current != (AutomationElement) null; current = ancestorsNavigator._treeWalker.GetParent(current))
-      {
-        if (filter.Matches(current))
-          yield return current;
-      }
-      current = (AutomationElement) null;
-    }
-
-    public override string ToString() => StringResource.Get("AncestorsNavigator_ToString_3", (object) new UIObject(this._root).ToString(), (object) UICondition.ToString(this._treeWalker.Condition), (object) this.Filter.ToString());
-  }
 }

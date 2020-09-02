@@ -6,23 +6,26 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class CustomNavigationPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = CustomNavigationPatternIdentifiers.Pattern;
-    private readonly IUIAutomationCustomNavigationPattern _customNavigationPattern;
+namespace System.Windows.Automation {
+    public class CustomNavigationPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = CustomNavigationPatternIdentifiers.Pattern;
+        readonly IUIAutomationCustomNavigationPattern _customNavigationPattern;
 
-    internal CustomNavigationPattern(
-      AutomationElement element,
-      IUIAutomationCustomNavigationPattern CustomNavigationPattern)
-      : base(element)
-      => this._customNavigationPattern = CustomNavigationPattern;
+        internal CustomNavigationPattern(
+            AutomationElement element,
+            IUIAutomationCustomNavigationPattern CustomNavigationPattern)
+            : base(el: element) {
+            this._customNavigationPattern = CustomNavigationPattern;
+        }
 
-    internal static CustomNavigationPattern Wrap(
-      AutomationElement element,
-      IUIAutomationCustomNavigationPattern CustomNavigationPattern) => new CustomNavigationPattern(element, CustomNavigationPattern);
+        internal static CustomNavigationPattern Wrap(
+            AutomationElement element,
+            IUIAutomationCustomNavigationPattern CustomNavigationPattern) {
+            return new CustomNavigationPattern(element: element, CustomNavigationPattern: CustomNavigationPattern);
+        }
 
-    public AutomationElement Navigate(NavigateDirection direction) => new AutomationElement(this._customNavigationPattern.Navigate(direction));
-  }
+        public AutomationElement Navigate(NavigateDirection direction) {
+            return new AutomationElement(autoElement: this._customNavigationPattern.Navigate(direction: direction));
+        }
+    }
 }

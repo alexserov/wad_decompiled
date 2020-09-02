@@ -7,17 +7,19 @@
 using System.Runtime.InteropServices;
 using UIAutomationClient;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("fb8b03af-3bdf-48d4-bd36-1a65793be168")]
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [ComImport]
-  public interface ISelectionProvider
-  {
-    IRawElementProviderSimple[] GetSelection();
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "fb8b03af-3bdf-48d4-bd36-1a65793be168"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), ComImport]
+    public interface ISelectionProvider {
+        IRawElementProviderSimple[] GetSelection();
 
-    bool CanSelectMultiple { [return: MarshalAs(UnmanagedType.Bool)] get; }
+        bool CanSelectMultiple {
+            [return: MarshalAs(unmanagedType: UnmanagedType.Bool)]
+            get;
+        }
 
-    bool IsSelectionRequired { [return: MarshalAs(UnmanagedType.Bool)] get; }
-  }
+        bool IsSelectionRequired {
+            [return: MarshalAs(unmanagedType: UnmanagedType.Bool)]
+            get;
+        }
+    }
 }

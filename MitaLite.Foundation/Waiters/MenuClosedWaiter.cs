@@ -5,32 +5,35 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class MenuClosedWaiter : UIEventWaiter
-  {
-    private string _uiObjectDescription;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class MenuClosedWaiter : UIEventWaiter {
+        readonly string _uiObjectDescription;
 
-    public MenuClosedWaiter()
-      : base((IEventSource) new AutomationEventSource(AutomationElement.MenuClosedEvent, UIObject.Root, Scope.Subtree))
-    {
-      this._uiObjectDescription = UIObject.Root.ToString();
-      this.Start();
+        public MenuClosedWaiter()
+            : base(eventSource: new AutomationEventSource(eventId: AutomationElement.MenuClosedEvent, root: UIObject.Root, scope: Scope.Subtree)) {
+            this._uiObjectDescription = UIObject.Root.ToString();
+            Start();
+        }
+
+        public MenuClosedWaiter(UIObject root)
+            : base(eventSource: new AutomationEventSource(eventId: AutomationElement.MenuClosedEvent, root: root, scope: Scope.Element)) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: "uiObject");
+            this._uiObjectDescription = root.ToString();
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+        }
+
+        public override string ToString() {
+            return "MenuClosedWaiter for element " + this._uiObjectDescription;
+        }
     }
-
-    public MenuClosedWaiter(UIObject root)
-      : base((IEventSource) new AutomationEventSource(AutomationElement.MenuClosedEvent, root, Scope.Element))
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, "uiObject");
-      this._uiObjectDescription = root.ToString();
-      this.Start();
-    }
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing) => base.Dispose(disposing);
-
-    public override string ToString() => "MenuClosedWaiter for element " + this._uiObjectDescription;
-  }
 }

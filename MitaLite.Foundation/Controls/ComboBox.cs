@@ -6,35 +6,28 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ComboBox : ComboBox<ComboBox, ComboBoxItem>
-  {
-    private static IFactory<ComboBox> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ComboBox : ComboBox<ComboBox, ComboBoxItem> {
+        static IFactory<ComboBox> _factory;
 
-    public ComboBox(UIObject uiObject)
-      : base(uiObject, ComboBoxItem.Factory)
-    {
-    }
+        public ComboBox(UIObject uiObject)
+            : base(uiObject: uiObject, itemFactory: ComboBoxItem.Factory) {
+        }
 
-    internal ComboBox(AutomationElement element)
-      : base(element, ComboBoxItem.Factory)
-    {
-    }
+        internal ComboBox(AutomationElement element)
+            : base(element: element, itemFactory: ComboBoxItem.Factory) {
+        }
 
-    public static IFactory<ComboBox> Factory
-    {
-      get
-      {
-        if (ComboBox._factory == null)
-          ComboBox._factory = (IFactory<ComboBox>) new ComboBox.ComboBoxFactory();
-        return ComboBox._factory;
-      }
-    }
+        public static IFactory<ComboBox> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ComboBoxFactory();
+                return _factory;
+            }
+        }
 
-    private class ComboBoxFactory : IFactory<ComboBox>
-    {
-      public ComboBox Create(UIObject element) => new ComboBox(element);
+        class ComboBoxFactory : IFactory<ComboBox> {
+            public ComboBox Create(UIObject element) => new ComboBox(uiObject: element);
+        }
     }
-  }
 }

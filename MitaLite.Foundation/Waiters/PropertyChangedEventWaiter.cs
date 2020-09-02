@@ -4,25 +4,28 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class PropertyChangedEventWaiter : UIEventWaiter
-  {
-    public PropertyChangedEventWaiter(UIObject root, params UIProperty[] uiProperties)
-      : this(root, Scope.Element, uiProperties)
-    {
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class PropertyChangedEventWaiter : UIEventWaiter {
+        public PropertyChangedEventWaiter(UIObject root, params UIProperty[] uiProperties)
+            : this(root: root, scope: Scope.Element, uiProperties: uiProperties) {
+        }
+
+        public PropertyChangedEventWaiter(UIObject root, Scope scope, params UIProperty[] uiProperties)
+            : base(eventSource: new PropertyChangedEventSource(root: root, scope: scope, uiProperties: uiProperties)) {
+            Start();
+        }
+
+        public PropertyChangedEventWaiter(UIObject root, Scope scope)
+            : base(eventSource: new PropertyChangedEventSource(root: root, scope: scope)) {
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+        }
     }
-
-    public PropertyChangedEventWaiter(UIObject root, Scope scope, params UIProperty[] uiProperties)
-      : base((IEventSource) new PropertyChangedEventSource(root, scope, uiProperties))
-      => this.Start();
-
-    public PropertyChangedEventWaiter(UIObject root, Scope scope)
-      : base((IEventSource) new PropertyChangedEventSource(root, scope))
-      => this.Start();
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing) => base.Dispose(disposing);
-  }
 }

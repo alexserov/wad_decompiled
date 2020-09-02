@@ -6,12 +6,10 @@
 
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [CoClass(typeof (CUIAutomationClass))]
-  [Guid("30CBE57D-D9D0-452A-AB13-7AC5AC4825EE")]
-  [ComImport]
-  public interface CUIAutomation : IUIAutomation
-  {
-  }
+namespace UIAutomationClient {
+    [CoClass(coClass: typeof(CUIAutomationClass))]
+    [Guid(guid: "30CBE57D-D9D0-452A-AB13-7AC5AC4825EE")]
+    [ComImport]
+    public interface CUIAutomation : IUIAutomation {
+    }
 }

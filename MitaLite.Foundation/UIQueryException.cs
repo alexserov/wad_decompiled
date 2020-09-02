@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class UIQueryException : Exception
-  {
-    public UIQueryException()
-    {
-    }
+namespace MS.Internal.Mita.Foundation {
+    public class UIQueryException : Exception {
+        public UIQueryException() {
+        }
 
-    public UIQueryException(string message)
-      : base(message)
-    {
-    }
+        public UIQueryException(string message)
+            : base(message: message) {
+        }
 
-    public UIQueryException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public UIQueryException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

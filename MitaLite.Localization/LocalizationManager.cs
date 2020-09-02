@@ -6,51 +6,47 @@
 
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Localization
-{
-  public static class LocalizationManager
-  {
-    private static SortedDictionary<string, LocalizationProviderProxy> _registeredProviders = new SortedDictionary<string, LocalizationProviderProxy>();
-    private static object providersLock = new object();
+namespace MS.Internal.Mita.Localization {
+    public static class LocalizationManager {
+        static readonly SortedDictionary<string, LocalizationProviderProxy> _registeredProviders = new SortedDictionary<string, LocalizationProviderProxy>();
+        static readonly object providersLock = new object();
 
-    public static LocalizationProviderProxy RegisterProvider(
-      ILocalizationProvider provider,
-      string proxyName) => new LocalizationProviderProxy(provider, proxyName);
+        public static LocalizationProviderProxy RegisterProvider(
+            ILocalizationProvider provider,
+            string proxyName) {
+            return new LocalizationProviderProxy(provider: provider, proxyName: proxyName);
+        }
 
-    public static LocalizationProviderProxy RegisterProvider(
-      LocalizationProviderProxy instance)
-    {
-      Validate.ArgumentNotNull((object) instance, nameof (instance));
-      lock (LocalizationManager.providersLock)
-      {
-        if (LocalizationManager._registeredProviders.ContainsKey(instance.RegisteredName))
-          throw new LocalizationManagerException(StringResource.Get("ProviderAlreadyRegistered"));
-        LocalizationManager._registeredProviders.Add(instance.RegisteredName, instance);
-      }
-      return instance;
+        public static LocalizationProviderProxy RegisterProvider(
+            LocalizationProviderProxy instance) {
+            Validate.ArgumentNotNull(parameter: instance, parameterName: nameof(instance));
+            lock (providersLock) {
+                if (_registeredProviders.ContainsKey(key: instance.RegisteredName))
+                    throw new LocalizationManagerException(message: StringResource.Get(id: "ProviderAlreadyRegistered"));
+                _registeredProviders.Add(key: instance.RegisteredName, value: instance);
+            }
+
+            return instance;
+        }
+
+        public static LocalizationProviderProxy GetInstance(string proxyName) {
+            LocalizationProviderProxy localizationProviderProxy = null;
+            lock (providersLock) {
+                if (_registeredProviders.ContainsKey(key: proxyName))
+                    _registeredProviders.TryGetValue(key: proxyName, value: out localizationProviderProxy);
+                else
+                    localizationProviderProxy = proxyName == string.Empty ? new LocalizationProviderProxy(provider: new NonLocalizingProvider(), proxyName: string.Empty) : throw new LocalizationManagerException(message: StringResource.Get(id: "ProviderNotRegistered"));
+            }
+
+            return localizationProviderProxy;
+        }
+
+        public static void UnregisterProvider(string proxyName) {
+            lock (providersLock) {
+                if (!_registeredProviders.ContainsKey(key: proxyName))
+                    throw new LocalizationManagerException(message: StringResource.Get(id: "UnRegisterNonExistentProvider", (object) proxyName));
+                _registeredProviders.Remove(key: proxyName);
+            }
+        }
     }
-
-    public static LocalizationProviderProxy GetInstance(string proxyName)
-    {
-      LocalizationProviderProxy localizationProviderProxy = (LocalizationProviderProxy) null;
-      lock (LocalizationManager.providersLock)
-      {
-        if (LocalizationManager._registeredProviders.ContainsKey(proxyName))
-          LocalizationManager._registeredProviders.TryGetValue(proxyName, out localizationProviderProxy);
-        else
-          localizationProviderProxy = proxyName == string.Empty ? new LocalizationProviderProxy((ILocalizationProvider) new NonLocalizingProvider(), string.Empty) : throw new LocalizationManagerException(StringResource.Get("ProviderNotRegistered"));
-      }
-      return localizationProviderProxy;
-    }
-
-    public static void UnregisterProvider(string proxyName)
-    {
-      lock (LocalizationManager.providersLock)
-      {
-        if (!LocalizationManager._registeredProviders.ContainsKey(proxyName))
-          throw new LocalizationManagerException(StringResource.Get("UnRegisterNonExistentProvider", (object) proxyName));
-        LocalizationManager._registeredProviders.Remove(proxyName);
-      }
-    }
-  }
 }

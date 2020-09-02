@@ -6,44 +6,44 @@
 
 using System.Collections.Generic;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class StaticListNavigator : UINavigator
-  {
-    private List<AutomationElement> _elementList;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class StaticListNavigator : UINavigator {
+        readonly List<AutomationElement> _elementList;
 
-    public StaticListNavigator(IEnumerable<AutomationElement> enumerable) => this._elementList = new List<AutomationElement>(enumerable);
+        public StaticListNavigator(IEnumerable<AutomationElement> enumerable) {
+            this._elementList = new List<AutomationElement>(collection: enumerable);
+        }
 
-    public StaticListNavigator(AutomationElement[] elementArray)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) elementArray, nameof (elementArray));
-      this._elementList = new List<AutomationElement>(elementArray.Length);
-      foreach (AutomationElement element in elementArray)
-        this._elementList.Insert(this._elementList.Count, element);
+        public StaticListNavigator(AutomationElement[] elementArray) {
+            Validate.ArgumentNotNull(parameter: elementArray, parameterName: nameof(elementArray));
+            this._elementList = new List<AutomationElement>(capacity: elementArray.Length);
+            foreach (var element in elementArray)
+                this._elementList.Insert(index: this._elementList.Count, item: element);
+        }
+
+        public StaticListNavigator(StaticListNavigator previous)
+            : base(previous: previous) {
+            Validate.ArgumentNotNull(parameter: previous, parameterName: nameof(previous));
+            Validate.ArgumentNotNull(parameter: previous._elementList, parameterName: "previous.elementList");
+            this._elementList = previous._elementList;
+        }
+
+        public override UINavigator Duplicate() {
+            return new StaticListNavigator(previous: this);
+        }
+
+        public override IEnumerator<AutomationElement> GetEnumerator() {
+            var staticListNavigator = this;
+            var filter = staticListNavigator.Filter;
+            foreach (var element in staticListNavigator._elementList)
+                if (filter.Matches(element: element))
+                    yield return element;
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "StaticListNavigator_ToString_1", (object) Filter.ToString());
+        }
     }
-
-    public StaticListNavigator(StaticListNavigator previous)
-      : base((UINavigator) previous)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) previous, nameof (previous));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) previous._elementList, "previous.elementList");
-      this._elementList = previous._elementList;
-    }
-
-    public override UINavigator Duplicate() => (UINavigator) new StaticListNavigator(this);
-
-    public override IEnumerator<AutomationElement> GetEnumerator()
-    {
-      StaticListNavigator staticListNavigator = this;
-      UIObjectFilter filter = staticListNavigator.Filter;
-      foreach (AutomationElement element in staticListNavigator._elementList)
-      {
-        if (filter.Matches(element))
-          yield return element;
-      }
-    }
-
-    public override string ToString() => StringResource.Get("StaticListNavigator_ToString_1", (object) this.Filter.ToString());
-  }
 }

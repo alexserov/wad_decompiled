@@ -7,28 +7,30 @@
 using System.Windows.Automation.Text;
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TextPattern2 : TextPattern
-  {
-    public new static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TextPattern2, IUIAutomationTextPattern2>(10024, "TextPattern2Identifiers.Pattern", new Func<AutomationElement, IUIAutomationTextPattern2, TextPattern2>(TextPattern2.Wrap));
-    private readonly IUIAutomationTextPattern2 _textPattern2;
+namespace System.Windows.Automation {
+    public class TextPattern2 : TextPattern {
+        public new static readonly AutomationPattern Pattern = new AutomationPattern<TextPattern2, IUIAutomationTextPattern2>(id: 10024, programmaticName: "TextPattern2Identifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationTextPattern2 _textPattern2;
 
-    private TextPattern2(AutomationElement element, IUIAutomationTextPattern2 textPattern2)
-      : base(element, (IUIAutomationTextPattern) textPattern2)
-      => this._textPattern2 = textPattern2;
+        TextPattern2(AutomationElement element, IUIAutomationTextPattern2 textPattern2)
+            : base(element: element, textPattern: textPattern2) {
+            this._textPattern2 = textPattern2;
+        }
 
-    internal static TextPattern2 Wrap(
-      AutomationElement element,
-      IUIAutomationTextPattern2 textPattern2) => new TextPattern2(element, textPattern2);
+        internal static TextPattern2 Wrap(
+            AutomationElement element,
+            IUIAutomationTextPattern2 textPattern2) {
+            return new TextPattern2(element: element, textPattern2: textPattern2);
+        }
 
-    public TextPatternRange RangeFromAnnotation(AutomationElement annotationElement)
-    {
-      if (annotationElement == (AutomationElement) null)
-        throw new ArgumentNullException("annotationElement is null");
-      return new TextPatternRange(this._textPattern2.RangeFromAnnotation(annotationElement.IUIAutomationElement));
+        public TextPatternRange RangeFromAnnotation(AutomationElement annotationElement) {
+            if (annotationElement == null)
+                throw new ArgumentNullException(paramName: "annotationElement is null");
+            return new TextPatternRange(textPatternRange: this._textPattern2.RangeFromAnnotation(annotation: annotationElement.IUIAutomationElement));
+        }
+
+        public TextPatternRange GetCaretRange(out int isActive) {
+            return new TextPatternRange(textPatternRange: this._textPattern2.GetCaretRange(isActive: out isActive));
+        }
     }
-
-    public TextPatternRange GetCaretRange(out int isActive) => new TextPatternRange(this._textPattern2.GetCaretRange(out isActive));
-  }
 }

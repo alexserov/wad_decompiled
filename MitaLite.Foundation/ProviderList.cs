@@ -8,45 +8,41 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class ProviderList : IEnumerable<Provider>, IEnumerable
-  {
-    private List<Provider> _providers;
+namespace MS.Internal.Mita.Foundation {
+    public class ProviderList : IEnumerable<Provider>, IEnumerable {
+        readonly List<Provider> _providers;
 
-    internal ProviderList(List<Provider> providers) => this._providers = providers;
-
-    public Provider this[string friendlyName]
-    {
-      get
-      {
-        Provider provider = (Provider) null;
-        if (!this.TryGetProvider(friendlyName, out provider))
-          throw new InvalidOperationException();
-        return provider;
-      }
-    }
-
-    public bool TryGetProvider(string friendlyName, out Provider provider)
-    {
-      foreach (Provider provider1 in this._providers)
-      {
-        if (string.Equals(provider1.FriendlyName, friendlyName, StringComparison.Ordinal))
-        {
-          provider = provider1;
-          return true;
+        internal ProviderList(List<Provider> providers) {
+            this._providers = providers;
         }
-      }
-      provider = (Provider) null;
-      return false;
-    }
 
-    public IEnumerator<Provider> GetEnumerator()
-    {
-      foreach (Provider provider in this._providers)
-        yield return provider;
-    }
+        public Provider this[string friendlyName] {
+            get {
+                Provider provider = null;
+                if (!TryGetProvider(friendlyName: friendlyName, provider: out provider))
+                    throw new InvalidOperationException();
+                return provider;
+            }
+        }
 
-    IEnumerator IEnumerable.GetEnumerator() => (IEnumerator) this.GetEnumerator();
-  }
+        public IEnumerator<Provider> GetEnumerator() {
+            foreach (var provider in this._providers)
+                yield return provider;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
+        }
+
+        public bool TryGetProvider(string friendlyName, out Provider provider) {
+            foreach (var provider1 in this._providers)
+                if (string.Equals(a: provider1.FriendlyName, b: friendlyName, comparisonType: StringComparison.Ordinal)) {
+                    provider = provider1;
+                    return true;
+                }
+
+            provider = null;
+            return false;
+        }
+    }
 }

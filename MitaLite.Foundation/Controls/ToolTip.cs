@@ -6,35 +6,28 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ToolTip : UIObject
-  {
-    private static IFactory<ToolTip> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ToolTip : UIObject {
+        static IFactory<ToolTip> _factory;
 
-    public ToolTip(UIObject uiObject)
-      : base(uiObject)
-    {
-    }
+        public ToolTip(UIObject uiObject)
+            : base(uiObject: uiObject) {
+        }
 
-    internal ToolTip(AutomationElement element)
-      : base(element)
-    {
-    }
+        internal ToolTip(AutomationElement element)
+            : base(element: element) {
+        }
 
-    public static IFactory<ToolTip> Factory
-    {
-      get
-      {
-        if (ToolTip._factory == null)
-          ToolTip._factory = (IFactory<ToolTip>) new ToolTip.ToolTipFactory();
-        return ToolTip._factory;
-      }
-    }
+        public static IFactory<ToolTip> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ToolTipFactory();
+                return _factory;
+            }
+        }
 
-    private class ToolTipFactory : IFactory<ToolTip>
-    {
-      public ToolTip Create(UIObject element) => new ToolTip(element);
+        class ToolTipFactory : IFactory<ToolTip> {
+            public ToolTip Create(UIObject element) => new ToolTip(uiObject: element);
+        }
     }
-  }
 }

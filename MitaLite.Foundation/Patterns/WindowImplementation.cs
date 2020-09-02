@@ -4,110 +4,88 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Waiters;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Waiters;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class WindowImplementation : PatternImplementation<WindowPattern>, IWindow
-  {
-    public WindowImplementation(UIObject uiObject)
-      : base(uiObject, WindowPattern.Pattern)
-    {
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class WindowImplementation : PatternImplementation<WindowPattern>, IWindow {
+        public WindowImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: WindowPattern.Pattern) {
+        }
+
+        public void SetWindowVisualState(WindowVisualState state) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(SetWindowVisualState), state)) != ActionResult.Unhandled)
+                return;
+            Pattern.SetWindowVisualState(state: state);
+        }
+
+        public void Close() {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Close))) != ActionResult.Unhandled)
+                return;
+            Pattern.Close();
+        }
+
+        public void WaitForInputIdle(int milliseconds) {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(WaitForInputIdle), milliseconds)) != ActionResult.Unhandled)
+                return;
+            Pattern.WaitForInputIdle(milliseconds: milliseconds);
+        }
+
+        public UIEventWaiter GetWindowClosedWaiter() {
+            return new WindowClosedWaiter(root: UIObject);
+        }
+
+        public bool CanMaximize {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanMaximize)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanMaximize;
+            }
+        }
+
+        public bool CanMinimize {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanMinimize)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanMinimize;
+            }
+        }
+
+        public bool IsModal {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsModal)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.IsModal;
+            }
+        }
+
+        public WindowVisualState WindowVisualState {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(WindowVisualState)), overridden: out overridden) == ActionResult.Handled ? (WindowVisualState) overridden : Pattern.Current.WindowVisualState;
+            }
+        }
+
+        public WindowInteractionState WindowInteractionState {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(WindowInteractionState)), overridden: out overridden) == ActionResult.Handled ? (WindowInteractionState) overridden : Pattern.Current.WindowInteractionState;
+            }
+        }
+
+        public bool IsTopmost {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsTopmost)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.IsTopmost;
+            }
+        }
     }
-
-    public void SetWindowVisualState(WindowVisualState state)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (SetWindowVisualState), new object[1]
-      {
-        (object) state
-      })) != ActionResult.Unhandled)
-        return;
-      this.Pattern.SetWindowVisualState(state);
-    }
-
-    public void Close()
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Close))) != ActionResult.Unhandled)
-        return;
-      this.Pattern.Close();
-    }
-
-    public void WaitForInputIdle(int milliseconds)
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (WaitForInputIdle), new object[1]
-      {
-        (object) milliseconds
-      })) != ActionResult.Unhandled)
-        return;
-      this.Pattern.WaitForInputIdle(milliseconds);
-    }
-
-    public UIEventWaiter GetWindowClosedWaiter() => (UIEventWaiter) new WindowClosedWaiter(this.UIObject);
-
-    public bool CanMaximize
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanMaximize)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanMaximize;
-      }
-    }
-
-    public bool CanMinimize
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanMinimize)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanMinimize;
-      }
-    }
-
-    public bool IsModal
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (IsModal)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.IsModal;
-      }
-    }
-
-    public WindowVisualState WindowVisualState
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (WindowVisualState)), out overridden) == ActionResult.Handled ? (WindowVisualState) overridden : this.Pattern.Current.WindowVisualState;
-      }
-    }
-
-    public WindowInteractionState WindowInteractionState
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (WindowInteractionState)), out overridden) == ActionResult.Handled ? (WindowInteractionState) overridden : this.Pattern.Current.WindowInteractionState;
-      }
-    }
-
-    public bool IsTopmost
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (IsTopmost)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.IsTopmost;
-      }
-    }
-  }
 }

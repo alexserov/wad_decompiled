@@ -6,18 +6,22 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class ProviderInstaller
-  {
-    public static void Install(Type registrarType, string friendlyName, bool onByDefault) => ProviderInstaller.Install(registrarType, friendlyName, onByDefault, string.Empty);
+namespace MS.Internal.Mita.Foundation {
+    public static class ProviderInstaller {
+        public static void Install(Type registrarType, string friendlyName, bool onByDefault) {
+            Install(registrarType: registrarType, friendlyName: friendlyName, onByDefault: onByDefault, description: string.Empty);
+        }
 
-    public static void Install(
-      Type registrarType,
-      string friendlyName,
-      bool onByDefault,
-      string description) => Provider.Install(registrarType, friendlyName, onByDefault, description);
+        public static void Install(
+            Type registrarType,
+            string friendlyName,
+            bool onByDefault,
+            string description) {
+            Provider.Install(registrarType: registrarType, friendlyName: friendlyName, onByDefault: onByDefault, description: description);
+        }
 
-    public static void Uninstall(string friendlyName) => Provider.Uninstall(friendlyName);
-  }
+        public static void Uninstall(string friendlyName) {
+            Provider.Uninstall(friendlyName: friendlyName);
+        }
+    }
 }

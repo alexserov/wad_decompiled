@@ -7,83 +7,79 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MitaBroker
-{
-  [Guid("42A03D14-2BB7-4A56-B25B-C2F61BF46E33")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComVisible(true)]
-  public interface IRequestHandler
-  {
-    int LaunchApplication(string capabilitiesJSONString);
+namespace MitaBroker {
+    [Guid(guid: "42A03D14-2BB7-4A56-B25B-C2F61BF46E33"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComVisible(visibility: true)]
+    public interface IRequestHandler {
+        int LaunchApplication(string capabilitiesJSONString);
 
-    void CloseApplication();
+        void CloseApplication();
 
-    void QuitApplication(bool forceQuitApp);
+        void QuitApplication(bool forceQuitApp);
 
-    void SetImplicitTimeout(int timeoutMs);
+        void SetImplicitTimeout(int timeoutMs);
 
-    string GetCapabilities(string capabilitiesSet);
+        string GetCapabilities(string capabilitiesSet);
 
-    string GetLastErrorMessage();
+        string GetLastErrorMessage();
 
-    string GetActiveElement();
+        string GetActiveElement();
 
-    string GetApplicationObject();
+        string GetApplicationObject();
 
-    string SearchElement(string searchTarget, string locatorStrategy, string startNodeId);
+        string SearchElement(string searchTarget, string locatorStrategy, string startNodeId);
 
-    string SearchMultipleElements(string searchTarget, string locatorStrategy, string startNodeId);
+        string SearchMultipleElements(string searchTarget, string locatorStrategy, string startNodeId);
 
-    string GetElementAttribute(string elementId, string attributeName);
+        string GetElementAttribute(string elementId, string attributeName);
 
-    string GetElementProperty(string elementId, string propertyName);
+        string GetElementProperty(string elementId, string propertyName);
 
-    int ActionOnElement(string elementId, string actionName, string data);
+        int ActionOnElement(string elementId, string actionName, string data);
 
-    bool GetElementState(string elementId, string state);
+        bool GetElementState(string elementId, string state);
 
-    int GetElementStatus(string elementId);
+        int GetElementStatus(string elementId);
 
-    string GetApplicationId();
+        string GetApplicationId();
 
-    IntPtr GetApplicationHwnd();
+        IntPtr GetApplicationHwnd();
 
-    int Navigate(string navigationType);
+        int Navigate(string navigationType);
 
-    string GetProperty(string propertyName);
+        string GetProperty(string propertyName);
 
-    string GetTopLevelWindows();
+        string GetTopLevelWindows();
 
-    int SwitchToWindow(string windowHandle);
+        int SwitchToWindow(string windowHandle);
 
-    string GetWindowProperty(string windowHandle, string propertyName);
+        string GetWindowProperty(string windowHandle, string propertyName);
 
-    int SetWindowProperty(string windowHandle, string propertyName, string JSONParameters);
+        int SetWindowProperty(string windowHandle, string propertyName, string JSONParameters);
 
-    string GetSource();
+        string GetSource();
 
-    int SendMouse(string actionType, string JSONParameters);
+        int SendMouse(string actionType, string JSONParameters);
 
-    int SendTouch(string touchType, string JSONParameters);
+        int SendTouch(string touchType, string JSONParameters);
 
-    int SendMultiTouch(string JSONObject);
+        int SendMultiTouch(string JSONObject);
 
-    string GetLocation();
+        string GetLocation();
 
-    void ConvertClientToScreen(int xClient, int yClient, out int xScreen, out int yScreen);
+        void ConvertClientToScreen(int xClient, int yClient, out int xScreen, out int yScreen);
 
-    void ConvertScreenToClient(int xScreen, int yScreen, out int xClient, out int yClient);
+        void ConvertScreenToClient(int xScreen, int yScreen, out int xClient, out int yClient);
 
-    int SendZoom(int centerX, int centerY, int distanceStart, int distanceEnd);
+        int SendZoom(int centerX, int centerY, int distanceStart, int distanceEnd);
 
-    int SendPinch(int centerX, int centerY, int distanceStart, int distanceEnd);
+        int SendPinch(int centerX, int centerY, int distanceStart, int distanceEnd);
 
-    int SendActions(string JSONParameters);
+        int SendActions(string JSONParameters);
 
-    int ReleaseActions();
+        int ReleaseActions();
 
-    int GetApplicationType();
+        int GetApplicationType();
 
-    bool IsExperimentalW3C();
-  }
+        bool IsExperimentalW3C();
+    }
 }

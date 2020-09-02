@@ -4,984 +4,923 @@
 // MVID: 04F1F240-3A91-44F5-8C6F-E562756B4D74
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaBroker.dll
 
-using MitaBroker.WebDriver.Actions.Enums;
-using MS.Internal.Mita.Foundation;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using MitaBroker.WebDriver.Actions.Enums;
+using MS.Internal.Mita.Foundation;
+using Newtonsoft.Json.Linq;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal sealed class ActionsHandler
-  {
-    private List<InputSource> ActiveInputSources = new List<InputSource>();
-    private Dictionary<string, IInputSourceState> InputStateTable = new Dictionary<string, IInputSourceState>();
-    private ActionSequence InputCancelList = new ActionSequence();
-    private List<PointerInputState> pointerIdRecylcleList;
-    private static PointerIdCollections availablePointerIdCollection = new PointerIdCollections();
-    private const int interpolationResolutionMs = 50;
-    private KnownElements SessionKnownElements;
-    private IntPtr SessionTopLevelWindowHandle;
+namespace MitaBroker.WebDriver.Actions {
+    internal sealed class ActionsHandler {
+        const int interpolationResolutionMs = 50;
+        static readonly PointerIdCollections availablePointerIdCollection = new PointerIdCollections();
+        List<InputSource> ActiveInputSources = new List<InputSource>();
+        ActionSequence InputCancelList = new ActionSequence();
+        Dictionary<string, IInputSourceState> InputStateTable = new Dictionary<string, IInputSourceState>();
+        List<PointerInputState> pointerIdRecylcleList;
+        readonly KnownElements SessionKnownElements;
+        IntPtr SessionTopLevelWindowHandle;
 
-    public void ResetHandlerState()
-    {
-      this.ActiveInputSources = new List<InputSource>();
-      this.InputStateTable = new Dictionary<string, IInputSourceState>();
-      this.InputCancelList = new ActionSequence();
-    }
-
-    public ActionsHandler(KnownElements sessionKnownElements) => this.SessionKnownElements = sessionKnownElements;
-
-    public void SetSessionTopLevelWindowHandle(IntPtr sessionTopLevelWindowHandle) => this.SessionTopLevelWindowHandle = sessionTopLevelWindowHandle;
-
-    private ActionsByTick ExtractActionSequence(JToken parameters)
-    {
-      JToken parameter = parameters[(object) "actions"];
-      if (parameter == null || !parameter.HasValues || parameter.Type != JTokenType.Array)
-        throw new ArgumentException("\"actions\" in JSON payload is undefined or is not an Array");
-      ActionsByTick actionsByTick = new ActionsByTick();
-      foreach (JToken actionSequence1 in (IEnumerable<JToken>) parameter)
-      {
-        ActionSequence actionSequence2 = this.ProcessInputSourceActionSequence(actionSequence1);
-        foreach (ActionObject actionObject in (List<ActionObject>) actionSequence2)
-        {
-          int index = actionSequence2.IndexOf(actionObject);
-          if (actionsByTick.Count < index + 1)
-            actionsByTick.Add(new ActionSequence());
-          actionsByTick[index].Add(actionObject);
+        public ActionsHandler(KnownElements sessionKnownElements) {
+            this.SessionKnownElements = sessionKnownElements;
         }
-      }
-      return actionsByTick;
-    }
 
-    private ActionSequence ProcessInputSourceActionSequence(JToken actionSequence)
-    {
-      JToken jtoken1 = actionSequence[(object) "type"];
-      string str1 = jtoken1 != null && jtoken1.Type == JTokenType.String ? jtoken1.Value<string>() : throw new ArgumentException("\"type\" in JSON payload is undefined or is not the correct type");
-      InputSourceType inputSourceType = (InputSourceType) Enum.Parse(typeof (InputSourceType), str1, true);
-      switch (inputSourceType)
-      {
-        case InputSourceType.None:
-        case InputSourceType.Key:
-        case InputSourceType.Pointer:
-          if (inputSourceType == InputSourceType.Key)
-            throw new NotImplementedException("Currently key input source type is not supported");
-          JToken jtoken2 = actionSequence[(object) "id"];
-          string id = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException("\"id\" in JSON payload is undefined or is not a String");
-          JToken parameters = (JToken) null;
-          if (inputSourceType == InputSourceType.Pointer)
-            parameters = this.ProcessPointerParameters(actionSequence[(object) "parameters"]);
-          InputSource inputSource = this.ActiveInputSources.Find((Predicate<InputSource>) (s => s.Id == id));
-          if (inputSource == null)
-          {
-            IInputSourceState inputSourceState = (IInputSourceState) null;
-            switch (inputSourceType)
-            {
-              case InputSourceType.None:
-                inputSource = (InputSource) new NullInputSource(id);
-                inputSourceState = (IInputSourceState) new NullInputState();
-                break;
-              case InputSourceType.Key:
-                inputSource = (InputSource) new KeyInputSource(id);
-                inputSourceState = (IInputSourceState) new KeyInputState();
-                break;
-              case InputSourceType.Pointer:
-                PointerType pointerType = (PointerType) Enum.Parse(typeof (PointerType), parameters[(object) "pointerType"].Value<string>(), true);
-                inputSource = (InputSource) new PointerInputSource(id, pointerType);
-                inputSourceState = (IInputSourceState) new PointerInputState(pointerType);
-                break;
+        public void ResetHandlerState() {
+            this.ActiveInputSources = new List<InputSource>();
+            this.InputStateTable = new Dictionary<string, IInputSourceState>();
+            this.InputCancelList = new ActionSequence();
+        }
+
+        public void SetSessionTopLevelWindowHandle(IntPtr sessionTopLevelWindowHandle) {
+            this.SessionTopLevelWindowHandle = sessionTopLevelWindowHandle;
+        }
+
+        ActionsByTick ExtractActionSequence(JToken parameters) {
+            var parameter = parameters[key: "actions"];
+            if (parameter == null || !parameter.HasValues || parameter.Type != JTokenType.Array)
+                throw new ArgumentException(message: "\"actions\" in JSON payload is undefined or is not an Array");
+            var actionsByTick = new ActionsByTick();
+            foreach (var actionSequence1 in parameter) {
+                var actionSequence2 = ProcessInputSourceActionSequence(actionSequence: actionSequence1);
+                foreach (var actionObject in actionSequence2) {
+                    var index = actionSequence2.IndexOf(item: actionObject);
+                    if (actionsByTick.Count < index + 1)
+                        actionsByTick.Add(item: new ActionSequence());
+                    actionsByTick[index: index].Add(item: actionObject);
+                }
             }
-            this.ActiveInputSources.Add(inputSource);
-            this.InputStateTable.Add(id, inputSourceState);
-          }
-          if (inputSource.Type != inputSourceType)
-            throw new ArgumentException("Input source " + id + " " + inputSource.Type.ToString().ToLower() + " source type does not match the given " + str1 + " type in JSON payload");
-          if (parameters != null && parameters[(object) "pointerType"] != null)
-          {
-            string str2 = parameters[(object) "pointerType"].Value<string>();
-            PointerType pointerType = (PointerType) Enum.Parse(typeof (PointerType), str2, true);
-            if (!(inputSource is PointerInputSource pointerInputSource))
-              throw new InternalErrorException("Input source " + id + " is not a PointerInputSource");
-            if (pointerInputSource.PointerType != pointerType)
-              throw new ArgumentException("Input source " + id + " " + pointerInputSource.PointerType.ToString().ToLower() + " source pointer type does not match the given parameters " + str2 + " pointerType in JSON payload");
-          }
-          JToken jtoken3 = actionSequence[(object) "actions"];
-          if (jtoken3 == null || jtoken3.Type != JTokenType.Array)
-            throw new ArgumentException("\"actions\" in actionSequence JSON payload is undefined or is not an Array");
-          ActionSequence actionSequence1 = new ActionSequence();
-          foreach (JToken actionItem in (IEnumerable<JToken>) jtoken3)
-          {
-            if (actionItem == null || actionItem.Type != JTokenType.Object)
-              throw new ArgumentException("actionItem in \"actions\" array JSON payload is undefined or is not an Object");
-            ActionObject actionObject = (ActionObject) null;
-            switch (inputSourceType)
-            {
-              case InputSourceType.None:
-                actionObject = this.ProcessNullAction(id, actionItem);
-                break;
-              case InputSourceType.Key:
-                actionObject = this.ProcessKeyAction(id, actionItem);
-                break;
-              case InputSourceType.Pointer:
-                actionObject = this.ProcessPointerAction(id, parameters, actionItem);
-                break;
+
+            return actionsByTick;
+        }
+
+        ActionSequence ProcessInputSourceActionSequence(JToken actionSequence) {
+            var jtoken1 = actionSequence[key: "type"];
+            var str1 = jtoken1 != null && jtoken1.Type == JTokenType.String ? jtoken1.Value<string>() : throw new ArgumentException(message: "\"type\" in JSON payload is undefined or is not the correct type");
+            var inputSourceType = (InputSourceType) Enum.Parse(enumType: typeof(InputSourceType), value: str1, ignoreCase: true);
+            switch (inputSourceType) {
+                case InputSourceType.None:
+                case InputSourceType.Key:
+                case InputSourceType.Pointer:
+                    if (inputSourceType == InputSourceType.Key)
+                        throw new NotImplementedException(message: "Currently key input source type is not supported");
+                    var jtoken2 = actionSequence[key: "id"];
+                    var id = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException(message: "\"id\" in JSON payload is undefined or is not a String");
+                    JToken parameters = null;
+                    if (inputSourceType == InputSourceType.Pointer)
+                        parameters = ProcessPointerParameters(parametersData: actionSequence[key: "parameters"]);
+                    var inputSource = this.ActiveInputSources.Find(match: s => s.Id == id);
+                    if (inputSource == null) {
+                        IInputSourceState inputSourceState = null;
+                        switch (inputSourceType) {
+                            case InputSourceType.None:
+                                inputSource = new NullInputSource(id: id);
+                                inputSourceState = new NullInputState();
+                                break;
+                            case InputSourceType.Key:
+                                inputSource = new KeyInputSource(id: id);
+                                inputSourceState = new KeyInputState();
+                                break;
+                            case InputSourceType.Pointer:
+                                var pointerType = (PointerType) Enum.Parse(enumType: typeof(PointerType), value: parameters[key: "pointerType"].Value<string>(), ignoreCase: true);
+                                inputSource = new PointerInputSource(id: id, pointerType: pointerType);
+                                inputSourceState = new PointerInputState(subtype: pointerType);
+                                break;
+                        }
+
+                        this.ActiveInputSources.Add(item: inputSource);
+                        this.InputStateTable.Add(key: id, value: inputSourceState);
+                    }
+
+                    if (inputSource.Type != inputSourceType)
+                        throw new ArgumentException(message: "Input source " + id + " " + inputSource.Type.ToString().ToLower() + " source type does not match the given " + str1 + " type in JSON payload");
+                    if (parameters != null && parameters[key: "pointerType"] != null) {
+                        var str2 = parameters[key: "pointerType"].Value<string>();
+                        var pointerType = (PointerType) Enum.Parse(enumType: typeof(PointerType), value: str2, ignoreCase: true);
+                        if (!(inputSource is PointerInputSource pointerInputSource))
+                            throw new InternalErrorException(message: "Input source " + id + " is not a PointerInputSource");
+                        if (pointerInputSource.PointerType != pointerType)
+                            throw new ArgumentException(message: "Input source " + id + " " + pointerInputSource.PointerType.ToString().ToLower() + " source pointer type does not match the given parameters " + str2 + " pointerType in JSON payload");
+                    }
+
+                    var jtoken3 = actionSequence[key: "actions"];
+                    if (jtoken3 == null || jtoken3.Type != JTokenType.Array)
+                        throw new ArgumentException(message: "\"actions\" in actionSequence JSON payload is undefined or is not an Array");
+                    var actionSequence1 = new ActionSequence();
+                    foreach (var actionItem in jtoken3) {
+                        if (actionItem == null || actionItem.Type != JTokenType.Object)
+                            throw new ArgumentException(message: "actionItem in \"actions\" array JSON payload is undefined or is not an Object");
+                        ActionObject actionObject = null;
+                        switch (inputSourceType) {
+                            case InputSourceType.None:
+                                actionObject = ProcessNullAction(id: id, actionItem: actionItem);
+                                break;
+                            case InputSourceType.Key:
+                                actionObject = ProcessKeyAction(id: id, actionItem: actionItem);
+                                break;
+                            case InputSourceType.Pointer:
+                                actionObject = ProcessPointerAction(id: id, parameters: parameters, actionItem: actionItem);
+                                break;
+                        }
+
+                        actionSequence1.Add(item: actionObject);
+                    }
+
+                    return actionSequence1;
+                default:
+                    throw new ArgumentException(message: "\"type\" in JSON payload is not \"key\", \"pointer\", or \"none\"");
             }
-            actionSequence1.Add(actionObject);
-          }
-          return actionSequence1;
-        default:
-          throw new ArgumentException("\"type\" in JSON payload is not \"key\", \"pointer\", or \"none\"");
-      }
-    }
-
-    private JToken ProcessPointerParameters(JToken parametersData)
-    {
-      JToken jtoken1 = (JToken) JObject.Parse("{\"pointerType\" : \"mouse\"}");
-      if (parametersData == null)
-        return jtoken1;
-      JToken jtoken2 = parametersData.Type == JTokenType.Object ? parametersData[(object) "pointerType"] : throw new ArgumentException("\"parameters\" in JSON payload is not an Object");
-      string str = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException("\"pointerType\" in JSON payload is undefined or is not a String");
-      PointerType pointerType = (PointerType) Enum.Parse(typeof (PointerType), str, true);
-      switch (pointerType)
-      {
-        case PointerType.Mouse:
-        case PointerType.Pen:
-        case PointerType.Touch:
-          if (pointerType != PointerType.Pen && pointerType != PointerType.Touch)
-            throw new NotImplementedException("Currently only pen and touch pointer input source types are supported");
-          jtoken1[(object) "pointerType"] = (JToken) str;
-          return jtoken1;
-        default:
-          throw new ArgumentException("\"pointerType\" in JSON payload is not \"mouse\", \"pen\", or \"touch\"");
-      }
-    }
-
-    private ActionObject ProcessNullAction(string id, JToken actionItem)
-    {
-      JToken jtoken = actionItem[(object) "type"];
-      MitaBroker.WebDriver.Actions.Enums.InputActionType inputActionType = jtoken != null && jtoken.Type == JTokenType.String ? (MitaBroker.WebDriver.Actions.Enums.InputActionType) Enum.Parse(typeof (MitaBroker.WebDriver.Actions.Enums.InputActionType), jtoken.Value<string>(), true) : throw new ArgumentException("\"type\" in a null action JSON payload is undefined or is not a String");
-      ActionObject action = inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.Pause ? new ActionObject(id, 0, (int) inputActionType) : throw new ArgumentException("\"type\" in a null action JSON payload is not \"pause\"");
-      return this.ProcessPauseAction(actionItem, action);
-    }
-
-    private ActionObject ProcessKeyAction(string id, JToken actionItem)
-    {
-      JToken jtoken1 = actionItem[(object) "type"];
-      MitaBroker.WebDriver.Actions.Enums.InputActionType inputActionType = jtoken1 != null && jtoken1.Type == JTokenType.String ? (MitaBroker.WebDriver.Actions.Enums.InputActionType) Enum.Parse(typeof (MitaBroker.WebDriver.Actions.Enums.InputActionType), jtoken1.Value<string>(), true) : throw new ArgumentException("\"type\" in a key action JSON payload is undefined or is not a String");
-      switch (inputActionType)
-      {
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.Pause:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.KeyDown:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.KeyUp:
-          ActionObject action = new ActionObject(id, 1, (int) inputActionType);
-          if (inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.Pause)
-            return this.ProcessPauseAction(actionItem, action);
-          JToken jtoken2 = actionItem[(object) "value"];
-          string str = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException("\"value\" in a key action JSON payload is undefined or is not a String");
-          if (!str.IsNormalized())
-            throw new ArgumentException("\"value\" in a key action JSON payload is not a String containing a single unicode code point");
-          action.Set("value", (object) str);
-          return action;
-        default:
-          throw new ArgumentException("\"type\" in a key action JSON payload is not \"keyUp\", \"keyDown\", or \"pause\"");
-      }
-    }
-
-    private ActionObject ProcessPointerAction(
-      string id,
-      JToken parameters,
-      JToken actionItem)
-    {
-      JToken jtoken = actionItem[(object) "type"];
-      MitaBroker.WebDriver.Actions.Enums.InputActionType inputActionType = jtoken != null && jtoken.Type == JTokenType.String ? (MitaBroker.WebDriver.Actions.Enums.InputActionType) Enum.Parse(typeof (MitaBroker.WebDriver.Actions.Enums.InputActionType), jtoken.Value<string>(), true) : throw new ArgumentException("\"type\" in a pointer action JSON payload is undefined or is not a String");
-      switch (inputActionType)
-      {
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.Pause:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerDown:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerUp:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerMove:
-        case MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerCancel:
-          ActionObject action = new ActionObject(id, 2, (int) inputActionType);
-          if (inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.Pause)
-            return this.ProcessPauseAction(actionItem, action);
-          PointerType pointerType = (PointerType) Enum.Parse(typeof (PointerType), parameters[(object) "pointerType"].Value<string>(), true);
-          action.Set("pointerType", (object) pointerType);
-          if (inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerUp || inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerDown)
-            this.ProcessPointerUpOrPointerDownAction(actionItem, action);
-          if (inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerMove)
-            this.ProcessPointerMoveAction(actionItem, action);
-          if (inputActionType == MitaBroker.WebDriver.Actions.Enums.InputActionType.PointerCancel)
-            this.ProcessPointerCancelAction(actionItem, action);
-          return action;
-        default:
-          throw new ArgumentException("\"type\" in a pointer action JSON payload is not \"pause\", \"pointerUp\", \"pointerDown\", \"pointerMove\", or \"pointerCancel\"");
-      }
-    }
-
-    private ActionObject ProcessPauseAction(JToken actionItem, ActionObject action)
-    {
-      JToken jtoken = actionItem[(object) "duration"];
-      if (jtoken != null && (jtoken.Type != JTokenType.Integer || jtoken.Value<int>() < 0))
-        throw new ArgumentException("\"duration\" in a null action JSON payload is not an Integer greater than or equal to 0");
-      action.Set("duration", (object) jtoken.Value<uint>());
-      return action;
-    }
-
-    private void ProcessPointerUpOrPointerDownAction(JToken actionItem, ActionObject action)
-    {
-      JToken jtoken = actionItem[(object) "button"];
-      if (jtoken == null || jtoken.Type != JTokenType.Integer || jtoken.Value<int>() < 0)
-        throw new ArgumentException("\"button\" in a pointer action JSON payload is undefined or is not an Integer greater than or equal to 0");
-      action.Set("button", (object) jtoken.Value<int>());
-      this.ProcessExtraPointerParameters(actionItem, action);
-    }
-
-    private void ProcessPointerMoveAction(JToken actionItem, ActionObject action)
-    {
-      JToken jtoken1 = actionItem[(object) "duration"];
-      if (jtoken1 != null && (jtoken1.Type != JTokenType.Integer || jtoken1.Value<int>() < 0))
-        throw new ArgumentException("\"duration\" in a pointer action JSON payload is not an Integer greater than or equal to 0");
-      action.Set("duration", (object) jtoken1.Value<uint>());
-      JToken jtoken2 = actionItem[(object) "origin"] ?? (JToken) new JValue("viewport");
-      string str = (string) null;
-      OriginType? nullable1 = new OriginType?();
-      if (jtoken2.Type == JTokenType.Object)
-      {
-        foreach (JToken child in jtoken2.Children())
-        {
-          if (child.Type == JTokenType.Property && child is JProperty jproperty && jproperty.Name.Contains("element"))
-          {
-            str = jproperty.Value.Value<string>();
-            nullable1 = new OriginType?(OriginType.Element);
-            action.Set("element", (object) str);
-            break;
-          }
         }
-      }
-      else if (jtoken2.Type == JTokenType.String)
-        nullable1 = new OriginType?((OriginType) Enum.Parse(typeof (OriginType), jtoken2.Value<string>(), true));
-      OriginType? nullable2 = nullable1;
-      OriginType originType1 = OriginType.Viewport;
-      if (!(nullable2.GetValueOrDefault() == originType1 & nullable2.HasValue))
-      {
-        OriginType? nullable3 = nullable1;
-        OriginType originType2 = OriginType.Pointer;
-        if (!(nullable3.GetValueOrDefault() == originType2 & nullable3.HasValue) && string.IsNullOrEmpty(str))
-          throw new ArgumentException("\"origin\" in a action JSON payload is not equal to \"viewport\" or \"pointer\" and element is not an Object that represents a web element");
-      }
-      action.Set("origin", (object) nullable1);
-      JToken jtoken3 = actionItem[(object) "x"];
-      if (jtoken3 == null && jtoken3.Type != JTokenType.Integer)
-        throw new ArgumentException("\"x\" in a pointer action JSON payload is not an Integer");
-      action.Set("x", (object) jtoken3.Value<int>());
-      JToken jtoken4 = actionItem[(object) "y"];
-      if (jtoken4 == null && jtoken4.Type != JTokenType.Integer)
-        throw new ArgumentException("\"y\" in a pointer action JSON payload is not an Integer");
-      action.Set("y", (object) jtoken4.Value<int>());
-      this.ProcessExtraPointerParameters(actionItem, action);
-    }
 
-    private void ProcessExtraPointerParameters(JToken actionItem, ActionObject action)
-    {
-      JToken jtoken1 = actionItem[(object) "width"];
-      if (jtoken1 != null)
-      {
-        if (jtoken1.Type != JTokenType.Float || (double) jtoken1.Value<float>() < 1.0)
-          throw new ArgumentException("\"width\" attribute is not a floating point value greater or equal to 1");
-        action.Set("width", (object) jtoken1.Value<float>());
-      }
-      JToken jtoken2 = actionItem[(object) "height"];
-      if (jtoken2 != null)
-      {
-        if (jtoken2.Type != JTokenType.Float || (double) jtoken2.Value<float>() < 1.0)
-          throw new ArgumentException("\"height\" attribute is not a floating point value greater or equal to 1");
-        action.Set("height", (object) jtoken2.Value<float>());
-      }
-      if (jtoken1 != null && jtoken2 == null || jtoken1 == null && jtoken2 != null)
-        throw new ArgumentException("\"width\" and \"height\" attributes need to be specified together");
-      JToken jtoken3 = actionItem[(object) "pressure"];
-      if (jtoken3 != null)
-      {
-        if (jtoken3.Type != JTokenType.Float || (double) jtoken3.Value<float>() < 0.0 || (double) jtoken3.Value<float>() > 1.0)
-          throw new ArgumentException("\"pressure\" attribute is not a floating point value between 0 and 1");
-        action.Set("pressure", (object) jtoken3.Value<float>());
-      }
-      JToken jtoken4 = actionItem[(object) "tiltX"];
-      if (jtoken4 != null)
-      {
-        if (jtoken4.Type != JTokenType.Integer || jtoken4.Value<int>() < -90 || jtoken4.Value<int>() > 90)
-          throw new ArgumentException("\"tiltX\" attribute is not an integer value between -90 and 90");
-        action.Set("tiltX", (object) jtoken4.Value<int>());
-      }
-      JToken jtoken5 = actionItem[(object) "tiltY"];
-      if (jtoken5 != null)
-      {
-        if (jtoken5.Type != JTokenType.Integer || jtoken5.Value<int>() < -90 || jtoken5.Value<int>() > 90)
-          throw new ArgumentException("\"tiltY\" attribute is not an integer value between -90 and 90");
-        action.Set("tiltY", (object) jtoken5.Value<int>());
-      }
-      JToken jtoken6 = actionItem[(object) "twist"];
-      if (jtoken6 == null)
-        return;
-      if (jtoken6.Type != JTokenType.Integer || jtoken6.Value<int>() < 0 || jtoken6.Value<int>() >= 360)
-        throw new ArgumentException("\"twist\" attribute is not an integer value between 0 and 359");
-      action.Set("twist", (object) jtoken6.Value<int>());
-    }
-
-    private void ProcessPointerCancelAction(JToken actionItem, ActionObject action) => throw new NotImplementedException("Process a pointer cancel action is not implemented");
-
-    private void DispatchActions(ActionsByTick actionsByTick)
-    {
-      this.pointerIdRecylcleList = new List<PointerInputState>();
-      int xScreen;
-      int yScreen;
-      PositionAdapter.ConvertClientToScreen(this.SessionTopLevelWindowHandle, 0, 0, out xScreen, out yScreen);
-      PointI topLevelWindowPosition = new PointI(xScreen, yScreen);
-      foreach (ActionSequence tickActions in (List<ActionSequence>) actionsByTick)
-      {
-        uint tickDuration = this.ComputeTickDuration(tickActions);
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        this.DispatchTickActions(tickActions, tickDuration, topLevelWindowPosition);
-        stopwatch.Stop();
-        if (stopwatch.ElapsedMilliseconds < (long) tickDuration)
-          Thread.Sleep(TimeSpan.FromMilliseconds((double) tickDuration).Subtract(stopwatch.Elapsed));
-      }
-      foreach (PointerInputState pointerIdRecylcle in this.pointerIdRecylcleList)
-      {
-        if (pointerIdRecylcle.Pressed.Count == 0 && pointerIdRecylcle.PointerId != -1)
-        {
-          int pointerId = pointerIdRecylcle.PointerId;
-          pointerIdRecylcle.PointerId = -1;
-          ActionsHandler.availablePointerIdCollection.Recycle(pointerId);
-        }
-      }
-      this.pointerIdRecylcleList.Clear();
-    }
-
-    private uint ComputeTickDuration(ActionSequence tickActions)
-    {
-      uint num1 = 0;
-      foreach (ActionObject tickAction in (List<ActionObject>) tickActions)
-      {
-        uint? nullable1 = new uint?();
-        if (tickAction.Subtype == 0 || tickAction.Type == 2 && tickAction.Subtype == 5)
-          nullable1 = (uint?) tickAction.Get("duration");
-        if (nullable1.HasValue)
-        {
-          uint? nullable2 = nullable1;
-          uint num2 = num1;
-          if (nullable2.GetValueOrDefault() > num2 & nullable2.HasValue)
-            num1 = nullable1.Value;
-        }
-      }
-      return num1;
-    }
-
-    private void DispatchTickActions(
-      ActionSequence tickActions,
-      uint tickDuration,
-      PointI topLevelWindowPosition)
-    {
-      List<PointerData> tickPenList = new List<PointerData>();
-      List<PointerData> tickTouchList = new List<PointerData>();
-      List<List<PointerData>> pointerDataListList1 = new List<List<PointerData>>();
-      List<List<PointerData>> pointerDataListList2 = new List<List<PointerData>>();
-      Stopwatch stopwatch = Stopwatch.StartNew();
-      foreach (ActionObject tickAction in (List<ActionObject>) tickActions)
-      {
-        string id = tickAction.Id;
-        InputSourceType type = (InputSourceType) tickAction.Type;
-        if (!this.InputStateTable.ContainsKey(id))
-        {
-          switch (type)
-          {
-            case InputSourceType.None:
-              this.InputStateTable.Add(id, (IInputSourceState) new NullInputState());
-              break;
-            case InputSourceType.Key:
-              this.InputStateTable.Add(id, (IInputSourceState) new KeyInputState());
-              break;
-            case InputSourceType.Pointer:
-              this.InputStateTable.Add(id, (IInputSourceState) new PointerInputState((PointerType) tickAction.Get("pointerType")));
-              break;
-          }
-        }
-        IInputSourceState inputSourceState = this.InputStateTable[id];
-        switch (tickAction.Subtype)
-        {
-          case 0:
-            this.DispatchPauseAction(id, tickAction, (NullInputState) inputSourceState, tickDuration);
-            continue;
-          case 1:
-            this.DispatchKeyDownAction(id, tickAction, (KeyInputState) inputSourceState, tickDuration);
-            continue;
-          case 2:
-            this.DispatchKeyUpAction(id, tickAction, (KeyInputState) inputSourceState, tickDuration);
-            continue;
-          case 3:
-            this.DispatchPointerDownAction(id, tickAction, (PointerInputState) inputSourceState, tickDuration, topLevelWindowPosition, tickPenList, tickTouchList);
-            continue;
-          case 4:
-            this.DispatchPointerUpAction(id, tickAction, (PointerInputState) inputSourceState, tickDuration, topLevelWindowPosition, tickPenList, tickTouchList);
-            continue;
-          case 5:
-            this.DispatchPointerMoveAction(id, tickAction, (PointerInputState) inputSourceState, tickDuration, topLevelWindowPosition, tickPenList, tickTouchList, pointerDataListList1, pointerDataListList2);
-            continue;
-          case 6:
-            this.DispatchPointerCancelAction(id, tickAction, (PointerInputState) inputSourceState, tickDuration);
-            continue;
-          default:
-            throw new InternalErrorException(string.Format("Action object subtype is not known: {0}", (object) tickAction.Subtype));
-        }
-      }
-      if (tickTouchList.Count > 0)
-      {
-        using (InputController.Activate(PointerInputType.MultiTouch))
-        {
-          PointerData[] pointerDataArray = new PointerData[tickTouchList.Count];
-          tickTouchList.CopyTo(pointerDataArray);
-          PointerInput.InjectPointers(pointerDataArray);
-        }
-      }
-      if (tickPenList.Count > 1)
-        throw new ArgumentException("Currently only a single (non-concurrent) pen input is supported");
-      if (tickPenList.Count > 0)
-      {
-        using (InputController.Activate(PointerInputType.Pen))
-        {
-          PointerData[] pointerDataArray = new PointerData[tickPenList.Count];
-          tickPenList.CopyTo(pointerDataArray);
-          PointerInput.InjectPointers(pointerDataArray);
-        }
-      }
-      if (pointerDataListList1.Count <= 0 && pointerDataListList2.Count <= 0)
-        return;
-      this.PerformInterpolationFrames(pointerDataListList1, pointerDataListList2, stopwatch.ElapsedMilliseconds);
-    }
-
-    private void PerformInterpolationFrames(
-      List<List<PointerData>> tickPenInterpolationFrames,
-      List<List<PointerData>> tickTouchInterpolationFrames,
-      long tickElapsedMs)
-    {
-      Stopwatch stopwatch = Stopwatch.StartNew();
-      int index1 = 0;
-      int index2 = 0;
-      while (index1 < tickPenInterpolationFrames.Count || index2 < tickTouchInterpolationFrames.Count)
-      {
-        if (index1 < tickPenInterpolationFrames.Count)
-        {
-          using (InputController.Activate(PointerInputType.Pen))
-          {
-            PointerData[] pointerDataArray = new PointerData[tickPenInterpolationFrames[index1].Count];
-            tickPenInterpolationFrames[index1].CopyTo(pointerDataArray);
-            PointerInput.InjectPointers(pointerDataArray);
-          }
-          ++index1;
-        }
-        if (index2 < tickTouchInterpolationFrames.Count)
-        {
-          using (InputController.Activate(PointerInputType.MultiTouch))
-          {
-            PointerData[] pointerDataArray = new PointerData[tickTouchInterpolationFrames[index2].Count];
-            tickTouchInterpolationFrames[index2].CopyTo(pointerDataArray);
-            PointerInput.InjectPointers(pointerDataArray);
-          }
-          ++index2;
-        }
-        if (stopwatch.ElapsedMilliseconds + tickElapsedMs < 50L)
-          Thread.Sleep((int) (50L - tickElapsedMs - stopwatch.ElapsedMilliseconds));
-        stopwatch.Restart();
-        tickElapsedMs = 0L;
-      }
-    }
-
-    private void DispatchPauseAction(
-      string sourceId,
-      ActionObject actionObject,
-      NullInputState inputState,
-      uint tickDuration)
-    {
-    }
-
-    private void DispatchKeyDownAction(
-      string sourceId,
-      ActionObject actionObject,
-      KeyInputState inputState,
-      uint tickDuration)
-    {
-      string str = (string) actionObject.Get("value");
-      string normalisedKey = Keys.GetNormalisedKey(str);
-      inputState.Pressed.Contains(normalisedKey);
-      Keys.GetShiftedCharacterCode(str);
-      Keys.GetKeyLocation(str);
-      if (normalisedKey == "Alt")
-        inputState.Alt = true;
-      if (normalisedKey == "Shift")
-        inputState.Shift = true;
-      if (normalisedKey == "Control")
-        inputState.Ctrl = true;
-      if (normalisedKey == "Meta")
-        inputState.Meta = true;
-      inputState.Pressed.Add(normalisedKey);
-      string text = MitaBroker.KeyboardInput.Process(str);
-      if (text.Length <= 0)
-        return;
-      TextInput.SendText(text);
-    }
-
-    private void DispatchKeyUpAction(
-      string sourceId,
-      ActionObject actionObject,
-      KeyInputState inputState,
-      uint tickDuration)
-    {
-      string str = (string) actionObject.Get("value");
-      string normalisedKey = Keys.GetNormalisedKey(str);
-      if (!inputState.Pressed.Contains(normalisedKey))
-        return;
-      Keys.GetShiftedCharacterCode(str);
-      Keys.GetKeyLocation(str);
-      if (normalisedKey == "Alt")
-        inputState.Alt = false;
-      if (normalisedKey == "Shift")
-        inputState.Shift = false;
-      if (normalisedKey == "Control")
-        inputState.Ctrl = false;
-      if (normalisedKey == "Meta")
-        inputState.Meta = false;
-      inputState.Pressed.Remove(normalisedKey);
-      string text = MitaBroker.KeyboardInput.Process(str);
-      if (text.Length <= 0)
-        return;
-      TextInput.SendText(text);
-    }
-
-    private void DispatchPointerDownAction(
-      string sourceId,
-      ActionObject actionObject,
-      PointerInputState inputState,
-      uint tickDuration,
-      PointI topLevelWindowPosition,
-      List<PointerData> tickPenList,
-      List<PointerData> tickTouchList)
-    {
-      PointerType pointerType = (PointerType) actionObject.Get("pointerType");
-      int num = (int) actionObject.Get("button");
-      if (inputState.Pressed.Contains(num))
-        return;
-      int x = inputState.X;
-      int y = inputState.Y;
-      inputState.Pressed.Add(num);
-      List<int> pressed = inputState.Pressed;
-      ActionObject actionObject1 = actionObject.Copy();
-      actionObject1.Subtype = 4;
-      this.InputCancelList.Add(actionObject1);
-      switch (pointerType)
-      {
-        case PointerType.Pen:
-        case PointerType.Touch:
-          int xScreen;
-          int yScreen;
-          this.ConvertClientToScreen(topLevelWindowPosition, x, y, out xScreen, out yScreen);
-          if (inputState.PointerId == -1)
-            inputState.PointerId = ActionsHandler.availablePointerIdCollection.Get();
-          PointerData pointerData = new PointerData()
-          {
-            location = new PointI(xScreen, yScreen),
-            flags = POINTER_FLAGS.ContactDown,
-            pointerId = (uint) inputState.PointerId
-          };
-          this.UpdateInputStateWithExtraPointerParameters(actionObject, inputState);
-          this.PopulatePointerDataWithExtraPointerParameters(inputState, ref pointerData);
-          if (pointerType == PointerType.Pen)
-          {
-            tickPenList.Add(pointerData);
-            break;
-          }
-          if (pointerType != PointerType.Touch)
-            break;
-          tickTouchList.Add(pointerData);
-          break;
-        default:
-          throw new InternalErrorException(string.Format("Unsupported pointer type: {0}", (object) pointerType));
-      }
-    }
-
-    private void DispatchPointerUpAction(
-      string sourceId,
-      ActionObject actionObject,
-      PointerInputState inputState,
-      uint tickDuration,
-      PointI topLevelWindowPosition,
-      List<PointerData> tickPenList,
-      List<PointerData> tickTouchList)
-    {
-      PointerType pointerType = (PointerType) actionObject.Get("pointerType");
-      int num = (int) actionObject.Get("button");
-      if (!inputState.Pressed.Contains(num))
-        return;
-      int x = inputState.X;
-      int y = inputState.Y;
-      inputState.Pressed.Remove(num);
-      List<int> pressed = inputState.Pressed;
-      switch (pointerType)
-      {
-        case PointerType.Pen:
-        case PointerType.Touch:
-          int xScreen;
-          int yScreen;
-          this.ConvertClientToScreen(topLevelWindowPosition, x, y, out xScreen, out yScreen);
-          if (inputState.PointerId == -1)
-            throw new InternalErrorException("Pointer Up Action takes place on input state with uninitialized pointer id");
-          PointerData pointerData = new PointerData()
-          {
-            location = new PointI(xScreen, yScreen),
-            flags = POINTER_FLAGS.UP,
-            pointerId = (uint) inputState.PointerId
-          };
-          this.pointerIdRecylcleList.Add(inputState);
-          this.UpdateInputStateWithExtraPointerParameters(actionObject, inputState);
-          this.PopulatePointerDataWithExtraPointerParameters(inputState, ref pointerData);
-          if (pointerType == PointerType.Pen)
-          {
-            tickPenList.Add(pointerData);
-            break;
-          }
-          if (pointerType != PointerType.Touch)
-            break;
-          tickTouchList.Add(pointerData);
-          break;
-        default:
-          throw new InternalErrorException(string.Format("Unsupported pointer type: {0}", (object) pointerType));
-      }
-    }
-
-    private void DispatchPointerMoveAction(
-      string sourceId,
-      ActionObject actionObject,
-      PointerInputState inputState,
-      uint tickDuration,
-      PointI topLevelWindowPosition,
-      List<PointerData> tickPenList,
-      List<PointerData> tickTouchList,
-      List<List<PointerData>> tickPenInterpolation,
-      List<List<PointerData>> tickTouchInterpolation)
-    {
-      int num1 = (int) actionObject.Get("x");
-      int num2 = (int) actionObject.Get("y");
-      int x = inputState.X;
-      int y = inputState.Y;
-      OriginType originType = (OriginType) actionObject.Get("origin");
-      int targetX = 0;
-      int targetY = 0;
-      switch (originType)
-      {
-        case OriginType.Viewport:
-          targetX = num1;
-          targetY = num2;
-          break;
-        case OriginType.Pointer:
-          targetX = x + num1;
-          targetY = y + num2;
-          break;
-        case OriginType.Element:
-          string elementId = (string) actionObject.Get("element");
-          switch (this.SessionKnownElements.GetStatus(elementId))
-          {
-            case ResponseStatus.NoSuchElement:
-              throw new NoSuchElementException("Element " + elementId + " specified in the Actions origin is unknown or does not exist");
-            case ResponseStatus.StaleElementReference:
-              throw new NoSuchElementException("Element " + elementId + " specified in the Actions origin is no longer valid");
-            default:
-              UIObject uiObject = this.SessionKnownElements.Get(elementId);
-              if (uiObject == (UIObject) null)
-                throw new InternalErrorException("Internal error is encountered when retrieving element " + elementId + " coordinates specified in the Actions origin");
-              IntPtr levelWindowHandle = this.SessionTopLevelWindowHandle;
-              PointI rectangleTopLeft = uiObject.GetBoundingRectangleTopLeft(this.SessionTopLevelWindowHandle);
-              SizeI size = uiObject.GetAdjustedBoundingRectangle().Size;
-              int num3 = rectangleTopLeft.X + size.Width / 2;
-              int num4 = rectangleTopLeft.Y + size.Height / 2;
-              targetX = num3 + num1;
-              int num5 = num2;
-              targetY = num4 + num5;
-              break;
-          }
-          break;
-      }
-      uint duration = ((uint?) actionObject.Get("duration")).HasValue ? (uint) actionObject.Get("duration") : tickDuration;
-      this.UpdateInputStateWithExtraPointerParameters(actionObject, inputState);
-      this.PerformPointerMoveAction(sourceId, inputState, duration, x, y, targetX, targetY, topLevelWindowPosition, tickPenList, tickTouchList, tickPenInterpolation, tickTouchInterpolation);
-    }
-
-    private void PerformPointerMoveAction(
-      string sourceId,
-      PointerInputState inputState,
-      uint duration,
-      int startX,
-      int startY,
-      int targetX,
-      int targetY,
-      PointI topLevelWindowPosition,
-      List<PointerData> tickPenList,
-      List<PointerData> tickTouchList,
-      List<List<PointerData>> tickPenInterpolation,
-      List<List<PointerData>> tickTouchInterpolation)
-    {
-      PointerType subtype = inputState.Subtype;
-      int xClient = duration >= 50U ? startX : targetX;
-      int yClient = duration >= 50U ? startY : targetY;
-      int x = inputState.X;
-      int y = inputState.Y;
-      List<int> pressed = inputState.Pressed;
-      switch (subtype)
-      {
-        case PointerType.Mouse:
-        case PointerType.Wheel:
-          throw new NotImplementedException();
-        case PointerType.Pen:
-        case PointerType.Touch:
-          int xScreen;
-          int yScreen;
-          this.ConvertClientToScreen(topLevelWindowPosition, xClient, yClient, out xScreen, out yScreen);
-          if (inputState.PointerId == -1)
-            inputState.PointerId = ActionsHandler.availablePointerIdCollection.Get();
-          PointerData pointerData = new PointerData()
-          {
-            location = new PointI(xScreen, yScreen),
-            flags = POINTER_FLAGS.ContactMoves,
-            pointerId = (uint) inputState.PointerId
-          };
-          this.PopulatePointerDataWithExtraPointerParameters(inputState, ref pointerData);
-          if (inputState.Pressed.Count > 0)
-          {
-            switch (subtype)
-            {
-              case PointerType.Pen:
-                tickPenList.Add(pointerData);
-                break;
-              case PointerType.Touch:
-                tickTouchList.Add(pointerData);
-                break;
-            }
-            if (duration > 50U)
-            {
-              int startX1 = startX + topLevelWindowPosition.X;
-              int startY1 = startY + topLevelWindowPosition.Y;
-              int targetX1 = targetX + topLevelWindowPosition.X;
-              int targetY1 = targetY + topLevelWindowPosition.Y;
-              switch (subtype)
-              {
+        JToken ProcessPointerParameters(JToken parametersData) {
+            JToken jtoken1 = JObject.Parse(json: "{\"pointerType\" : \"mouse\"}");
+            if (parametersData == null)
+                return jtoken1;
+            var jtoken2 = parametersData.Type == JTokenType.Object ? parametersData[key: "pointerType"] : throw new ArgumentException(message: "\"parameters\" in JSON payload is not an Object");
+            var str = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException(message: "\"pointerType\" in JSON payload is undefined or is not a String");
+            var pointerType = (PointerType) Enum.Parse(enumType: typeof(PointerType), value: str, ignoreCase: true);
+            switch (pointerType) {
+                case PointerType.Mouse:
                 case PointerType.Pen:
-                  this.GenerateInterpolationFrames(duration, inputState.PointerId, startX1, startY1, targetX1, targetY1, tickPenInterpolation);
-                  break;
                 case PointerType.Touch:
-                  this.GenerateInterpolationFrames(duration, inputState.PointerId, startX1, startY1, targetX1, targetY1, tickTouchInterpolation);
-                  break;
-              }
-              xClient = targetX;
-              yClient = targetY;
+                    if (pointerType != PointerType.Pen && pointerType != PointerType.Touch)
+                        throw new NotImplementedException(message: "Currently only pen and touch pointer input source types are supported");
+                    jtoken1[key: "pointerType"] = str;
+                    return jtoken1;
+                default:
+                    throw new ArgumentException(message: "\"pointerType\" in JSON payload is not \"mouse\", \"pen\", or \"touch\"");
             }
-          }
-          inputState.X = xClient;
-          inputState.Y = yClient;
-          break;
-        default:
-          throw new NotSupportedException();
-      }
-    }
-
-    private void DispatchPointerCancelAction(
-      string sourceId,
-      ActionObject actionObject,
-      PointerInputState inputState,
-      uint tickDuration) => throw new NotImplementedException();
-
-    private void UpdateInputStateWithExtraPointerParameters(
-      ActionObject actionObject,
-      PointerInputState inputState)
-    {
-      inputState.Pressure = actionObject.Contains("pressure") ? (float?) actionObject.Get("pressure") : inputState.Pressure;
-      inputState.Twist = actionObject.Contains("twist") ? (int?) actionObject.Get("twist") : inputState.Twist;
-      inputState.TiltX = actionObject.Contains("tiltX") ? (int?) actionObject.Get("tiltX") : inputState.TiltX;
-      inputState.TiltY = actionObject.Contains("tiltY") ? (int?) actionObject.Get("tiltY") : inputState.TiltY;
-      PointerInputState pointerInputState1 = inputState;
-      float? nullable1;
-      double? nullable2;
-      if (!actionObject.Contains("width"))
-      {
-        nullable2 = inputState.Width;
-      }
-      else
-      {
-        nullable1 = (float?) actionObject.Get("width");
-        nullable2 = nullable1.HasValue ? new double?((double) nullable1.GetValueOrDefault()) : new double?();
-      }
-      pointerInputState1.Width = nullable2;
-      PointerInputState pointerInputState2 = inputState;
-      double? nullable3;
-      if (!actionObject.Contains("height"))
-      {
-        nullable3 = inputState.Height;
-      }
-      else
-      {
-        nullable1 = (float?) actionObject.Get("height");
-        nullable3 = nullable1.HasValue ? new double?((double) nullable1.GetValueOrDefault()) : new double?();
-      }
-      pointerInputState2.Height = nullable3;
-    }
-
-    private void PopulatePointerDataWithExtraPointerParameters(
-      PointerInputState inputState,
-      ref PointerData pointerData)
-    {
-      ref PointerData local1 = ref pointerData;
-      uint? nullable1;
-      if (!inputState.Pressure.HasValue)
-      {
-        nullable1 = new uint?();
-      }
-      else
-      {
-        float? pressure = inputState.Pressure;
-        float num = 1024f;
-        nullable1 = pressure.HasValue ? new uint?((uint) ((double) pressure.GetValueOrDefault() * (double) num)) : new uint?();
-      }
-      local1.pressure = nullable1;
-      ref PointerData local2 = ref pointerData;
-      int? nullable2;
-      uint? nullable3;
-      if (!inputState.Twist.HasValue)
-      {
-        nullable3 = new uint?();
-      }
-      else
-      {
-        nullable2 = inputState.Twist;
-        nullable3 = nullable2.HasValue ? new uint?((uint) nullable2.GetValueOrDefault()) : new uint?();
-      }
-      local2.twist = nullable3;
-      ref PointerData local3 = ref pointerData;
-      nullable2 = inputState.TiltX;
-      int? nullable4;
-      if (!nullable2.HasValue)
-      {
-        nullable2 = new int?();
-        nullable4 = nullable2;
-      }
-      else
-        nullable4 = inputState.TiltX;
-      local3.tiltX = nullable4;
-      ref PointerData local4 = ref pointerData;
-      nullable2 = inputState.TiltY;
-      int? nullable5;
-      if (!nullable2.HasValue)
-      {
-        nullable2 = new int?();
-        nullable5 = nullable2;
-      }
-      else
-        nullable5 = inputState.TiltY;
-      local4.tiltY = nullable5;
-      ref PointerData local5 = ref pointerData;
-      double? nullable6;
-      int? nullable7;
-      if (!inputState.Width.HasValue)
-      {
-        nullable2 = new int?();
-        nullable7 = nullable2;
-      }
-      else
-      {
-        nullable6 = inputState.Width;
-        if (!nullable6.HasValue)
-        {
-          nullable2 = new int?();
-          nullable7 = nullable2;
         }
-        else
-          nullable7 = new int?((int) nullable6.GetValueOrDefault());
-      }
-      local5.width = nullable7;
-      ref PointerData local6 = ref pointerData;
-      nullable6 = inputState.Height;
-      int? nullable8;
-      if (!nullable6.HasValue)
-      {
-        nullable2 = new int?();
-        nullable8 = nullable2;
-      }
-      else
-      {
-        nullable6 = inputState.Height;
-        if (!nullable6.HasValue)
-        {
-          nullable2 = new int?();
-          nullable8 = nullable2;
+
+        ActionObject ProcessNullAction(string id, JToken actionItem) {
+            var jtoken = actionItem[key: "type"];
+            var inputActionType = jtoken != null && jtoken.Type == JTokenType.String ? (InputActionType) Enum.Parse(enumType: typeof(InputActionType), value: jtoken.Value<string>(), ignoreCase: true) : throw new ArgumentException(message: "\"type\" in a null action JSON payload is undefined or is not a String");
+            var action = inputActionType == InputActionType.Pause ? new ActionObject(id: id, type: 0, subtype: (int) inputActionType) : throw new ArgumentException(message: "\"type\" in a null action JSON payload is not \"pause\"");
+            return ProcessPauseAction(actionItem: actionItem, action: action);
         }
-        else
-          nullable8 = new int?((int) nullable6.GetValueOrDefault());
-      }
-      local6.height = nullable8;
-      if (inputState.Pressed.Contains(5))
-        pointerData.pressedButton |= POINTER_PRESSED_BUTTON.INVERTED | POINTER_PRESSED_BUTTON.ERASER;
-      if (!inputState.Pressed.Contains(2))
-        return;
-      pointerData.pressedButton |= POINTER_PRESSED_BUTTON.BARREL;
-    }
 
-    private void GenerateInterpolationFrames(
-      uint duration,
-      int inputPointerId,
-      int startX,
-      int startY,
-      int targetX,
-      int targetY,
-      List<List<PointerData>> tickPointerInputInterpolationFrames)
-    {
-      float num1 = 50f;
-      float num2 = duration > 0U ? num1 / (float) duration : 1f;
-      int num3 = (int) ((double) duration / (double) num1);
-      for (int index = 0; index < num3; ++index)
-      {
-        if (tickPointerInputInterpolationFrames.Count < index + 1)
-          tickPointerInputInterpolationFrames.Add(new List<PointerData>());
-        int x = (int) Math.Round((double) (index + 1) * (double) num2 * (double) (targetX - startX)) + startX;
-        int y = (int) Math.Round((double) (index + 1) * (double) num2 * (double) (targetY - startY)) + startY;
-        PointerData pointerData = new PointerData()
-        {
-          location = new PointI(x, y),
-          flags = POINTER_FLAGS.ContactMoves,
-          pointerId = (uint) inputPointerId
-        };
-        tickPointerInputInterpolationFrames[index].Add(pointerData);
-      }
-    }
+        ActionObject ProcessKeyAction(string id, JToken actionItem) {
+            var jtoken1 = actionItem[key: "type"];
+            var inputActionType = jtoken1 != null && jtoken1.Type == JTokenType.String ? (InputActionType) Enum.Parse(enumType: typeof(InputActionType), value: jtoken1.Value<string>(), ignoreCase: true) : throw new ArgumentException(message: "\"type\" in a key action JSON payload is undefined or is not a String");
+            switch (inputActionType) {
+                case InputActionType.Pause:
+                case InputActionType.KeyDown:
+                case InputActionType.KeyUp:
+                    var action = new ActionObject(id: id, type: 1, subtype: (int) inputActionType);
+                    if (inputActionType == InputActionType.Pause)
+                        return ProcessPauseAction(actionItem: actionItem, action: action);
+                    var jtoken2 = actionItem[key: "value"];
+                    var str = jtoken2 != null && jtoken2.Type == JTokenType.String ? jtoken2.Value<string>() : throw new ArgumentException(message: "\"value\" in a key action JSON payload is undefined or is not a String");
+                    if (!str.IsNormalized())
+                        throw new ArgumentException(message: "\"value\" in a key action JSON payload is not a String containing a single unicode code point");
+                    action.Set(key: "value", value: str);
+                    return action;
+                default:
+                    throw new ArgumentException(message: "\"type\" in a key action JSON payload is not \"keyUp\", \"keyDown\", or \"pause\"");
+            }
+        }
 
-    private void ConvertClientToScreen(
-      PointI clientTopLeftPosition,
-      int xClient,
-      int yClient,
-      out int xScreen,
-      out int yScreen)
-    {
-      xScreen = xClient + clientTopLeftPosition.X;
-      yScreen = yClient + clientTopLeftPosition.Y;
-    }
+        ActionObject ProcessPointerAction(
+            string id,
+            JToken parameters,
+            JToken actionItem) {
+            var jtoken = actionItem[key: "type"];
+            var inputActionType = jtoken != null && jtoken.Type == JTokenType.String ? (InputActionType) Enum.Parse(enumType: typeof(InputActionType), value: jtoken.Value<string>(), ignoreCase: true) : throw new ArgumentException(message: "\"type\" in a pointer action JSON payload is undefined or is not a String");
+            switch (inputActionType) {
+                case InputActionType.Pause:
+                case InputActionType.PointerDown:
+                case InputActionType.PointerUp:
+                case InputActionType.PointerMove:
+                case InputActionType.PointerCancel:
+                    var action = new ActionObject(id: id, type: 2, subtype: (int) inputActionType);
+                    if (inputActionType == InputActionType.Pause)
+                        return ProcessPauseAction(actionItem: actionItem, action: action);
+                    var pointerType = (PointerType) Enum.Parse(enumType: typeof(PointerType), value: parameters[key: "pointerType"].Value<string>(), ignoreCase: true);
+                    action.Set(key: "pointerType", value: pointerType);
+                    if (inputActionType == InputActionType.PointerUp || inputActionType == InputActionType.PointerDown)
+                        ProcessPointerUpOrPointerDownAction(actionItem: actionItem, action: action);
+                    if (inputActionType == InputActionType.PointerMove)
+                        ProcessPointerMoveAction(actionItem: actionItem, action: action);
+                    if (inputActionType == InputActionType.PointerCancel)
+                        ProcessPointerCancelAction(actionItem: actionItem, action: action);
+                    return action;
+                default:
+                    throw new ArgumentException(message: "\"type\" in a pointer action JSON payload is not \"pause\", \"pointerUp\", \"pointerDown\", \"pointerMove\", or \"pointerCancel\"");
+            }
+        }
 
-    internal void PerformActions(string ActionsJSONString) => this.DispatchActions(this.ExtractActionSequence(JToken.Parse(ActionsJSONString)));
+        ActionObject ProcessPauseAction(JToken actionItem, ActionObject action) {
+            var jtoken = actionItem[key: "duration"];
+            if (jtoken != null && (jtoken.Type != JTokenType.Integer || jtoken.Value<int>() < 0))
+                throw new ArgumentException(message: "\"duration\" in a null action JSON payload is not an Integer greater than or equal to 0");
+            action.Set(key: "duration", value: jtoken.Value<uint>());
+            return action;
+        }
 
-    internal void ReleaseActions()
-    {
-      ActionSequence tickActions = new ActionSequence((IEnumerable<ActionObject>) this.InputCancelList);
-      tickActions.Reverse();
-      this.DispatchTickActions(tickActions, 0U, new PointI());
-      this.InputCancelList.Clear();
-      this.InputStateTable.Clear();
-      this.ActiveInputSources.Clear();
+        void ProcessPointerUpOrPointerDownAction(JToken actionItem, ActionObject action) {
+            var jtoken = actionItem[key: "button"];
+            if (jtoken == null || jtoken.Type != JTokenType.Integer || jtoken.Value<int>() < 0)
+                throw new ArgumentException(message: "\"button\" in a pointer action JSON payload is undefined or is not an Integer greater than or equal to 0");
+            action.Set(key: "button", value: jtoken.Value<int>());
+            ProcessExtraPointerParameters(actionItem: actionItem, action: action);
+        }
+
+        void ProcessPointerMoveAction(JToken actionItem, ActionObject action) {
+            var jtoken1 = actionItem[key: "duration"];
+            if (jtoken1 != null && (jtoken1.Type != JTokenType.Integer || jtoken1.Value<int>() < 0))
+                throw new ArgumentException(message: "\"duration\" in a pointer action JSON payload is not an Integer greater than or equal to 0");
+            action.Set(key: "duration", value: jtoken1.Value<uint>());
+            var jtoken2 = actionItem[key: "origin"] ?? new JValue(value: "viewport");
+            string str = null;
+            var nullable1 = new OriginType?();
+            if (jtoken2.Type == JTokenType.Object) {
+                foreach (var child in jtoken2.Children())
+                    if (child.Type == JTokenType.Property && child is JProperty jproperty && jproperty.Name.Contains(value: "element")) {
+                        str = jproperty.Value.Value<string>();
+                        nullable1 = OriginType.Element;
+                        action.Set(key: "element", value: str);
+                        break;
+                    }
+            } else if (jtoken2.Type == JTokenType.String) {
+                nullable1 = (OriginType) Enum.Parse(enumType: typeof(OriginType), value: jtoken2.Value<string>(), ignoreCase: true);
+            }
+
+            var nullable2 = nullable1;
+            var originType1 = OriginType.Viewport;
+            if (!((nullable2.GetValueOrDefault() == originType1) & nullable2.HasValue)) {
+                var nullable3 = nullable1;
+                var originType2 = OriginType.Pointer;
+                if (!((nullable3.GetValueOrDefault() == originType2) & nullable3.HasValue) && string.IsNullOrEmpty(value: str))
+                    throw new ArgumentException(message: "\"origin\" in a action JSON payload is not equal to \"viewport\" or \"pointer\" and element is not an Object that represents a web element");
+            }
+
+            action.Set(key: "origin", value: nullable1);
+            var jtoken3 = actionItem[key: "x"];
+            if (jtoken3 == null && jtoken3.Type != JTokenType.Integer)
+                throw new ArgumentException(message: "\"x\" in a pointer action JSON payload is not an Integer");
+            action.Set(key: "x", value: jtoken3.Value<int>());
+            var jtoken4 = actionItem[key: "y"];
+            if (jtoken4 == null && jtoken4.Type != JTokenType.Integer)
+                throw new ArgumentException(message: "\"y\" in a pointer action JSON payload is not an Integer");
+            action.Set(key: "y", value: jtoken4.Value<int>());
+            ProcessExtraPointerParameters(actionItem: actionItem, action: action);
+        }
+
+        void ProcessExtraPointerParameters(JToken actionItem, ActionObject action) {
+            var jtoken1 = actionItem[key: "width"];
+            if (jtoken1 != null) {
+                if (jtoken1.Type != JTokenType.Float || jtoken1.Value<float>() < 1.0)
+                    throw new ArgumentException(message: "\"width\" attribute is not a floating point value greater or equal to 1");
+                action.Set(key: "width", value: jtoken1.Value<float>());
+            }
+
+            var jtoken2 = actionItem[key: "height"];
+            if (jtoken2 != null) {
+                if (jtoken2.Type != JTokenType.Float || jtoken2.Value<float>() < 1.0)
+                    throw new ArgumentException(message: "\"height\" attribute is not a floating point value greater or equal to 1");
+                action.Set(key: "height", value: jtoken2.Value<float>());
+            }
+
+            if (jtoken1 != null && jtoken2 == null || jtoken1 == null && jtoken2 != null)
+                throw new ArgumentException(message: "\"width\" and \"height\" attributes need to be specified together");
+            var jtoken3 = actionItem[key: "pressure"];
+            if (jtoken3 != null) {
+                if (jtoken3.Type != JTokenType.Float || jtoken3.Value<float>() < 0.0 || jtoken3.Value<float>() > 1.0)
+                    throw new ArgumentException(message: "\"pressure\" attribute is not a floating point value between 0 and 1");
+                action.Set(key: "pressure", value: jtoken3.Value<float>());
+            }
+
+            var jtoken4 = actionItem[key: "tiltX"];
+            if (jtoken4 != null) {
+                if (jtoken4.Type != JTokenType.Integer || jtoken4.Value<int>() < -90 || jtoken4.Value<int>() > 90)
+                    throw new ArgumentException(message: "\"tiltX\" attribute is not an integer value between -90 and 90");
+                action.Set(key: "tiltX", value: jtoken4.Value<int>());
+            }
+
+            var jtoken5 = actionItem[key: "tiltY"];
+            if (jtoken5 != null) {
+                if (jtoken5.Type != JTokenType.Integer || jtoken5.Value<int>() < -90 || jtoken5.Value<int>() > 90)
+                    throw new ArgumentException(message: "\"tiltY\" attribute is not an integer value between -90 and 90");
+                action.Set(key: "tiltY", value: jtoken5.Value<int>());
+            }
+
+            var jtoken6 = actionItem[key: "twist"];
+            if (jtoken6 == null)
+                return;
+            if (jtoken6.Type != JTokenType.Integer || jtoken6.Value<int>() < 0 || jtoken6.Value<int>() >= 360)
+                throw new ArgumentException(message: "\"twist\" attribute is not an integer value between 0 and 359");
+            action.Set(key: "twist", value: jtoken6.Value<int>());
+        }
+
+        void ProcessPointerCancelAction(JToken actionItem, ActionObject action) {
+            throw new NotImplementedException(message: "Process a pointer cancel action is not implemented");
+        }
+
+        void DispatchActions(ActionsByTick actionsByTick) {
+            this.pointerIdRecylcleList = new List<PointerInputState>();
+            int xScreen;
+            int yScreen;
+            PositionAdapter.ConvertClientToScreen(hwnd: this.SessionTopLevelWindowHandle, xClient: 0, yClient: 0, xScreen: out xScreen, yScreen: out yScreen);
+            var topLevelWindowPosition = new PointI(x: xScreen, y: yScreen);
+            foreach (var tickActions in actionsByTick) {
+                var tickDuration = ComputeTickDuration(tickActions: tickActions);
+                var stopwatch = Stopwatch.StartNew();
+                DispatchTickActions(tickActions: tickActions, tickDuration: tickDuration, topLevelWindowPosition: topLevelWindowPosition);
+                stopwatch.Stop();
+                if (stopwatch.ElapsedMilliseconds < tickDuration)
+                    Thread.Sleep(timeout: TimeSpan.FromMilliseconds(value: tickDuration).Subtract(ts: stopwatch.Elapsed));
+            }
+
+            foreach (var pointerIdRecylcle in this.pointerIdRecylcleList)
+                if (pointerIdRecylcle.Pressed.Count == 0 && pointerIdRecylcle.PointerId != -1) {
+                    var pointerId = pointerIdRecylcle.PointerId;
+                    pointerIdRecylcle.PointerId = -1;
+                    availablePointerIdCollection.Recycle(pointerId: pointerId);
+                }
+
+            this.pointerIdRecylcleList.Clear();
+        }
+
+        uint ComputeTickDuration(ActionSequence tickActions) {
+            uint num1 = 0;
+            foreach (var tickAction in tickActions) {
+                var nullable1 = new uint?();
+                if (tickAction.Subtype == 0 || tickAction.Type == 2 && tickAction.Subtype == 5)
+                    nullable1 = (uint?) tickAction.Get(key: "duration");
+                if (nullable1.HasValue) {
+                    var nullable2 = nullable1;
+                    var num2 = num1;
+                    if ((nullable2.GetValueOrDefault() > num2) & nullable2.HasValue)
+                        num1 = nullable1.Value;
+                }
+            }
+
+            return num1;
+        }
+
+        void DispatchTickActions(
+            ActionSequence tickActions,
+            uint tickDuration,
+            PointI topLevelWindowPosition) {
+            var tickPenList = new List<PointerData>();
+            var tickTouchList = new List<PointerData>();
+            var pointerDataListList1 = new List<List<PointerData>>();
+            var pointerDataListList2 = new List<List<PointerData>>();
+            var stopwatch = Stopwatch.StartNew();
+            foreach (var tickAction in tickActions) {
+                var id = tickAction.Id;
+                var type = (InputSourceType) tickAction.Type;
+                if (!this.InputStateTable.ContainsKey(key: id))
+                    switch (type) {
+                        case InputSourceType.None:
+                            this.InputStateTable.Add(key: id, value: new NullInputState());
+                            break;
+                        case InputSourceType.Key:
+                            this.InputStateTable.Add(key: id, value: new KeyInputState());
+                            break;
+                        case InputSourceType.Pointer:
+                            this.InputStateTable.Add(key: id, value: new PointerInputState(subtype: (PointerType) tickAction.Get(key: "pointerType")));
+                            break;
+                    }
+
+                var inputSourceState = this.InputStateTable[key: id];
+                switch (tickAction.Subtype) {
+                    case 0:
+                        DispatchPauseAction(sourceId: id, actionObject: tickAction, inputState: (NullInputState) inputSourceState, tickDuration: tickDuration);
+                        continue;
+                    case 1:
+                        DispatchKeyDownAction(sourceId: id, actionObject: tickAction, inputState: (KeyInputState) inputSourceState, tickDuration: tickDuration);
+                        continue;
+                    case 2:
+                        DispatchKeyUpAction(sourceId: id, actionObject: tickAction, inputState: (KeyInputState) inputSourceState, tickDuration: tickDuration);
+                        continue;
+                    case 3:
+                        DispatchPointerDownAction(sourceId: id, actionObject: tickAction, inputState: (PointerInputState) inputSourceState, tickDuration: tickDuration, topLevelWindowPosition: topLevelWindowPosition, tickPenList: tickPenList, tickTouchList: tickTouchList);
+                        continue;
+                    case 4:
+                        DispatchPointerUpAction(sourceId: id, actionObject: tickAction, inputState: (PointerInputState) inputSourceState, tickDuration: tickDuration, topLevelWindowPosition: topLevelWindowPosition, tickPenList: tickPenList, tickTouchList: tickTouchList);
+                        continue;
+                    case 5:
+                        DispatchPointerMoveAction(sourceId: id, actionObject: tickAction, inputState: (PointerInputState) inputSourceState, tickDuration: tickDuration, topLevelWindowPosition: topLevelWindowPosition, tickPenList: tickPenList, tickTouchList: tickTouchList, tickPenInterpolation: pointerDataListList1, tickTouchInterpolation: pointerDataListList2);
+                        continue;
+                    case 6:
+                        DispatchPointerCancelAction(sourceId: id, actionObject: tickAction, inputState: (PointerInputState) inputSourceState, tickDuration: tickDuration);
+                        continue;
+                    default:
+                        throw new InternalErrorException(message: string.Format(format: "Action object subtype is not known: {0}", arg0: tickAction.Subtype));
+                }
+            }
+
+            if (tickTouchList.Count > 0)
+                using (InputController.Activate(inputType: PointerInputType.MultiTouch)) {
+                    var pointerDataArray = new PointerData[tickTouchList.Count];
+                    tickTouchList.CopyTo(array: pointerDataArray);
+                    PointerInput.InjectPointers(pointerDataArray: pointerDataArray);
+                }
+
+            if (tickPenList.Count > 1)
+                throw new ArgumentException(message: "Currently only a single (non-concurrent) pen input is supported");
+            if (tickPenList.Count > 0)
+                using (InputController.Activate(inputType: PointerInputType.Pen)) {
+                    var pointerDataArray = new PointerData[tickPenList.Count];
+                    tickPenList.CopyTo(array: pointerDataArray);
+                    PointerInput.InjectPointers(pointerDataArray: pointerDataArray);
+                }
+
+            if (pointerDataListList1.Count <= 0 && pointerDataListList2.Count <= 0)
+                return;
+            PerformInterpolationFrames(tickPenInterpolationFrames: pointerDataListList1, tickTouchInterpolationFrames: pointerDataListList2, tickElapsedMs: stopwatch.ElapsedMilliseconds);
+        }
+
+        void PerformInterpolationFrames(
+            List<List<PointerData>> tickPenInterpolationFrames,
+            List<List<PointerData>> tickTouchInterpolationFrames,
+            long tickElapsedMs) {
+            var stopwatch = Stopwatch.StartNew();
+            var index1 = 0;
+            var index2 = 0;
+            while (index1 < tickPenInterpolationFrames.Count || index2 < tickTouchInterpolationFrames.Count) {
+                if (index1 < tickPenInterpolationFrames.Count) {
+                    using (InputController.Activate(inputType: PointerInputType.Pen)) {
+                        var pointerDataArray = new PointerData[tickPenInterpolationFrames[index: index1].Count];
+                        tickPenInterpolationFrames[index: index1].CopyTo(array: pointerDataArray);
+                        PointerInput.InjectPointers(pointerDataArray: pointerDataArray);
+                    }
+
+                    ++index1;
+                }
+
+                if (index2 < tickTouchInterpolationFrames.Count) {
+                    using (InputController.Activate(inputType: PointerInputType.MultiTouch)) {
+                        var pointerDataArray = new PointerData[tickTouchInterpolationFrames[index: index2].Count];
+                        tickTouchInterpolationFrames[index: index2].CopyTo(array: pointerDataArray);
+                        PointerInput.InjectPointers(pointerDataArray: pointerDataArray);
+                    }
+
+                    ++index2;
+                }
+
+                if (stopwatch.ElapsedMilliseconds + tickElapsedMs < 50L)
+                    Thread.Sleep(millisecondsTimeout: (int) (50L - tickElapsedMs - stopwatch.ElapsedMilliseconds));
+                stopwatch.Restart();
+                tickElapsedMs = 0L;
+            }
+        }
+
+        void DispatchPauseAction(
+            string sourceId,
+            ActionObject actionObject,
+            NullInputState inputState,
+            uint tickDuration) {
+        }
+
+        void DispatchKeyDownAction(
+            string sourceId,
+            ActionObject actionObject,
+            KeyInputState inputState,
+            uint tickDuration) {
+            var str = (string) actionObject.Get(key: "value");
+            var normalisedKey = Keys.GetNormalisedKey(key: str);
+            inputState.Pressed.Contains(item: normalisedKey);
+            Keys.GetShiftedCharacterCode(key: str);
+            Keys.GetKeyLocation(key: str);
+            if (normalisedKey == "Alt")
+                inputState.Alt = true;
+            if (normalisedKey == "Shift")
+                inputState.Shift = true;
+            if (normalisedKey == "Control")
+                inputState.Ctrl = true;
+            if (normalisedKey == "Meta")
+                inputState.Meta = true;
+            inputState.Pressed.Add(item: normalisedKey);
+            var text = KeyboardInput.Process(inputKeySequences: str);
+            if (text.Length <= 0)
+                return;
+            TextInput.SendText(text: text);
+        }
+
+        void DispatchKeyUpAction(
+            string sourceId,
+            ActionObject actionObject,
+            KeyInputState inputState,
+            uint tickDuration) {
+            var str = (string) actionObject.Get(key: "value");
+            var normalisedKey = Keys.GetNormalisedKey(key: str);
+            if (!inputState.Pressed.Contains(item: normalisedKey))
+                return;
+            Keys.GetShiftedCharacterCode(key: str);
+            Keys.GetKeyLocation(key: str);
+            if (normalisedKey == "Alt")
+                inputState.Alt = false;
+            if (normalisedKey == "Shift")
+                inputState.Shift = false;
+            if (normalisedKey == "Control")
+                inputState.Ctrl = false;
+            if (normalisedKey == "Meta")
+                inputState.Meta = false;
+            inputState.Pressed.Remove(item: normalisedKey);
+            var text = KeyboardInput.Process(inputKeySequences: str);
+            if (text.Length <= 0)
+                return;
+            TextInput.SendText(text: text);
+        }
+
+        void DispatchPointerDownAction(
+            string sourceId,
+            ActionObject actionObject,
+            PointerInputState inputState,
+            uint tickDuration,
+            PointI topLevelWindowPosition,
+            List<PointerData> tickPenList,
+            List<PointerData> tickTouchList) {
+            var pointerType = (PointerType) actionObject.Get(key: "pointerType");
+            var num = (int) actionObject.Get(key: "button");
+            if (inputState.Pressed.Contains(item: num))
+                return;
+            var x = inputState.X;
+            var y = inputState.Y;
+            inputState.Pressed.Add(item: num);
+            var pressed = inputState.Pressed;
+            var actionObject1 = actionObject.Copy();
+            actionObject1.Subtype = 4;
+            this.InputCancelList.Add(item: actionObject1);
+            switch (pointerType) {
+                case PointerType.Pen:
+                case PointerType.Touch:
+                    int xScreen;
+                    int yScreen;
+                    ConvertClientToScreen(clientTopLeftPosition: topLevelWindowPosition, xClient: x, yClient: y, xScreen: out xScreen, yScreen: out yScreen);
+                    if (inputState.PointerId == -1)
+                        inputState.PointerId = availablePointerIdCollection.Get();
+                    var pointerData = new PointerData {
+                        location = new PointI(x: xScreen, y: yScreen),
+                        flags = POINTER_FLAGS.ContactDown,
+                        pointerId = (uint) inputState.PointerId
+                    };
+                    UpdateInputStateWithExtraPointerParameters(actionObject: actionObject, inputState: inputState);
+                    PopulatePointerDataWithExtraPointerParameters(inputState: inputState, pointerData: ref pointerData);
+                    if (pointerType == PointerType.Pen) {
+                        tickPenList.Add(item: pointerData);
+                        break;
+                    }
+
+                    if (pointerType != PointerType.Touch)
+                        break;
+                    tickTouchList.Add(item: pointerData);
+                    break;
+                default:
+                    throw new InternalErrorException(message: string.Format(format: "Unsupported pointer type: {0}", arg0: pointerType));
+            }
+        }
+
+        void DispatchPointerUpAction(
+            string sourceId,
+            ActionObject actionObject,
+            PointerInputState inputState,
+            uint tickDuration,
+            PointI topLevelWindowPosition,
+            List<PointerData> tickPenList,
+            List<PointerData> tickTouchList) {
+            var pointerType = (PointerType) actionObject.Get(key: "pointerType");
+            var num = (int) actionObject.Get(key: "button");
+            if (!inputState.Pressed.Contains(item: num))
+                return;
+            var x = inputState.X;
+            var y = inputState.Y;
+            inputState.Pressed.Remove(item: num);
+            var pressed = inputState.Pressed;
+            switch (pointerType) {
+                case PointerType.Pen:
+                case PointerType.Touch:
+                    int xScreen;
+                    int yScreen;
+                    ConvertClientToScreen(clientTopLeftPosition: topLevelWindowPosition, xClient: x, yClient: y, xScreen: out xScreen, yScreen: out yScreen);
+                    if (inputState.PointerId == -1)
+                        throw new InternalErrorException(message: "Pointer Up Action takes place on input state with uninitialized pointer id");
+                    var pointerData = new PointerData {
+                        location = new PointI(x: xScreen, y: yScreen),
+                        flags = POINTER_FLAGS.UP,
+                        pointerId = (uint) inputState.PointerId
+                    };
+                    this.pointerIdRecylcleList.Add(item: inputState);
+                    UpdateInputStateWithExtraPointerParameters(actionObject: actionObject, inputState: inputState);
+                    PopulatePointerDataWithExtraPointerParameters(inputState: inputState, pointerData: ref pointerData);
+                    if (pointerType == PointerType.Pen) {
+                        tickPenList.Add(item: pointerData);
+                        break;
+                    }
+
+                    if (pointerType != PointerType.Touch)
+                        break;
+                    tickTouchList.Add(item: pointerData);
+                    break;
+                default:
+                    throw new InternalErrorException(message: string.Format(format: "Unsupported pointer type: {0}", arg0: pointerType));
+            }
+        }
+
+        void DispatchPointerMoveAction(
+            string sourceId,
+            ActionObject actionObject,
+            PointerInputState inputState,
+            uint tickDuration,
+            PointI topLevelWindowPosition,
+            List<PointerData> tickPenList,
+            List<PointerData> tickTouchList,
+            List<List<PointerData>> tickPenInterpolation,
+            List<List<PointerData>> tickTouchInterpolation) {
+            var num1 = (int) actionObject.Get(key: "x");
+            var num2 = (int) actionObject.Get(key: "y");
+            var x = inputState.X;
+            var y = inputState.Y;
+            var originType = (OriginType) actionObject.Get(key: "origin");
+            var targetX = 0;
+            var targetY = 0;
+            switch (originType) {
+                case OriginType.Viewport:
+                    targetX = num1;
+                    targetY = num2;
+                    break;
+                case OriginType.Pointer:
+                    targetX = x + num1;
+                    targetY = y + num2;
+                    break;
+                case OriginType.Element:
+                    var elementId = (string) actionObject.Get(key: "element");
+                    switch (this.SessionKnownElements.GetStatus(elementId: elementId)) {
+                        case ResponseStatus.NoSuchElement:
+                            throw new NoSuchElementException(message: "Element " + elementId + " specified in the Actions origin is unknown or does not exist");
+                        case ResponseStatus.StaleElementReference:
+                            throw new NoSuchElementException(message: "Element " + elementId + " specified in the Actions origin is no longer valid");
+                        default:
+                            var uiObject = this.SessionKnownElements.Get(elementId: elementId);
+                            if (uiObject == null)
+                                throw new InternalErrorException(message: "Internal error is encountered when retrieving element " + elementId + " coordinates specified in the Actions origin");
+                            var levelWindowHandle = this.SessionTopLevelWindowHandle;
+                            var rectangleTopLeft = uiObject.GetBoundingRectangleTopLeft(appRootWindowHandle: this.SessionTopLevelWindowHandle);
+                            var size = uiObject.GetAdjustedBoundingRectangle().Size;
+                            var num3 = rectangleTopLeft.X + size.Width / 2;
+                            var num4 = rectangleTopLeft.Y + size.Height / 2;
+                            targetX = num3 + num1;
+                            var num5 = num2;
+                            targetY = num4 + num5;
+                            break;
+                    }
+
+                    break;
+            }
+
+            var duration = ((uint?) actionObject.Get(key: "duration")).HasValue ? (uint) actionObject.Get(key: "duration") : tickDuration;
+            UpdateInputStateWithExtraPointerParameters(actionObject: actionObject, inputState: inputState);
+            PerformPointerMoveAction(sourceId: sourceId, inputState: inputState, duration: duration, startX: x, startY: y, targetX: targetX, targetY: targetY, topLevelWindowPosition: topLevelWindowPosition, tickPenList: tickPenList, tickTouchList: tickTouchList, tickPenInterpolation: tickPenInterpolation, tickTouchInterpolation: tickTouchInterpolation);
+        }
+
+        void PerformPointerMoveAction(
+            string sourceId,
+            PointerInputState inputState,
+            uint duration,
+            int startX,
+            int startY,
+            int targetX,
+            int targetY,
+            PointI topLevelWindowPosition,
+            List<PointerData> tickPenList,
+            List<PointerData> tickTouchList,
+            List<List<PointerData>> tickPenInterpolation,
+            List<List<PointerData>> tickTouchInterpolation) {
+            var subtype = inputState.Subtype;
+            var xClient = duration >= 50U ? startX : targetX;
+            var yClient = duration >= 50U ? startY : targetY;
+            var x = inputState.X;
+            var y = inputState.Y;
+            var pressed = inputState.Pressed;
+            switch (subtype) {
+                case PointerType.Mouse:
+                case PointerType.Wheel:
+                    throw new NotImplementedException();
+                case PointerType.Pen:
+                case PointerType.Touch:
+                    int xScreen;
+                    int yScreen;
+                    ConvertClientToScreen(clientTopLeftPosition: topLevelWindowPosition, xClient: xClient, yClient: yClient, xScreen: out xScreen, yScreen: out yScreen);
+                    if (inputState.PointerId == -1)
+                        inputState.PointerId = availablePointerIdCollection.Get();
+                    var pointerData = new PointerData {
+                        location = new PointI(x: xScreen, y: yScreen),
+                        flags = POINTER_FLAGS.ContactMoves,
+                        pointerId = (uint) inputState.PointerId
+                    };
+                    PopulatePointerDataWithExtraPointerParameters(inputState: inputState, pointerData: ref pointerData);
+                    if (inputState.Pressed.Count > 0) {
+                        switch (subtype) {
+                            case PointerType.Pen:
+                                tickPenList.Add(item: pointerData);
+                                break;
+                            case PointerType.Touch:
+                                tickTouchList.Add(item: pointerData);
+                                break;
+                        }
+
+                        if (duration > 50U) {
+                            var startX1 = startX + topLevelWindowPosition.X;
+                            var startY1 = startY + topLevelWindowPosition.Y;
+                            var targetX1 = targetX + topLevelWindowPosition.X;
+                            var targetY1 = targetY + topLevelWindowPosition.Y;
+                            switch (subtype) {
+                                case PointerType.Pen:
+                                    GenerateInterpolationFrames(duration: duration, inputPointerId: inputState.PointerId, startX: startX1, startY: startY1, targetX: targetX1, targetY: targetY1, tickPointerInputInterpolationFrames: tickPenInterpolation);
+                                    break;
+                                case PointerType.Touch:
+                                    GenerateInterpolationFrames(duration: duration, inputPointerId: inputState.PointerId, startX: startX1, startY: startY1, targetX: targetX1, targetY: targetY1, tickPointerInputInterpolationFrames: tickTouchInterpolation);
+                                    break;
+                            }
+
+                            xClient = targetX;
+                            yClient = targetY;
+                        }
+                    }
+
+                    inputState.X = xClient;
+                    inputState.Y = yClient;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        void DispatchPointerCancelAction(
+            string sourceId,
+            ActionObject actionObject,
+            PointerInputState inputState,
+            uint tickDuration) {
+            throw new NotImplementedException();
+        }
+
+        void UpdateInputStateWithExtraPointerParameters(
+            ActionObject actionObject,
+            PointerInputState inputState) {
+            inputState.Pressure = actionObject.Contains(key: "pressure") ? (float?) actionObject.Get(key: "pressure") : inputState.Pressure;
+            inputState.Twist = actionObject.Contains(key: "twist") ? (int?) actionObject.Get(key: "twist") : inputState.Twist;
+            inputState.TiltX = actionObject.Contains(key: "tiltX") ? (int?) actionObject.Get(key: "tiltX") : inputState.TiltX;
+            inputState.TiltY = actionObject.Contains(key: "tiltY") ? (int?) actionObject.Get(key: "tiltY") : inputState.TiltY;
+            var pointerInputState1 = inputState;
+            float? nullable1;
+            double? nullable2;
+            if (!actionObject.Contains(key: "width")) {
+                nullable2 = inputState.Width;
+            } else {
+                nullable1 = (float?) actionObject.Get(key: "width");
+                nullable2 = nullable1.HasValue ? nullable1.GetValueOrDefault() : new double?();
+            }
+
+            pointerInputState1.Width = nullable2;
+            var pointerInputState2 = inputState;
+            double? nullable3;
+            if (!actionObject.Contains(key: "height")) {
+                nullable3 = inputState.Height;
+            } else {
+                nullable1 = (float?) actionObject.Get(key: "height");
+                nullable3 = nullable1.HasValue ? nullable1.GetValueOrDefault() : new double?();
+            }
+
+            pointerInputState2.Height = nullable3;
+        }
+
+        void PopulatePointerDataWithExtraPointerParameters(
+            PointerInputState inputState,
+            ref PointerData pointerData) {
+            ref var local1 = ref pointerData;
+            uint? nullable1;
+            if (!inputState.Pressure.HasValue) {
+                nullable1 = new uint?();
+            } else {
+                var pressure = inputState.Pressure;
+                var num = 1024f;
+                nullable1 = pressure.HasValue ? (uint) (pressure.GetValueOrDefault() * (double) num) : new uint?();
+            }
+
+            local1.pressure = nullable1;
+            ref var local2 = ref pointerData;
+            int? nullable2;
+            uint? nullable3;
+            if (!inputState.Twist.HasValue) {
+                nullable3 = new uint?();
+            } else {
+                nullable2 = inputState.Twist;
+                nullable3 = nullable2.HasValue ? (uint) nullable2.GetValueOrDefault() : new uint?();
+            }
+
+            local2.twist = nullable3;
+            ref var local3 = ref pointerData;
+            nullable2 = inputState.TiltX;
+            int? nullable4;
+            if (!nullable2.HasValue) {
+                nullable2 = new int?();
+                nullable4 = nullable2;
+            } else {
+                nullable4 = inputState.TiltX;
+            }
+
+            local3.tiltX = nullable4;
+            ref var local4 = ref pointerData;
+            nullable2 = inputState.TiltY;
+            int? nullable5;
+            if (!nullable2.HasValue) {
+                nullable2 = new int?();
+                nullable5 = nullable2;
+            } else {
+                nullable5 = inputState.TiltY;
+            }
+
+            local4.tiltY = nullable5;
+            ref var local5 = ref pointerData;
+            double? nullable6;
+            int? nullable7;
+            if (!inputState.Width.HasValue) {
+                nullable2 = new int?();
+                nullable7 = nullable2;
+            } else {
+                nullable6 = inputState.Width;
+                if (!nullable6.HasValue) {
+                    nullable2 = new int?();
+                    nullable7 = nullable2;
+                } else {
+                    nullable7 = (int) nullable6.GetValueOrDefault();
+                }
+            }
+
+            local5.width = nullable7;
+            ref var local6 = ref pointerData;
+            nullable6 = inputState.Height;
+            int? nullable8;
+            if (!nullable6.HasValue) {
+                nullable2 = new int?();
+                nullable8 = nullable2;
+            } else {
+                nullable6 = inputState.Height;
+                if (!nullable6.HasValue) {
+                    nullable2 = new int?();
+                    nullable8 = nullable2;
+                } else {
+                    nullable8 = (int) nullable6.GetValueOrDefault();
+                }
+            }
+
+            local6.height = nullable8;
+            if (inputState.Pressed.Contains(item: 5))
+                pointerData.pressedButton |= POINTER_PRESSED_BUTTON.INVERTED | POINTER_PRESSED_BUTTON.ERASER;
+            if (!inputState.Pressed.Contains(item: 2))
+                return;
+            pointerData.pressedButton |= POINTER_PRESSED_BUTTON.BARREL;
+        }
+
+        void GenerateInterpolationFrames(
+            uint duration,
+            int inputPointerId,
+            int startX,
+            int startY,
+            int targetX,
+            int targetY,
+            List<List<PointerData>> tickPointerInputInterpolationFrames) {
+            var num1 = 50f;
+            var num2 = duration > 0U ? num1 / duration : 1f;
+            var num3 = (int) (duration / (double) num1);
+            for (var index = 0; index < num3; ++index) {
+                if (tickPointerInputInterpolationFrames.Count < index + 1)
+                    tickPointerInputInterpolationFrames.Add(item: new List<PointerData>());
+                var x = (int) Math.Round(a: (index + 1) * (double) num2 * (targetX - startX)) + startX;
+                var y = (int) Math.Round(a: (index + 1) * (double) num2 * (targetY - startY)) + startY;
+                var pointerData = new PointerData {
+                    location = new PointI(x: x, y: y),
+                    flags = POINTER_FLAGS.ContactMoves,
+                    pointerId = (uint) inputPointerId
+                };
+                tickPointerInputInterpolationFrames[index: index].Add(item: pointerData);
+            }
+        }
+
+        void ConvertClientToScreen(
+            PointI clientTopLeftPosition,
+            int xClient,
+            int yClient,
+            out int xScreen,
+            out int yScreen) {
+            xScreen = xClient + clientTopLeftPosition.X;
+            yScreen = yClient + clientTopLeftPosition.Y;
+        }
+
+        internal void PerformActions(string ActionsJSONString) {
+            DispatchActions(actionsByTick: ExtractActionSequence(parameters: JToken.Parse(json: ActionsJSONString)));
+        }
+
+        internal void ReleaseActions() {
+            var tickActions = new ActionSequence(collection: this.InputCancelList);
+            tickActions.Reverse();
+            DispatchTickActions(tickActions: tickActions, tickDuration: 0U, topLevelWindowPosition: new PointI());
+            this.InputCancelList.Clear();
+            this.InputStateTable.Clear();
+            this.ActiveInputSources.Clear();
+        }
     }
-  }
 }

@@ -8,41 +8,42 @@ using System.Collections.Generic;
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class RichTextBlock : TextBlock
-  {
-    private static IFactory<RichTextBlock> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class RichTextBlock : TextBlock {
+        static IFactory<RichTextBlock> _factory;
 
-    public RichTextBlock(UIObject uiObject)
-      : base(uiObject)
-    {
+        public RichTextBlock(UIObject uiObject)
+            : base(uiObject: uiObject) {
+        }
+
+        public RichTextBlock(AutomationElement element)
+            : base(element: element) {
+        }
+
+        public List<TextPatternRange> TextRegionsByFormat {
+            get { return GetTextPatternRanges(textUnit: TextUnit.Format); }
+        }
+
+        public List<TextPatternRange> TextRegionsByParagraph {
+            get { return GetTextPatternRanges(textUnit: TextUnit.Paragraph); }
+        }
+
+        public List<TextPatternRange> TextRegionsByPage {
+            get { return GetTextPatternRanges(textUnit: TextUnit.Page); }
+        }
+
+        public static IFactory<RichTextBlock> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new RichTextBlockFactory();
+                return _factory;
+            }
+        }
+
+        class RichTextBlockFactory : IFactory<RichTextBlock> {
+            public RichTextBlock Create(UIObject element) {
+                return new RichTextBlock(uiObject: element);
+            }
+        }
     }
-
-    public RichTextBlock(AutomationElement element)
-      : base(element)
-    {
-    }
-
-    public List<TextPatternRange> TextRegionsByFormat => this.GetTextPatternRanges(TextUnit.Format);
-
-    public List<TextPatternRange> TextRegionsByParagraph => this.GetTextPatternRanges(TextUnit.Paragraph);
-
-    public List<TextPatternRange> TextRegionsByPage => this.GetTextPatternRanges(TextUnit.Page);
-
-    public static IFactory<RichTextBlock> Factory
-    {
-      get
-      {
-        if (RichTextBlock._factory == null)
-          RichTextBlock._factory = (IFactory<RichTextBlock>) new RichTextBlock.RichTextBlockFactory();
-        return RichTextBlock._factory;
-      }
-    }
-
-    private class RichTextBlockFactory : IFactory<RichTextBlock>
-    {
-      public RichTextBlock Create(UIObject element) => new RichTextBlock(element);
-    }
-  }
 }

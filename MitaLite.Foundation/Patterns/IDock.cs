@@ -6,12 +6,9 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IDock
-  {
-    void SetDockPosition(DockPosition position);
-
-    DockPosition DockPosition { get; }
-  }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IDock {
+        DockPosition DockPosition { get; }
+        void SetDockPosition(DockPosition position);
+    }
 }

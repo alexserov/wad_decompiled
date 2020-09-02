@@ -7,30 +7,28 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class TextInput
-  {
-    private static Stack<ITextInput> _textInputStack = new Stack<ITextInput>();
+namespace MS.Internal.Mita.Foundation {
+    public static class TextInput {
+        static readonly Stack<ITextInput> _textInputStack = new Stack<ITextInput>();
 
-    public static void SendText(string text) => TextInput.Current.SendText(text);
+        public static ITextInput Current {
+            get {
+                if (_textInputStack.Count == 0)
+                    lock (_textInputStack) {
+                        if (_textInputStack.Count == 0)
+                            _textInputStack.Push(item: Keyboard.Instance);
+                    }
 
-    public static IDisposable Activate(ITextInput textInput) => (IDisposable) new InputControllerMartyr<ITextInput>(TextInput._textInputStack, textInput);
-
-    public static ITextInput Current
-    {
-      get
-      {
-        if (TextInput._textInputStack.Count == 0)
-        {
-          lock (TextInput._textInputStack)
-          {
-            if (TextInput._textInputStack.Count == 0)
-              TextInput._textInputStack.Push((ITextInput) Keyboard.Instance);
-          }
+                return _textInputStack.Peek();
+            }
         }
-        return TextInput._textInputStack.Peek();
-      }
+
+        public static void SendText(string text) {
+            Current.SendText(text: text);
+        }
+
+        public static IDisposable Activate(ITextInput textInput) {
+            return new InputControllerMartyr<ITextInput>(inputStack: _textInputStack, inputController: textInput);
+        }
     }
-  }
 }

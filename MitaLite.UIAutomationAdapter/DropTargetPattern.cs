@@ -6,23 +6,24 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class DropTargetPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<DropTargetPattern, IUIAutomationDropTargetPattern>(10031, "DropTargetPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationDropTargetPattern, DropTargetPattern>(DropTargetPattern.Wrap));
-    public static readonly AutomationProperty DropTargetEffectProperty = new AutomationProperty(30142, "DropTargetPatternIdentifiers.DropTargetEffectProperty");
-    public static readonly AutomationProperty DropTargetEffectsProperty = new AutomationProperty(30143, "DropTargetPatternIdentifiers.DropTargetEffectsProperty");
-    private readonly IUIAutomationDropTargetPattern _dropTargetPattern;
+namespace System.Windows.Automation {
+    public class DropTargetPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<DropTargetPattern, IUIAutomationDropTargetPattern>(id: 10031, programmaticName: "DropTargetPatternIdentifiers.Pattern", wrap: Wrap);
+        public static readonly AutomationProperty DropTargetEffectProperty = new AutomationProperty(id: 30142, programmaticName: "DropTargetPatternIdentifiers.DropTargetEffectProperty");
+        public static readonly AutomationProperty DropTargetEffectsProperty = new AutomationProperty(id: 30143, programmaticName: "DropTargetPatternIdentifiers.DropTargetEffectsProperty");
+        readonly IUIAutomationDropTargetPattern _dropTargetPattern;
 
-    private DropTargetPattern(
-      AutomationElement element,
-      IUIAutomationDropTargetPattern dropTargetPattern)
-      : base(element)
-      => this._dropTargetPattern = dropTargetPattern;
+        DropTargetPattern(
+            AutomationElement element,
+            IUIAutomationDropTargetPattern dropTargetPattern)
+            : base(el: element) {
+            this._dropTargetPattern = dropTargetPattern;
+        }
 
-    internal static DropTargetPattern Wrap(
-      AutomationElement element,
-      IUIAutomationDropTargetPattern dropTargetPattern) => new DropTargetPattern(element, dropTargetPattern);
-  }
+        internal static DropTargetPattern Wrap(
+            AutomationElement element,
+            IUIAutomationDropTargetPattern dropTargetPattern) {
+            return new DropTargetPattern(element: element, dropTargetPattern: dropTargetPattern);
+        }
+    }
 }

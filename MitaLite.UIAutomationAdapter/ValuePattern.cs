@@ -6,43 +6,52 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ValuePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = ValuePatternIdentifiers.Pattern;
-    public static readonly AutomationProperty ValueProperty = ValuePatternIdentifiers.ValueProperty;
-    public static readonly AutomationProperty IsReadOnlyProperty = ValuePatternIdentifiers.IsReadOnlyProperty;
-    private readonly IUIAutomationValuePattern _valuePattern;
+namespace System.Windows.Automation {
+    public class ValuePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = ValuePatternIdentifiers.Pattern;
+        public static readonly AutomationProperty ValueProperty = ValuePatternIdentifiers.ValueProperty;
+        public static readonly AutomationProperty IsReadOnlyProperty = ValuePatternIdentifiers.IsReadOnlyProperty;
+        readonly IUIAutomationValuePattern _valuePattern;
 
-    private ValuePattern(AutomationElement element, IUIAutomationValuePattern valuePattern)
-      : base(element)
-      => this._valuePattern = valuePattern;
+        ValuePattern(AutomationElement element, IUIAutomationValuePattern valuePattern)
+            : base(el: element) {
+            this._valuePattern = valuePattern;
+        }
 
-    internal static ValuePattern Wrap(
-      AutomationElement element,
-      IUIAutomationValuePattern valuePattern) => new ValuePattern(element, valuePattern);
+        public ValuePatternInformation Cached {
+            get { return new ValuePatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void SetValue(string value) => this._valuePattern.SetValue(value);
+        public ValuePatternInformation Current {
+            get { return new ValuePatternInformation(el: this._el, useCache: false); }
+        }
 
-    public ValuePattern.ValuePatternInformation Cached => new ValuePattern.ValuePatternInformation(this._el, true);
+        internal static ValuePattern Wrap(
+            AutomationElement element,
+            IUIAutomationValuePattern valuePattern) {
+            return new ValuePattern(element: element, valuePattern: valuePattern);
+        }
 
-    public ValuePattern.ValuePatternInformation Current => new ValuePattern.ValuePatternInformation(this._el, false);
+        public void SetValue(string value) {
+            this._valuePattern.SetValue(val: value);
+        }
 
-    public struct ValuePatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct ValuePatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal ValuePatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal ValuePatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public string Value => this._el.GetPatternPropertyValue(ValuePattern.ValueProperty, this._useCache).ToString();
+            public string Value {
+                get { return this._el.GetPatternPropertyValue(property: ValueProperty, useCache: this._useCache).ToString(); }
+            }
 
-      public bool IsReadOnly => (bool) this._el.GetPatternPropertyValue(ValuePattern.IsReadOnlyProperty, this._useCache);
+            public bool IsReadOnly {
+                get { return (bool) this._el.GetPatternPropertyValue(property: IsReadOnlyProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

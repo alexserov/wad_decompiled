@@ -7,44 +7,40 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class InputControllerMartyr<T> : IDisposable
-  {
-    private Stack<T> _inputControllerStack;
-    private T _currentController;
+namespace MS.Internal.Mita.Foundation {
+    internal class InputControllerMartyr<T> : IDisposable {
+        T _currentController;
+        readonly Stack<T> _inputControllerStack;
 
-    private InputControllerMartyr()
-    {
+        InputControllerMartyr() {
+        }
+
+        public InputControllerMartyr(Stack<T> inputStack, T inputController) {
+            this._inputControllerStack = inputStack;
+            this._currentController = inputController;
+            lock (this._inputControllerStack) {
+                this._inputControllerStack.Push(item: inputController);
+            }
+        }
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        ~InputControllerMartyr() {
+            Dispose(disposing: false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!disposing)
+                return;
+            lock (this._inputControllerStack) {
+                if (!this._inputControllerStack.Peek().Equals(obj: this._currentController))
+                    return;
+                this._inputControllerStack.Pop();
+                this._currentController = default;
+            }
+        }
     }
-
-    public InputControllerMartyr(Stack<T> inputStack, T inputController)
-    {
-      this._inputControllerStack = inputStack;
-      this._currentController = inputController;
-      lock (this._inputControllerStack)
-        this._inputControllerStack.Push(inputController);
-    }
-
-    ~InputControllerMartyr() => this.Dispose(false);
-
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposing)
-        return;
-      lock (this._inputControllerStack)
-      {
-        if (!this._inputControllerStack.Peek().Equals((object) this._currentController))
-          return;
-        this._inputControllerStack.Pop();
-        this._currentController = default (T);
-      }
-    }
-  }
 }

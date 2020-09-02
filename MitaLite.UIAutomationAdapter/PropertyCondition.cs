@@ -6,39 +6,40 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class PropertyCondition : Condition
-  {
-    public PropertyCondition(AutomationProperty property, object value) => this.Init(property, value);
-
-    public AutomationProperty Property => this.IUIAutomationCondition is IUIAutomationPropertyCondition automationCondition ? AutomationProperty.LookupById(automationCondition.propertyId) : (AutomationProperty) null;
-
-    public object Value => this.IUIAutomationCondition is IUIAutomationPropertyCondition automationCondition ? automationCondition.PropertyValue.ToObject() : (object) null;
-
-    public PropertyConditionFlags Flags => PropertyConditionFlags.None;
-
-    private void Init(AutomationProperty property, object value)
-    {
-      if (property == AutomationElement.ControlTypeProperty)
-      {
-        switch (value)
-        {
-          case ControlType controlType2:
-            this._condition = System.Windows.Automation.Automation.AutomationClass.CreatePropertyCondition(property.Id, controlType2.Id.ToVariant());
-            break;
-          case int _:
-            ControlType controlType1 = ControlType.LookupById(int.Parse(value.ToString()));
-            this._condition = controlType1 == null ? (IUIAutomationCondition) null : System.Windows.Automation.Automation.AutomationClass.CreatePropertyCondition(property.Id, controlType1.Id.ToVariant());
-            break;
+namespace System.Windows.Automation {
+    public class PropertyCondition : Condition {
+        public PropertyCondition(AutomationProperty property, object value) {
+            Init(property: property, value: value);
         }
-      }
-      else
-      {
-        Variant variant = value.ToVariant();
-        this._condition = System.Windows.Automation.Automation.AutomationClass.CreatePropertyCondition(property.Id, variant);
-        variant.Free();
-      }
+
+        public AutomationProperty Property {
+            get { return IUIAutomationCondition is IUIAutomationPropertyCondition automationCondition ? AutomationProperty.LookupById(id: automationCondition.propertyId) : null; }
+        }
+
+        public object Value {
+            get { return IUIAutomationCondition is IUIAutomationPropertyCondition automationCondition ? automationCondition.PropertyValue.ToObject() : null; }
+        }
+
+        public PropertyConditionFlags Flags {
+            get { return PropertyConditionFlags.None; }
+        }
+
+        void Init(AutomationProperty property, object value) {
+            if (property == AutomationElement.ControlTypeProperty) {
+                switch (value) {
+                    case ControlType controlType2:
+                        this._condition = Automation.AutomationClass.CreatePropertyCondition(propertyId: property.Id, value: controlType2.Id.ToVariant());
+                        break;
+                    case int _:
+                        var controlType1 = ControlType.LookupById(id: int.Parse(s: value.ToString()));
+                        this._condition = controlType1 == null ? null : Automation.AutomationClass.CreatePropertyCondition(propertyId: property.Id, value: controlType1.Id.ToVariant());
+                        break;
+                }
+            } else {
+                var variant = value.ToVariant();
+                this._condition = Automation.AutomationClass.CreatePropertyCondition(propertyId: property.Id, value: variant);
+                variant.Free();
+            }
+        }
     }
-  }
 }

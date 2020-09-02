@@ -6,155 +6,179 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class MultiTouch : IMultiPointGestureInput, ISinglePointGestureInput, IPointerInput, IDisposable
-  {
-    private static object _classLock = new object();
-    private static MultiTouch _singletonInstance;
-    private IInputManager _inputManager = (IInputManager) new InputManager(INPUT_DEVICE_TYPE.TOUCH, (IInputDeviceFactory) new InputDeviceFactory(), (ITimeManagerFactory) new TimeManagerFactory(), (IInputAlgorithms) new InputAlgorithms());
-    private PointI[] _location = new PointI[(int) MultiTouch.MaxNumberOfContacts];
-    private readonly uint DefaultFirstFingerUpTapDelta = 100;
-    private readonly uint DefaultContactId;
-    private bool _disposed;
-    private static readonly uint MaxNumberOfContacts = 10;
+namespace MS.Internal.Mita.Foundation {
+    internal class MultiTouch : IMultiPointGestureInput, ISinglePointGestureInput, IPointerInput, IDisposable {
+        static readonly object _classLock = new object();
+        static MultiTouch _singletonInstance;
+        static readonly uint MaxNumberOfContacts = 10;
+        readonly uint DefaultContactId;
+        readonly uint DefaultFirstFingerUpTapDelta = 100;
+        bool _disposed;
+        IInputManager _inputManager = new InputManager(inputType: INPUT_DEVICE_TYPE.TOUCH, inputFactory: new InputDeviceFactory(), timeFactory: new TimeManagerFactory(), inputAlgorithms: new InputAlgorithms());
+        readonly PointI[] _location = new PointI[(int) MaxNumberOfContacts];
 
-    protected MultiTouch()
-    {
-    }
-
-    ~MultiTouch() => this.Dispose(false);
-
-    public static MultiTouch Instance
-    {
-      get
-      {
-        if (MultiTouch._singletonInstance == null)
-        {
-          lock (MultiTouch._classLock)
-          {
-            if (MultiTouch._singletonInstance == null)
-              MultiTouch._singletonInstance = new MultiTouch();
-          }
+        protected MultiTouch() {
         }
-        return MultiTouch._singletonInstance;
-      }
-    }
 
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
+        public static MultiTouch Instance {
+            get {
+                if (_singletonInstance == null)
+                    lock (_classLock) {
+                        if (_singletonInstance == null)
+                            _singletonInstance = new MultiTouch();
+                    }
 
-    private void Dispose(bool disposing)
-    {
-      try
-      {
-        if (this._disposed || !disposing)
-          return;
-        this._inputManager.Dispose();
-        this._inputManager = (IInputManager) null;
-      }
-      finally
-      {
-        this._disposed = true;
-      }
-    }
+                return _singletonInstance;
+            }
+        }
 
-    public void Flick(PointI endPoint, uint holdDuration, float acceleration) => this._inputManager.InjectPressAndDragWithAcceleration(this.Location, Input.AdjustPointerMoveInput(endPoint), holdDuration, acceleration, InputManager.DefaultPacketDelta);
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
 
-    public void Pan(PointI endPoint, uint holdDuration, float acceleration) => this._inputManager.InjectPressAndDragWithAcceleration(this.Location, Input.AdjustPointerMoveInput(endPoint), holdDuration, acceleration, InputManager.DefaultPacketDelta);
+        public void Flick(PointI endPoint, uint holdDuration, float acceleration) {
+            this._inputManager.InjectPressAndDragWithAcceleration(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), holdDuration: holdDuration, acceleration: acceleration, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void PressAndDrag(PointI endPoint, uint dragDuration) => this._inputManager.InjectPressAndDrag(this.Location, Input.AdjustPointerMoveInput(endPoint), dragDuration, InputManager.DefaultPressDuration, InputManager.DefaultPacketDelta);
+        public void Pan(PointI endPoint, uint holdDuration, float acceleration) {
+            this._inputManager.InjectPressAndDragWithAcceleration(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), holdDuration: holdDuration, acceleration: acceleration, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void PressAndDrag(PointI endPoint, uint dragDuration, uint pressDuration) => this._inputManager.InjectPressAndDrag(this.Location, Input.AdjustPointerMoveInput(endPoint), dragDuration, pressDuration, InputManager.DefaultPacketDelta);
+        public void PressAndDrag(PointI endPoint, uint dragDuration) {
+            this._inputManager.InjectPressAndDrag(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), dragDuration: dragDuration, holdDuration: InputManager.DefaultPressDuration, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void PressAndHold(uint holdDuration) => this._inputManager.InjectPress(this.Location, holdDuration, 1U, InputManager.DefaultTapDelta, InputManager.DefaultPacketDelta);
+        public void PressAndDrag(PointI endPoint, uint dragDuration, uint pressDuration) {
+            this._inputManager.InjectPressAndDrag(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), dragDuration: dragDuration, holdDuration: pressDuration, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void Click(PointerButtons button, int count) => this._inputManager.InjectPress(this.Location, InputManager.DefaultPressDuration, (uint) count, InputManager.DefaultTapDelta, InputManager.DefaultPacketDelta);
+        public void PressAndHold(uint holdDuration) {
+            this._inputManager.InjectPress(point: Location, holdDuration: holdDuration, tapCount: 1U, tapDelta: InputManager.DefaultTapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration) => this.PressAndDrag(endPoint, dragDuration);
+        public void Click(PointerButtons button, int count) {
+            this._inputManager.InjectPress(point: Location, holdDuration: InputManager.DefaultPressDuration, tapCount: (uint) count, tapDelta: InputManager.DefaultTapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void Move(PointI point) => this.Move(point, this.DefaultContactId);
+        public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration) {
+            PressAndDrag(endPoint: endPoint, dragDuration: dragDuration);
+        }
 
-    public void Press(PointerButtons button) => this._inputManager.InjectDynamicPress(this.Location, this.DefaultContactId);
+        public void Move(PointI point) {
+            Move(point: point, contactId: this.DefaultContactId);
+        }
 
-    public void Release(PointerButtons button) => this._inputManager.InjectDynamicRelease(this.Location, this.DefaultContactId);
+        public void Press(PointerButtons button) {
+            this._inputManager.InjectDynamicPress(touchPoint: Location, contactId: this.DefaultContactId);
+        }
 
-    public void InjectPointers(PointerData[] pointerDataArray) => this._inputManager.InjectDynamicPointers(pointerDataArray);
+        public void Release(PointerButtons button) {
+            this._inputManager.InjectDynamicRelease(touchPoint: Location, contactId: this.DefaultContactId);
+        }
 
-    public PointI Location => this.GetLocationOfContact(this.DefaultContactId);
+        public void InjectPointers(PointerData[] pointerDataArray) {
+            this._inputManager.InjectDynamicPointers(pointerDataArray: pointerDataArray);
+        }
 
-    public void PressAndTap(uint tapCount, uint tapDuration, uint tapDelta, uint distance) => this._inputManager.InjectMTPressAndTap(this.Location, this.CreateSecondFingerPointFromDistance(distance, 180f), this.Location, tapDelta, tapDuration, this.DefaultFirstFingerUpTapDelta, InputManager.DefaultPacketDelta);
+        public PointI Location {
+            get { return GetLocationOfContact(contactId: this.DefaultContactId); }
+        }
 
-    public void TwoPointPressAndHold(
-      uint tapCount,
-      uint holdDuration,
-      uint tapDelta,
-      uint distance) => this._inputManager.InjectMTTwoFingerPress(this.Location, this.CreateSecondFingerPointFromDistance(distance, 180f), holdDuration, tapCount, tapDelta, InputManager.DefaultPacketDelta);
+        public void PressAndTap(uint tapCount, uint tapDuration, uint tapDelta, uint distance) {
+            this._inputManager.InjectMTPressAndTap(startFingerOne: Location, startFingerTwo: CreateSecondFingerPointFromDistance(distance: distance, direction: 180f), endFingerOne: Location, deltaFingerTwoDown: tapDelta, deltaFingerTwoUp: tapDuration, deltaFingerOneUp: this.DefaultFirstFingerUpTapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void TwoPointPan(PointI endPoint, uint holdDuration, float acceleration, uint distance)
-    {
-      PointI pointI = Input.AdjustPointerMoveInput(endPoint);
-      uint distance1 = (uint) Math.Round(Math.Sqrt((double) ((pointI.Y - this.Location.Y) * (pointI.Y - this.Location.Y) + (pointI.X - this.Location.X) * (pointI.X - this.Location.X))));
-      float direction = (float) (Math.Atan2((double) (pointI.Y - this.Location.Y), (double) (pointI.X - this.Location.X)) * (180.0 / Math.PI));
-      this._inputManager.InjectMTPanWithAcceleration(this.Location, this.CreateSecondFingerPointFromDistance(distance, direction + 90f), direction, distance1, holdDuration, acceleration, InputManager.DefaultPacketDelta);
-    }
+        public void TwoPointPressAndHold(
+            uint tapCount,
+            uint holdDuration,
+            uint tapDelta,
+            uint distance) {
+            this._inputManager.InjectMTTwoFingerPress(pointOne: Location, pointTwo: CreateSecondFingerPointFromDistance(distance: distance, direction: 180f), holdDuration: holdDuration, tapCount: tapCount, tapDelta: tapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void Pinch(float direction, uint duration, uint startDistance, uint endDistance) => this.Pinch(direction, duration, startDistance, endDistance, false);
+        public void TwoPointPan(PointI endPoint, uint holdDuration, float acceleration, uint distance) {
+            var pointI = Input.AdjustPointerMoveInput(originalPoint: endPoint);
+            var distance1 = (uint) Math.Round(a: Math.Sqrt(d: (pointI.Y - Location.Y) * (pointI.Y - Location.Y) + (pointI.X - Location.X) * (pointI.X - Location.X)));
+            var direction = (float) (Math.Atan2(y: pointI.Y - Location.Y, x: pointI.X - Location.X) * (180.0 / Math.PI));
+            this._inputManager.InjectMTPanWithAcceleration(startFingerOne: Location, startFingerTwo: CreateSecondFingerPointFromDistance(distance: distance, direction: direction + 90f), direction: direction, distance: distance1, holdDuration: holdDuration, acceleration: acceleration, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void Pinch(
-      float direction,
-      uint duration,
-      uint startDistance,
-      uint endDistance,
-      bool pivot)
-    {
-      PointI pointFromDistance = this.CreateSecondFingerPointFromDistance(startDistance, direction);
-      uint distance = pivot ? startDistance - endDistance : (startDistance - endDistance) / 2U;
-      direction = (float) (((double) direction + 180.0) % 360.0);
-      this._inputManager.InjectMTZoom(this.Location, pointFromDistance, direction, duration, distance, pivot, InputManager.DefaultPacketDelta);
-    }
+        public void Pinch(float direction, uint duration, uint startDistance, uint endDistance) {
+            Pinch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance, pivot: false);
+        }
 
-    public void Stretch(float direction, uint duration, uint startDistance, uint endDistance) => this.Stretch(direction, duration, startDistance, endDistance, false);
+        public void Pinch(
+            float direction,
+            uint duration,
+            uint startDistance,
+            uint endDistance,
+            bool pivot) {
+            var pointFromDistance = CreateSecondFingerPointFromDistance(distance: startDistance, direction: direction);
+            var distance = pivot ? startDistance - endDistance : (startDistance - endDistance) / 2U;
+            direction = (float) ((direction + 180.0) % 360.0);
+            this._inputManager.InjectMTZoom(startFingerOne: Location, startFingerTwo: pointFromDistance, direction: direction, duration: duration, distance: distance, pivotZoom: pivot, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void Stretch(
-      float direction,
-      uint duration,
-      uint startDistance,
-      uint endDistance,
-      bool pivot)
-    {
-      PointI pointFromDistance = this.CreateSecondFingerPointFromDistance(startDistance, direction);
-      uint distance = pivot ? endDistance - startDistance : (endDistance - startDistance) / 2U;
-      this._inputManager.InjectMTZoom(this.Location, pointFromDistance, direction, duration, distance, pivot, InputManager.DefaultPacketDelta);
-    }
+        public void Stretch(float direction, uint duration, uint startDistance, uint endDistance) {
+            Stretch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance, pivot: false);
+        }
 
-    public void Rotate(float angle, uint duration, bool centerOnPoint, uint distance) => this._inputManager.InjectMTRotate(this.Location, this.CreateSecondFingerPointFromDistance(distance, 180f), angle, duration, centerOnPoint, InputManager.DefaultPacketDelta);
+        public void Stretch(
+            float direction,
+            uint duration,
+            uint startDistance,
+            uint endDistance,
+            bool pivot) {
+            var pointFromDistance = CreateSecondFingerPointFromDistance(distance: startDistance, direction: direction);
+            var distance = pivot ? endDistance - startDistance : (endDistance - startDistance) / 2U;
+            this._inputManager.InjectMTZoom(startFingerOne: Location, startFingerTwo: pointFromDistance, direction: direction, duration: duration, distance: distance, pivotZoom: pivot, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    public void InjectMultiPointGesture(MultiTouchInjectionData[] injectionData) => this._inputManager.InjectMultiTouch(injectionData, InputManager.DefaultPacketDelta);
+        public void Rotate(float angle, uint duration, bool centerOnPoint, uint distance) {
+            this._inputManager.InjectMTRotate(startFingerOne: Location, startFingerTwo: CreateSecondFingerPointFromDistance(distance: distance, direction: 180f), rotationAngle: angle, duration: duration, pivotRotate: centerOnPoint, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    private void Move(PointI point, uint contactId)
-    {
-      PointI start = contactId < MultiTouch.MaxNumberOfContacts && contactId >= 0U ? this._location[(int) contactId] : throw new ArgumentOutOfRangeException(nameof (contactId), "The given contact Id does not exist.");
-      this._location[(int) contactId] = Input.AdjustPointerMoveInput(point);
-      this._inputManager.InjectDynamicMove(start, this._location[(int) contactId], SinglePointGesture.DefaultDragDuration, this.DefaultContactId, InputManager.DefaultPacketDelta);
-    }
+        public void InjectMultiPointGesture(MultiTouchInjectionData[] injectionData) {
+            this._inputManager.InjectMultiTouch(injectionData: injectionData, packetDelta: InputManager.DefaultPacketDelta);
+        }
 
-    private PointI GetLocationOfContact(uint contactId) => contactId < MultiTouch.MaxNumberOfContacts && contactId >= 0U ? this._location[(int) contactId] : throw new ArgumentOutOfRangeException(nameof (contactId), "The given contact Id does not exist.");
+        ~MultiTouch() {
+            Dispose(disposing: false);
+        }
 
-        private PointI CreateSecondFingerPointFromDistance(uint distance, float direction) {
+        void Dispose(bool disposing) {
+            try {
+                if (this._disposed || !disposing)
+                    return;
+                this._inputManager.Dispose();
+                this._inputManager = null;
+            } finally {
+                this._disposed = true;
+            }
+        }
+
+        void Move(PointI point, uint contactId) {
+            var start = contactId < MaxNumberOfContacts && contactId >= 0U ? this._location[(int) contactId] : throw new ArgumentOutOfRangeException(paramName: nameof(contactId), message: "The given contact Id does not exist.");
+            this._location[(int) contactId] = Input.AdjustPointerMoveInput(originalPoint: point);
+            this._inputManager.InjectDynamicMove(start: start, end: this._location[(int) contactId], maxDragDuration: SinglePointGesture.DefaultDragDuration, contactId: this.DefaultContactId, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        PointI GetLocationOfContact(uint contactId) {
+            return contactId < MaxNumberOfContacts && contactId >= 0U ? this._location[(int) contactId] : throw new ArgumentOutOfRangeException(paramName: nameof(contactId), message: "The given contact Id does not exist.");
+        }
+
+        PointI CreateSecondFingerPointFromDistance(uint distance, float direction) {
             PointI pointI;
-            PointI location = this.Location;
-            int x = location.X;
-            location = this.Location;
-            int y = location.Y;
-            pointI = new PointI(x, y);
-            double num = (double)direction * Math.PI / 180.0;
-            pointI.X += (int)((double)distance * Math.Cos(num));
-            pointI.Y -= (int)((double)distance * Math.Sin(num));
+            var location = Location;
+            var x = location.X;
+            location = Location;
+            var y = location.Y;
+            pointI = new PointI(x: x, y: y);
+            var num = direction * Math.PI / 180.0;
+            pointI.X += (int) (distance * Math.Cos(d: num));
+            pointI.Y -= (int) (distance * Math.Sin(a: num));
             return pointI;
         }
-  }
+    }
 }

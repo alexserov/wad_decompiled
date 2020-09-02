@@ -6,40 +6,47 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class DockPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = DockPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty DockPositionProperty = DockPatternIdentifiers.DockPositionProperty;
-    private readonly IUIAutomationDockPattern _dockPattern;
+namespace System.Windows.Automation {
+    public class DockPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = DockPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty DockPositionProperty = DockPatternIdentifiers.DockPositionProperty;
+        readonly IUIAutomationDockPattern _dockPattern;
 
-    private DockPattern(AutomationElement element, IUIAutomationDockPattern dockPattern)
-      : base(element)
-      => this._dockPattern = dockPattern;
+        DockPattern(AutomationElement element, IUIAutomationDockPattern dockPattern)
+            : base(el: element) {
+            this._dockPattern = dockPattern;
+        }
 
-    internal static DockPattern Wrap(
-      AutomationElement element,
-      IUIAutomationDockPattern dockPattern) => new DockPattern(element, dockPattern);
+        public DockPatternInformation Cached {
+            get { return new DockPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void SetDockPosition(DockPosition dockPosition) => this._dockPattern.SetDockPosition(UiaConvert.Convert(dockPosition));
+        public DockPatternInformation Current {
+            get { return new DockPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public DockPattern.DockPatternInformation Cached => new DockPattern.DockPatternInformation(this._el, true);
+        internal static DockPattern Wrap(
+            AutomationElement element,
+            IUIAutomationDockPattern dockPattern) {
+            return new DockPattern(element: element, dockPattern: dockPattern);
+        }
 
-    public DockPattern.DockPatternInformation Current => new DockPattern.DockPatternInformation(this._el, false);
+        public void SetDockPosition(DockPosition dockPosition) {
+            this._dockPattern.SetDockPosition(dockPos: UiaConvert.Convert(position: dockPosition));
+        }
 
-    public struct DockPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct DockPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal DockPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal DockPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public DockPosition DockPosition => (DockPosition) this._el.GetPatternPropertyValue(DockPattern.DockPositionProperty, this._useCache);
+            public DockPosition DockPosition {
+                get { return (DockPosition) this._el.GetPatternPropertyValue(property: DockPositionProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

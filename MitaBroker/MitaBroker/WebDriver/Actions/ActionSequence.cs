@@ -6,17 +6,13 @@
 
 using System.Collections.Generic;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal sealed class ActionSequence : List<ActionObject>
-  {
-    public ActionSequence()
-    {
-    }
+namespace MitaBroker.WebDriver.Actions {
+    internal sealed class ActionSequence : List<ActionObject> {
+        public ActionSequence() {
+        }
 
-    public ActionSequence(IEnumerable<ActionObject> collection)
-      : base(collection)
-    {
+        public ActionSequence(IEnumerable<ActionObject> collection)
+            : base(collection: collection) {
+        }
     }
-  }
 }

@@ -8,34 +8,30 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal static class RuntimeId
-  {
-    private const char _delimiter = '.';
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal static class RuntimeId {
+        const char _delimiter = '.';
 
-    public static int[] PartsFromString(string runtimeIdString)
-    {
-      string[] strArray = runtimeIdString.Split('.');
-      int length = strArray.Length;
-      int[] numArray = new int[length];
-      for (int index = 0; index < length; ++index)
-        numArray[index] = int.Parse(strArray[index], (IFormatProvider) CultureInfo.InvariantCulture);
-      return numArray;
-    }
+        public static int[] PartsFromString(string runtimeIdString) {
+            var strArray = runtimeIdString.Split(separator: '.');
+            var length = strArray.Length;
+            var numArray = new int[length];
+            for (var index = 0; index < length; ++index)
+                numArray[index] = int.Parse(s: strArray[index], provider: CultureInfo.InvariantCulture);
+            return numArray;
+        }
 
-    public static string StringFromParts(int[] runtimeIdParts)
-    {
-      int index1 = runtimeIdParts.Length - 1;
-      StringBuilder stringBuilder = new StringBuilder();
-      for (int index2 = 0; index2 < index1; ++index2)
-      {
-        stringBuilder.Append(Convert.ToString(runtimeIdParts[index2], (IFormatProvider) CultureInfo.InvariantCulture));
-        stringBuilder.Append('.');
-      }
-      if (index1 >= 0)
-        stringBuilder.Append(Convert.ToString(runtimeIdParts[index1], (IFormatProvider) CultureInfo.InvariantCulture));
-      return stringBuilder.ToString();
+        public static string StringFromParts(int[] runtimeIdParts) {
+            var index1 = runtimeIdParts.Length - 1;
+            var stringBuilder = new StringBuilder();
+            for (var index2 = 0; index2 < index1; ++index2) {
+                stringBuilder.Append(value: Convert.ToString(value: runtimeIdParts[index2], provider: CultureInfo.InvariantCulture));
+                stringBuilder.Append(value: '.');
+            }
+
+            if (index1 >= 0)
+                stringBuilder.Append(value: Convert.ToString(value: runtimeIdParts[index1], provider: CultureInfo.InvariantCulture));
+            return stringBuilder.ToString();
+        }
     }
-  }
 }

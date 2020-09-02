@@ -6,14 +6,11 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public interface IEventSource : IDisposable
-  {
-    void Start(IEventSink sink);
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public interface IEventSource : IDisposable {
+        bool IsStarted { get; }
+        void Start(IEventSink sink);
 
-    void Stop();
-
-    bool IsStarted { get; }
-  }
+        void Stop();
+    }
 }

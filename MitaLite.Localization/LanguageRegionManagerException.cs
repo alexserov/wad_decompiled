@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Localization
-{
-  public class LanguageRegionManagerException : Exception
-  {
-    public LanguageRegionManagerException()
-    {
-    }
+namespace MS.Internal.Mita.Localization {
+    public class LanguageRegionManagerException : Exception {
+        public LanguageRegionManagerException() {
+        }
 
-    public LanguageRegionManagerException(string message)
-      : base(message)
-    {
-    }
+        public LanguageRegionManagerException(string message)
+            : base(message: message) {
+        }
 
-    public LanguageRegionManagerException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public LanguageRegionManagerException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

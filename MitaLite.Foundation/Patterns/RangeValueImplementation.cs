@@ -6,84 +6,65 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class RangeValueImplementation : PatternImplementation<RangeValuePattern>, IRangeValue
-  {
-    public RangeValueImplementation(UIObject uiObject)
-      : base(uiObject, RangeValuePattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class RangeValueImplementation : PatternImplementation<RangeValuePattern>, IRangeValue {
+        public RangeValueImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: RangeValuePattern.Pattern) {
+        }
 
-    public double Minimum
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Minimum)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.Minimum;
-      }
-    }
+        public double Minimum {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Minimum)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.Minimum;
+            }
+        }
 
-    public double Maximum
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Maximum)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.Maximum;
-      }
-    }
+        public double Maximum {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Maximum)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.Maximum;
+            }
+        }
 
-    public double LargeChange
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (LargeChange)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.LargeChange;
-      }
-    }
+        public double LargeChange {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(LargeChange)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.LargeChange;
+            }
+        }
 
-    public double SmallChange
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (SmallChange)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.SmallChange;
-      }
-    }
+        public double SmallChange {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(SmallChange)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.SmallChange;
+            }
+        }
 
-    public void SetValue(double value)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs("RangeSetValue", new object[1]
-      {
-        (object) value
-      })) == ActionResult.Unhandled)
-        this.Pattern.SetValue(value);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void SetValue(double value) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: "RangeSetValue", value)) == ActionResult.Unhandled)
+                Pattern.SetValue(value: value);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public double Value
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("RangeValue"), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.Value;
-      }
-    }
+        public double Value {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "RangeValue"), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.Value;
+            }
+        }
 
-    public bool IsReadOnly
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("RangeIsReadOnly"), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.IsReadOnly;
-      }
+        public bool IsReadOnly {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "RangeIsReadOnly"), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.IsReadOnly;
+            }
+        }
     }
-  }
 }

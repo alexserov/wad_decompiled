@@ -7,23 +7,28 @@
 using System.Windows.Automation.Text;
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TextEditPattern : TextPattern
-  {
-    public new static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TextEditPattern, IUIAutomationTextEditPattern>(10032, "TextEditPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTextEditPattern, TextEditPattern>(TextEditPattern.Wrap));
-    private readonly IUIAutomationTextEditPattern textEditPattern;
+namespace System.Windows.Automation {
+    public class TextEditPattern : TextPattern {
+        public new static readonly AutomationPattern Pattern = new AutomationPattern<TextEditPattern, IUIAutomationTextEditPattern>(id: 10032, programmaticName: "TextEditPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationTextEditPattern textEditPattern;
 
-    public TextEditPattern(AutomationElement element, IUIAutomationTextEditPattern textEditPattern)
-      : base(element, (IUIAutomationTextPattern) textEditPattern)
-      => this.textEditPattern = textEditPattern;
+        public TextEditPattern(AutomationElement element, IUIAutomationTextEditPattern textEditPattern)
+            : base(element: element, textPattern: textEditPattern) {
+            this.textEditPattern = textEditPattern;
+        }
 
-    internal static TextEditPattern Wrap(
-      AutomationElement element,
-      IUIAutomationTextEditPattern textEditPattern) => new TextEditPattern(element, textEditPattern);
+        internal static TextEditPattern Wrap(
+            AutomationElement element,
+            IUIAutomationTextEditPattern textEditPattern) {
+            return new TextEditPattern(element: element, textEditPattern: textEditPattern);
+        }
 
-    public TextPatternRange GetActiveComposition() => new TextPatternRange(this.textEditPattern.GetActiveComposition());
+        public TextPatternRange GetActiveComposition() {
+            return new TextPatternRange(textPatternRange: this.textEditPattern.GetActiveComposition());
+        }
 
-    public TextPatternRange GetConversionTarget() => new TextPatternRange(this.textEditPattern.GetConversionTarget());
-  }
+        public TextPatternRange GetConversionTarget() {
+            return new TextPatternRange(textPatternRange: this.textEditPattern.GetConversionTarget());
+        }
+    }
 }

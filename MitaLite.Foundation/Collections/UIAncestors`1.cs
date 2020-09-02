@@ -6,28 +6,22 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIAncestors<I> : UICollection<I> where I : UIObject
-  {
-    public UIAncestors(UIObject root, IFactory<I> factory)
-      : base((UINavigator) new AncestorsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIAncestors<I> : UICollection<I> where I : UIObject {
+        public UIAncestors(UIObject root, IFactory<I> factory)
+            : base(navigator: new AncestorsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIAncestors(AutomationElement root, IFactory<I> factory)
-      : base((UINavigator) new AncestorsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIAncestors(AutomationElement root, IFactory<I> factory)
+            : base(navigator: new AncestorsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIAncestors(UIObject root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new AncestorsNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIAncestors(UIObject root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new AncestorsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIAncestors(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new AncestorsNavigator(root, treeCondition), factory)
-    {
+        internal UIAncestors(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new AncestorsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

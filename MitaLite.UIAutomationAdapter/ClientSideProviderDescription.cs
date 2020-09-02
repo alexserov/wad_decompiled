@@ -6,53 +6,46 @@
 
 using System.Collections.Generic;
 
-namespace System.Windows.Automation
-{
-  public struct ClientSideProviderDescription
-  {
-    private readonly string _className;
-    private readonly ClientSideProviderFactoryCallback _callback;
-    private readonly ClientSideProviderMatchIndicator _flags;
-    private readonly string _imageName;
-    private readonly List<EventMapping> _eventMappings;
+namespace System.Windows.Automation {
+    public struct ClientSideProviderDescription {
+        readonly List<EventMapping> _eventMappings;
 
-    public ClientSideProviderDescription(
-      ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
-      string className)
-      : this(clientSideProviderFactoryCallback, className, string.Empty, ClientSideProviderMatchIndicator.None, (IEnumerable<EventMapping>) null)
-    {
+        public ClientSideProviderDescription(
+            ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
+            string className)
+            : this(clientSideProviderFactoryCallback: clientSideProviderFactoryCallback, className: className, imageName: string.Empty, flags: ClientSideProviderMatchIndicator.None, eventMappings: null) {
+        }
+
+        public ClientSideProviderDescription(
+            ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
+            string className,
+            IEnumerable<EventMapping> eventMappings)
+            : this(clientSideProviderFactoryCallback: clientSideProviderFactoryCallback, className: className, imageName: string.Empty, flags: ClientSideProviderMatchIndicator.None, eventMappings: eventMappings) {
+        }
+
+        public ClientSideProviderDescription(
+            ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
+            string className,
+            string imageName,
+            ClientSideProviderMatchIndicator flags,
+            IEnumerable<EventMapping> eventMappings) {
+            this.ClientSideProviderFactoryCallback = clientSideProviderFactoryCallback;
+            this.ClassName = className;
+            this.ImageName = imageName;
+            this.Flags = flags;
+            this._eventMappings = eventMappings != null ? new List<EventMapping>(collection: eventMappings) : new List<EventMapping>();
+        }
+
+        public string ClassName { get; }
+
+        public ClientSideProviderFactoryCallback ClientSideProviderFactoryCallback { get; }
+
+        public ClientSideProviderMatchIndicator Flags { get; }
+
+        public string ImageName { get; }
+
+        public IList<EventMapping> EventMappings {
+            get { return this._eventMappings; }
+        }
     }
-
-    public ClientSideProviderDescription(
-      ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
-      string className,
-      IEnumerable<EventMapping> eventMappings)
-      : this(clientSideProviderFactoryCallback, className, string.Empty, ClientSideProviderMatchIndicator.None, eventMappings)
-    {
-    }
-
-    public ClientSideProviderDescription(
-      ClientSideProviderFactoryCallback clientSideProviderFactoryCallback,
-      string className,
-      string imageName,
-      ClientSideProviderMatchIndicator flags,
-      IEnumerable<EventMapping> eventMappings)
-    {
-      this._callback = clientSideProviderFactoryCallback;
-      this._className = className;
-      this._imageName = imageName;
-      this._flags = flags;
-      this._eventMappings = eventMappings != null ? new List<EventMapping>(eventMappings) : new List<EventMapping>();
-    }
-
-    public string ClassName => this._className;
-
-    public ClientSideProviderFactoryCallback ClientSideProviderFactoryCallback => this._callback;
-
-    public ClientSideProviderMatchIndicator Flags => this._flags;
-
-    public string ImageName => this._imageName;
-
-    public IList<EventMapping> EventMappings => (IList<EventMapping>) this._eventMappings;
-  }
 }

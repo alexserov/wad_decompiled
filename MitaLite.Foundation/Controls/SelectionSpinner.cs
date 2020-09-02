@@ -4,48 +4,57 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Collections;
 using MS.Internal.Mita.Foundation.Patterns;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class SelectionSpinner : UIObject, IContainer<SelectionSpinnerItem>, ISelection<SelectionSpinnerItem>
-  {
-    private ISelection<SelectionSpinnerItem> _selectionPattern;
-    private static IFactory<SelectionSpinner> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class SelectionSpinner : UIObject, IContainer<SelectionSpinnerItem>, ISelection<SelectionSpinnerItem> {
+        static IFactory<SelectionSpinner> _factory;
+        ISelection<SelectionSpinnerItem> _selectionPattern;
 
-    public SelectionSpinner(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public SelectionSpinner(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal SelectionSpinner(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal SelectionSpinner(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._selectionPattern = (ISelection<SelectionSpinnerItem>) new SelectionImplementation<SelectionSpinnerItem>((UIObject) this, SelectionSpinnerItem.Factory);
+        public static IFactory<SelectionSpinner> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new SelectionSpinnerFactory();
+                return _factory;
+            }
+        }
 
-    public UICollection<SelectionSpinnerItem> Items => (UICollection<SelectionSpinnerItem>) new UIChildren<SelectionSpinnerItem>((UIObject) this, UICondition.ControlTree, SelectionSpinnerItem.Factory);
+        public UICollection<SelectionSpinnerItem> Items {
+            get { return new UIChildren<SelectionSpinnerItem>(root: this, treeCondition: UICondition.ControlTree, factory: SelectionSpinnerItem.Factory); }
+        }
 
-    public UICollection<SelectionSpinnerItem> Selection => this._selectionPattern.Selection;
+        public UICollection<SelectionSpinnerItem> Selection {
+            get { return this._selectionPattern.Selection; }
+        }
 
-    public virtual bool CanSelectMultiple => this._selectionPattern.CanSelectMultiple;
+        public virtual bool CanSelectMultiple {
+            get { return this._selectionPattern.CanSelectMultiple; }
+        }
 
-    public virtual bool IsSelectionRequired => this._selectionPattern.IsSelectionRequired;
+        public virtual bool IsSelectionRequired {
+            get { return this._selectionPattern.IsSelectionRequired; }
+        }
 
-    public static IFactory<SelectionSpinner> Factory
-    {
-      get
-      {
-        if (SelectionSpinner._factory == null)
-          SelectionSpinner._factory = (IFactory<SelectionSpinner>) new SelectionSpinner.SelectionSpinnerFactory();
-        return SelectionSpinner._factory;
-      }
+        void Initialize() {
+            this._selectionPattern = new SelectionImplementation<SelectionSpinnerItem>(uiObject: this, itemFactory: SelectionSpinnerItem.Factory);
+        }
+
+        class SelectionSpinnerFactory : IFactory<SelectionSpinner> {
+            public SelectionSpinner Create(UIObject element) {
+                return new SelectionSpinner(uiObject: element);
+            }
+        }
     }
-
-    private class SelectionSpinnerFactory : IFactory<SelectionSpinner>
-    {
-      public SelectionSpinner Create(UIObject element) => new SelectionSpinner(element);
-    }
-  }
 }

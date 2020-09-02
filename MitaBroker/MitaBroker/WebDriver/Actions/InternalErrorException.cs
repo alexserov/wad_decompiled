@@ -6,13 +6,10 @@
 
 using System;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal class InternalErrorException : Exception
-  {
-    public InternalErrorException(string message)
-      : base(message)
-    {
+namespace MitaBroker.WebDriver.Actions {
+    internal class InternalErrorException : Exception {
+        public InternalErrorException(string message)
+            : base(message: message) {
+        }
     }
-  }
 }

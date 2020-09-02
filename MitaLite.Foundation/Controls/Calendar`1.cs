@@ -4,67 +4,68 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Patterns;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Patterns;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public abstract class Calendar<I> : UIObject, IGrid<I>, ISelection<I>, IValue
-    where I : UIObject
-  {
-    private IGrid<I> _gridPattern;
-    private ISelection<I> _selectionPattern;
-    private IValue _valuePattern;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public abstract class Calendar<I> : UIObject, IGrid<I>, ISelection<I>, IValue
+        where I : UIObject {
+        protected Calendar(UIObject uiObject, IFactory<I> itemFactory)
+            : base(uiObject: uiObject) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    protected Calendar(UIObject uiObject, IFactory<I> itemFactory)
-      : base(uiObject)
-      => this.Initialize(itemFactory);
+        internal Calendar(AutomationElement element, IFactory<I> itemFactory)
+            : base(element: element) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    internal Calendar(AutomationElement element, IFactory<I> itemFactory)
-      : base(element)
-      => this.Initialize(itemFactory);
+        protected IValue ValueProvider { get; set; }
 
-    private void Initialize(IFactory<I> itemFactory)
-    {
-      this.GridProvider = (IGrid<I>) new GridImplementation<I>((UIObject) this, itemFactory);
-      this.SelectionProvider = (ISelection<I>) new SelectionImplementation<I>((UIObject) this, itemFactory);
-      this.ValueProvider = (IValue) new ValueImplementation((UIObject) this);
+        protected IGrid<I> GridProvider { get; set; }
+
+        protected ISelection<I> SelectionProvider { get; set; }
+
+        public virtual I GetCell(int row, int column) {
+            return GridProvider.GetCell(row: row, column: column);
+        }
+
+        public virtual int RowCount {
+            get { return GridProvider.RowCount; }
+        }
+
+        public virtual int ColumnCount {
+            get { return GridProvider.ColumnCount; }
+        }
+
+        public virtual UICollection<I> Selection {
+            get { return SelectionProvider.Selection; }
+        }
+
+        public virtual bool CanSelectMultiple {
+            get { return SelectionProvider.CanSelectMultiple; }
+        }
+
+        public virtual bool IsSelectionRequired {
+            get { return SelectionProvider.IsSelectionRequired; }
+        }
+
+        public virtual void SetValue(string value) {
+            ValueProvider.SetValue(value: value);
+        }
+
+        public virtual string Value {
+            get { return ValueProvider.Value; }
+        }
+
+        public virtual bool IsReadOnly {
+            get { return ValueProvider.IsReadOnly; }
+        }
+
+        void Initialize(IFactory<I> itemFactory) {
+            GridProvider = new GridImplementation<I>(uiObject: this, itemFactory: itemFactory);
+            SelectionProvider = new SelectionImplementation<I>(uiObject: this, itemFactory: itemFactory);
+            ValueProvider = new ValueImplementation(uiObject: this);
+        }
     }
-
-    public virtual UICollection<I> Selection => this.SelectionProvider.Selection;
-
-    public virtual bool CanSelectMultiple => this.SelectionProvider.CanSelectMultiple;
-
-    public virtual bool IsSelectionRequired => this.SelectionProvider.IsSelectionRequired;
-
-    public virtual I GetCell(int row, int column) => this.GridProvider.GetCell(row, column);
-
-    public virtual int RowCount => this.GridProvider.RowCount;
-
-    public virtual int ColumnCount => this.GridProvider.ColumnCount;
-
-    public virtual void SetValue(string value) => this.ValueProvider.SetValue(value);
-
-    public virtual string Value => this.ValueProvider.Value;
-
-    public virtual bool IsReadOnly => this.ValueProvider.IsReadOnly;
-
-    protected IValue ValueProvider
-    {
-      get => this._valuePattern;
-      set => this._valuePattern = value;
-    }
-
-    protected IGrid<I> GridProvider
-    {
-      get => this._gridPattern;
-      set => this._gridPattern = value;
-    }
-
-    protected ISelection<I> SelectionProvider
-    {
-      get => this._selectionPattern;
-      set => this._selectionPattern = value;
-    }
-  }
 }

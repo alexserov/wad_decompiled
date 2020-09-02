@@ -6,119 +6,86 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class ScrollImplementation : PatternImplementation<ScrollPattern>, IScroll
-  {
-    public ScrollImplementation(UIObject uiObject)
-      : base(uiObject, ScrollPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class ScrollImplementation : PatternImplementation<ScrollPattern>, IScroll {
+        public ScrollImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: ScrollPattern.Pattern) {
+        }
 
-    public void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (Scroll), new object[2]
-      {
-        (object) horizontalAmount,
-        (object) verticalAmount
-      })) == ActionResult.Unhandled)
-        this.Pattern.Scroll(horizontalAmount, verticalAmount);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(Scroll), horizontalAmount, (object) verticalAmount)) == ActionResult.Unhandled)
+                Pattern.Scroll(horizontalAmount: horizontalAmount, verticalAmount: verticalAmount);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public void ScrollHorizontal(ScrollAmount amount)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (ScrollHorizontal), new object[1]
-      {
-        (object) amount
-      })) == ActionResult.Unhandled)
-        this.Pattern.ScrollHorizontal(amount);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void ScrollHorizontal(ScrollAmount amount) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(ScrollHorizontal), amount)) == ActionResult.Unhandled)
+                Pattern.ScrollHorizontal(amount: amount);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public void ScrollVertical(ScrollAmount amount)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (ScrollVertical), new object[1]
-      {
-        (object) amount
-      })) == ActionResult.Unhandled)
-        this.Pattern.ScrollVertical(amount);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void ScrollVertical(ScrollAmount amount) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(ScrollVertical), amount)) == ActionResult.Unhandled)
+                Pattern.ScrollVertical(amount: amount);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public void SetScrollPercent(double horizontalPercent, double verticalPercent)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (SetScrollPercent), new object[2]
-      {
-        (object) horizontalPercent,
-        (object) verticalPercent
-      })) == ActionResult.Unhandled)
-        this.Pattern.SetScrollPercent(horizontalPercent, verticalPercent);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void SetScrollPercent(double horizontalPercent, double verticalPercent) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(SetScrollPercent), horizontalPercent, (object) verticalPercent)) == ActionResult.Unhandled)
+                Pattern.SetScrollPercent(horizontalPercent: horizontalPercent, verticalPercent: verticalPercent);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public bool HorizontallyScrollable
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (HorizontallyScrollable)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.HorizontallyScrollable;
-      }
-    }
+        public bool HorizontallyScrollable {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(HorizontallyScrollable)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.HorizontallyScrollable;
+            }
+        }
 
-    public bool VerticallyScrollable
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (VerticallyScrollable)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.VerticallyScrollable;
-      }
-    }
+        public bool VerticallyScrollable {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(VerticallyScrollable)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.VerticallyScrollable;
+            }
+        }
 
-    public double HorizontalScrollPercent
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (HorizontalScrollPercent)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.HorizontalScrollPercent;
-      }
-    }
+        public double HorizontalScrollPercent {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(HorizontalScrollPercent)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.HorizontalScrollPercent;
+            }
+        }
 
-    public double VerticalScrollPercent
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (VerticalScrollPercent)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.VerticalScrollPercent;
-      }
-    }
+        public double VerticalScrollPercent {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(VerticalScrollPercent)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.VerticalScrollPercent;
+            }
+        }
 
-    public double HorizontalViewSize
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (HorizontalViewSize)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.HorizontalViewSize;
-      }
-    }
+        public double HorizontalViewSize {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(HorizontalViewSize)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.HorizontalViewSize;
+            }
+        }
 
-    public double VerticalViewSize
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (VerticalViewSize)), out overridden) == ActionResult.Handled ? (double) overridden : this.Pattern.Current.VerticalViewSize;
-      }
+        public double VerticalViewSize {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(VerticalViewSize)), overridden: out overridden) == ActionResult.Handled ? (double) overridden : Pattern.Current.VerticalViewSize;
+            }
+        }
     }
-  }
 }

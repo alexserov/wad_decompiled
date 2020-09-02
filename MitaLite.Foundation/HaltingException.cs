@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class HaltingException : MitaException
-  {
-    public HaltingException()
-    {
-    }
+namespace MS.Internal.Mita.Foundation {
+    public class HaltingException : MitaException {
+        public HaltingException() {
+        }
 
-    public HaltingException(string message)
-      : base(message)
-    {
-    }
+        public HaltingException(string message)
+            : base(message: message) {
+        }
 
-    public HaltingException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public HaltingException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

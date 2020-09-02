@@ -6,52 +6,67 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TransformPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = TransformPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty CanMoveProperty = TransformPatternIdentifiers.CanMoveProperty;
-    public static readonly AutomationProperty CanResizeProperty = TransformPatternIdentifiers.CanResizeProperty;
-    public static readonly AutomationProperty CanRotateProperty = TransformPatternIdentifiers.CanRotateProperty;
-    private readonly IUIAutomationTransformPattern _transformPattern;
+namespace System.Windows.Automation {
+    public class TransformPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = TransformPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty CanMoveProperty = TransformPatternIdentifiers.CanMoveProperty;
+        public static readonly AutomationProperty CanResizeProperty = TransformPatternIdentifiers.CanResizeProperty;
+        public static readonly AutomationProperty CanRotateProperty = TransformPatternIdentifiers.CanRotateProperty;
+        readonly IUIAutomationTransformPattern _transformPattern;
 
-    internal TransformPattern(
-      AutomationElement element,
-      IUIAutomationTransformPattern transformPattern)
-      : base(element)
-      => this._transformPattern = transformPattern;
+        internal TransformPattern(
+            AutomationElement element,
+            IUIAutomationTransformPattern transformPattern)
+            : base(el: element) {
+            this._transformPattern = transformPattern;
+        }
 
-    internal static TransformPattern Wrap(
-      AutomationElement element,
-      IUIAutomationTransformPattern transformPattern) => new TransformPattern(element, transformPattern);
+        public TransformPatternInformation Cached {
+            get { return new TransformPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void Move(double x, double y) => this._transformPattern.Move(x, y);
+        public TransformPatternInformation Current {
+            get { return new TransformPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public void Resize(double width, double height) => this._transformPattern.Resize(width, height);
+        internal static TransformPattern Wrap(
+            AutomationElement element,
+            IUIAutomationTransformPattern transformPattern) {
+            return new TransformPattern(element: element, transformPattern: transformPattern);
+        }
 
-    public void Rotate(double degrees) => this._transformPattern.Rotate(degrees);
+        public void Move(double x, double y) {
+            this._transformPattern.Move(x: x, y: y);
+        }
 
-    public TransformPattern.TransformPatternInformation Cached => new TransformPattern.TransformPatternInformation(this._el, true);
+        public void Resize(double width, double height) {
+            this._transformPattern.Resize(width: width, height: height);
+        }
 
-    public TransformPattern.TransformPatternInformation Current => new TransformPattern.TransformPatternInformation(this._el, false);
+        public void Rotate(double degrees) {
+            this._transformPattern.Rotate(degrees: degrees);
+        }
 
-    public struct TransformPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct TransformPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal TransformPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal TransformPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public bool CanMove => (bool) this._el.GetPatternPropertyValue(TransformPattern.CanMoveProperty, this._useCache);
+            public bool CanMove {
+                get { return (bool) this._el.GetPatternPropertyValue(property: CanMoveProperty, useCache: this._useCache); }
+            }
 
-      public bool CanResize => (bool) this._el.GetPatternPropertyValue(TransformPattern.CanResizeProperty, this._useCache);
+            public bool CanResize {
+                get { return (bool) this._el.GetPatternPropertyValue(property: CanResizeProperty, useCache: this._useCache); }
+            }
 
-      public bool CanRotate => (bool) this._el.GetPatternPropertyValue(TransformPattern.CanRotateProperty, this._useCache);
+            public bool CanRotate {
+                get { return (bool) this._el.GetPatternPropertyValue(property: CanRotateProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

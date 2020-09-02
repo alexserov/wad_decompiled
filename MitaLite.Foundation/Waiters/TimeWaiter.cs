@@ -8,38 +8,40 @@ using System;
 using System.Globalization;
 using System.Threading;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class TimeWaiter : Waiter
-  {
-    private TimeSpan _timeout;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class TimeWaiter : Waiter {
+        readonly TimeSpan _timeout;
 
-    public TimeWaiter()
-      : this(Waiter.DefaultTimeout)
-    {
+        public TimeWaiter()
+            : this(timeout: DefaultTimeout) {
+        }
+
+        public TimeWaiter(int timeout)
+            : this(timeout: TimeSpan.FromMilliseconds(value: timeout)) {
+        }
+
+        public TimeWaiter(TimeSpan timeout) {
+            this._timeout = timeout;
+        }
+
+        public override void Wait() {
+            Wait(timeout: this._timeout);
+        }
+
+        public override bool TryWait() {
+            return TryWait(timeout: this._timeout);
+        }
+
+        public override bool TryWait(TimeSpan timeout) {
+            Thread.Sleep(timeout: timeout);
+            return true;
+        }
+
+        public override string ToString() {
+            return "TimeWaiter with timeout:  " + Convert.ToString(value: this._timeout, provider: CultureInfo.InvariantCulture);
+        }
+
+        public override void Dispose() {
+        }
     }
-
-    public TimeWaiter(int timeout)
-      : this(TimeSpan.FromMilliseconds((double) timeout))
-    {
-    }
-
-    public TimeWaiter(TimeSpan timeout) => this._timeout = timeout;
-
-    public override void Wait() => this.Wait(this._timeout);
-
-    public override bool TryWait() => this.TryWait(this._timeout);
-
-    public override bool TryWait(TimeSpan timeout)
-    {
-      Thread.Sleep(timeout);
-      return true;
-    }
-
-    public override string ToString() => "TimeWaiter with timeout:  " + Convert.ToString((object) this._timeout, (IFormatProvider) CultureInfo.InvariantCulture);
-
-    public override void Dispose()
-    {
-    }
-  }
 }

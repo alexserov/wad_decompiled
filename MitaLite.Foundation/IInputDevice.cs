@@ -6,16 +6,14 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal interface IInputDevice : IDisposable
-  {
-    void InjectPointer(PointerData pointerData);
+namespace MS.Internal.Mita.Foundation {
+    internal interface IInputDevice : IDisposable {
+        void InjectPointer(PointerData pointerData);
 
-    void InjectPointer(PointerData[] pointerData);
+        void InjectPointer(PointerData[] pointerData);
 
-    void InjectMouseInput(RIMNativeMethods.MouseInput mouseInput);
+        void InjectMouseInput(RIMNativeMethods.MouseInput mouseInput);
 
-    void InjectKeyboardInput(RIMNativeMethods.KeyboardInput keyboardInput);
-  }
+        void InjectKeyboardInput(RIMNativeMethods.KeyboardInput keyboardInput);
+    }
 }

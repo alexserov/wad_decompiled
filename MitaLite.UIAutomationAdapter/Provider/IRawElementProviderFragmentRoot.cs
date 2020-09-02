@@ -7,19 +7,15 @@
 using System.Runtime.InteropServices;
 using UIAutomationClient;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("620ce2a5-ab8f-40a9-86cb-de3c75599b58")]
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [ComImport]
-  public interface IRawElementProviderFragmentRoot : IRawElementProviderFragment, IRawElementProviderSimple
-  {
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IRawElementProviderFragment ElementProviderFromPoint(
-      double x,
-      double y);
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "620ce2a5-ab8f-40a9-86cb-de3c75599b58"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), ComImport]
+    public interface IRawElementProviderFragmentRoot : IRawElementProviderFragment, IRawElementProviderSimple {
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IRawElementProviderFragment ElementProviderFromPoint(
+            double x,
+            double y);
 
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IRawElementProviderFragment GetFocus();
-  }
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IRawElementProviderFragment GetFocus();
+    }
 }

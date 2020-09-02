@@ -7,36 +7,61 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("D50E472E-B64B-490C-BCA1-D30696F9F289")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationProxyFactoryEntry
-  {
-    [DispId(1610678272)]
-    IUIAutomationProxyFactory ProxyFactory { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
+namespace UIAutomationClient {
+    [Guid(guid: "D50E472E-B64B-490C-BCA1-D30696F9F289"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationProxyFactoryEntry {
+        [DispId(dispId: 1610678272)]
+        IUIAutomationProxyFactory ProxyFactory {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
 
-    [DispId(1610678273)]
-    string ClassName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: MarshalAs(UnmanagedType.LPWStr), In] set; }
+        [DispId(dispId: 1610678273)]
+        string ClassName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: MarshalAs(unmanagedType: UnmanagedType.LPWStr), In]
+            set;
+        }
 
-    [DispId(1610678274)]
-    string ImageName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: MarshalAs(UnmanagedType.LPWStr), In] set; }
+        [DispId(dispId: 1610678274)]
+        string ImageName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: MarshalAs(unmanagedType: UnmanagedType.LPWStr), In]
+            set;
+        }
 
-    [DispId(1610678275)]
-    int AllowSubstringMatch { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In] set; }
+        [DispId(dispId: 1610678275)]
+        int AllowSubstringMatch {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In]
+            set;
+        }
 
-    [DispId(1610678276)]
-    int CanCheckBaseClass { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In] set; }
+        [DispId(dispId: 1610678276)]
+        int CanCheckBaseClass {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In]
+            set;
+        }
 
-    [DispId(1610678277)]
-    int NeedsAdviseEvents { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In] set; }
+        [DispId(dispId: 1610678277)]
+        int NeedsAdviseEvents {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [param: In]
+            set;
+        }
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void SetWinEventsForAutomationEvent([In] int eventId, [In] int propertyId, [MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UINT), In] uint[] winEvents);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void SetWinEventsForAutomationEvent([In] int eventId, [In] int propertyId, [MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UINT), In]
+                                            uint[] winEvents);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UINT)]
-    uint[] GetWinEventsForAutomationEvent([In] int eventId, [In] int propertyId);
-  }
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_UINT)]
+        uint[] GetWinEventsForAutomationEvent([In] int eventId, [In] int propertyId);
+    }
 }

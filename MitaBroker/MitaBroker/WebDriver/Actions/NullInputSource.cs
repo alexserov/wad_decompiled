@@ -4,19 +4,18 @@
 // MVID: 04F1F240-3A91-44F5-8C6F-E562756B4D74
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaBroker.dll
 
-using MitaBroker.WebDriver.Actions.Enums;
 using System;
+using MitaBroker.WebDriver.Actions.Enums;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal class NullInputSource : InputSource
-  {
-    public NullInputSource(string id)
-    {
-      this.Id = id;
-      this.Type = InputSourceType.None;
+namespace MitaBroker.WebDriver.Actions {
+    internal class NullInputSource : InputSource {
+        public NullInputSource(string id) {
+            Id = id;
+            Type = InputSourceType.None;
+        }
+
+        public void Pause() {
+            throw new NotImplementedException(message: "NullInputSource Pause is not implemented");
+        }
     }
-
-    public void Pause() => throw new NotImplementedException("NullInputSource Pause is not implemented");
-  }
 }

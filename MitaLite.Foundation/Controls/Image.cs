@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class Image : UIObject
-  {
-    private static IFactory<Image> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class Image : UIObject {
+        static IFactory<Image> _factory;
 
-    public Image(UIObject uiObject)
-      : base(uiObject)
-    {
-    }
+        public Image(UIObject uiObject)
+            : base(uiObject: uiObject) {
+        }
 
-    internal Image(AutomationElement element)
-      : base(element)
-    {
-    }
+        internal Image(AutomationElement element)
+            : base(element: element) {
+        }
 
-    public static IFactory<Image> Factory
-    {
-      get
-      {
-        if (Image._factory == null)
-          Image._factory = (IFactory<Image>) new Image.ImageFactory();
-        return Image._factory;
-      }
-    }
+        public static IFactory<Image> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ImageFactory();
+                return _factory;
+            }
+        }
 
-    private class ImageFactory : IFactory<Image>
-    {
-      public Image Create(UIObject element) => new Image(element);
+        class ImageFactory : IFactory<Image> {
+            public Image Create(UIObject element) {
+                return new Image(uiObject: element);
+            }
+        }
     }
-  }
 }

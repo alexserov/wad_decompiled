@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ListBoxItem : ListItem<ListBox>
-  {
-    private static IFactory<ListBoxItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ListBoxItem : ListItem<ListBox> {
+        static IFactory<ListBoxItem> _factory;
 
-    public ListBoxItem(UIObject uiObject)
-      : base(uiObject, ListBox.Factory)
-    {
-    }
+        public ListBoxItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: ListBox.Factory) {
+        }
 
-    internal ListBoxItem(AutomationElement element)
-      : base(element, ListBox.Factory)
-    {
-    }
+        internal ListBoxItem(AutomationElement element)
+            : base(element: element, containerFactory: ListBox.Factory) {
+        }
 
-    public static IFactory<ListBoxItem> Factory
-    {
-      get
-      {
-        if (ListBoxItem._factory == null)
-          ListBoxItem._factory = (IFactory<ListBoxItem>) new ListBoxItem.ListBoxItemFactory();
-        return ListBoxItem._factory;
-      }
-    }
+        public static IFactory<ListBoxItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ListBoxItemFactory();
+                return _factory;
+            }
+        }
 
-    private class ListBoxItemFactory : IFactory<ListBoxItem>
-    {
-      public ListBoxItem Create(UIObject element) => new ListBoxItem(element);
+        class ListBoxItemFactory : IFactory<ListBoxItem> {
+            public ListBoxItem Create(UIObject element) {
+                return new ListBoxItem(uiObject: element);
+            }
+        }
     }
-  }
 }

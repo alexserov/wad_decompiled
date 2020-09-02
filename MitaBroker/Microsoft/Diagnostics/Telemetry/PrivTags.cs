@@ -6,15 +6,13 @@
 
 using Microsoft.Diagnostics.Telemetry.Internal;
 
-namespace Microsoft.Diagnostics.Telemetry
-{
-  internal static class PrivTags
-  {
-    public const PartA_PrivTags BrowsingHistory = PartA_PrivTags.BrowsingHistory;
-    public const PartA_PrivTags DeviceConnectivityAndConfiguration = PartA_PrivTags.DeviceConnectivityAndConfiguration;
-    public const PartA_PrivTags InkingTypingAndSpeechUtterance = PartA_PrivTags.InkingTypingAndSpeechUtterance;
-    public const PartA_PrivTags ProductAndServicePerformance = PartA_PrivTags.ProductAndServicePerformance;
-    public const PartA_PrivTags ProductAndServiceUsage = PartA_PrivTags.ProductAndServiceUsage;
-    public const PartA_PrivTags SoftwareSetupAndInventory = PartA_PrivTags.SoftwareSetupAndInventory;
-  }
+namespace Microsoft.Diagnostics.Telemetry {
+    internal static class PrivTags {
+        public const PartA_PrivTags BrowsingHistory = PartA_PrivTags.BrowsingHistory;
+        public const PartA_PrivTags DeviceConnectivityAndConfiguration = PartA_PrivTags.DeviceConnectivityAndConfiguration;
+        public const PartA_PrivTags InkingTypingAndSpeechUtterance = PartA_PrivTags.InkingTypingAndSpeechUtterance;
+        public const PartA_PrivTags ProductAndServicePerformance = PartA_PrivTags.ProductAndServicePerformance;
+        public const PartA_PrivTags ProductAndServiceUsage = PartA_PrivTags.ProductAndServiceUsage;
+        public const PartA_PrivTags SoftwareSetupAndInventory = PartA_PrivTags.SoftwareSetupAndInventory;
+    }
 }

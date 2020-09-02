@@ -7,15 +7,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("F528B657-847B-498C-8896-D52B565407A1")]
-  [ComImport]
-  public interface IUIAutomationNotCondition : IUIAutomationCondition
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationCondition GetChild();
-  }
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "F528B657-847B-498C-8896-D52B565407A1"), ComImport]
+    public interface IUIAutomationNotCondition : IUIAutomationCondition {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationCondition GetChild();
+    }
 }

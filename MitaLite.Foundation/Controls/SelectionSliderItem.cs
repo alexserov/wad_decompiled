@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class SelectionSliderItem : ListItem<SelectionSlider>
-  {
-    private static IFactory<SelectionSliderItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class SelectionSliderItem : ListItem<SelectionSlider> {
+        static IFactory<SelectionSliderItem> _factory;
 
-    public SelectionSliderItem(UIObject uiObject)
-      : base(uiObject, SelectionSlider.Factory)
-    {
-    }
+        public SelectionSliderItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: SelectionSlider.Factory) {
+        }
 
-    internal SelectionSliderItem(AutomationElement element)
-      : base(element, SelectionSlider.Factory)
-    {
-    }
+        internal SelectionSliderItem(AutomationElement element)
+            : base(element: element, containerFactory: SelectionSlider.Factory) {
+        }
 
-    public static IFactory<SelectionSliderItem> Factory
-    {
-      get
-      {
-        if (SelectionSliderItem._factory == null)
-          SelectionSliderItem._factory = (IFactory<SelectionSliderItem>) new SelectionSliderItem.SelectionSliderItemFactory();
-        return SelectionSliderItem._factory;
-      }
-    }
+        public static IFactory<SelectionSliderItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new SelectionSliderItemFactory();
+                return _factory;
+            }
+        }
 
-    private class SelectionSliderItemFactory : IFactory<SelectionSliderItem>
-    {
-      public SelectionSliderItem Create(UIObject element) => new SelectionSliderItem(element);
+        class SelectionSliderItemFactory : IFactory<SelectionSliderItem> {
+            public SelectionSliderItem Create(UIObject element) {
+                return new SelectionSliderItem(uiObject: element);
+            }
+        }
     }
-  }
 }

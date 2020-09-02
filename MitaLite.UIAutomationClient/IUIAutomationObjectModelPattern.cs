@@ -7,15 +7,13 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("71C284B3-C14D-4D14-981E-19751B0D756D")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationObjectModelPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.IUnknown)]
-    object GetUnderlyingObjectModel();
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "71C284B3-C14D-4D14-981E-19751B0D756D")]
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual)]
+    [ComImport]
+    public interface IUIAutomationObjectModelPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.IUnknown)]
+        object GetUnderlyingObjectModel();
+    }
 }

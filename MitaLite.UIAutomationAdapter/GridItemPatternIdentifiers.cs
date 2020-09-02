@@ -6,15 +6,13 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class GridItemPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<GridItemPattern, IUIAutomationGridItemPattern>(10007, "GridItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationGridItemPattern, GridItemPattern>(GridItemPattern.Wrap));
-    public static readonly AutomationProperty ColumnProperty = new AutomationProperty(30065, "GridItemPatternIdentifiers.ColumnProperty");
-    public static readonly AutomationProperty ColumnSpanProperty = new AutomationProperty(30067, "GridItemPatternIdentifiers.ColumnSpanProperty");
-    public static readonly AutomationProperty ContainingGridProperty = new AutomationProperty(30068, "GridItemPatternIdentifiers.ContainingGridProperty");
-    public static readonly AutomationProperty RowProperty = new AutomationProperty(30064, "GridItemPatternIdentifiers.RowProperty");
-    public static readonly AutomationProperty RowSpanProperty = new AutomationProperty(30066, "GridItemPatternIdentifiers.RowSpanProperty");
-  }
+namespace System.Windows.Automation {
+    public static class GridItemPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<GridItemPattern, IUIAutomationGridItemPattern>(id: 10007, programmaticName: "GridItemPatternIdentifiers.Pattern", wrap: GridItemPattern.Wrap);
+        public static readonly AutomationProperty ColumnProperty = new AutomationProperty(id: 30065, programmaticName: "GridItemPatternIdentifiers.ColumnProperty");
+        public static readonly AutomationProperty ColumnSpanProperty = new AutomationProperty(id: 30067, programmaticName: "GridItemPatternIdentifiers.ColumnSpanProperty");
+        public static readonly AutomationProperty ContainingGridProperty = new AutomationProperty(id: 30068, programmaticName: "GridItemPatternIdentifiers.ContainingGridProperty");
+        public static readonly AutomationProperty RowProperty = new AutomationProperty(id: 30064, programmaticName: "GridItemPatternIdentifiers.RowProperty");
+        public static readonly AutomationProperty RowSpanProperty = new AutomationProperty(id: 30066, programmaticName: "GridItemPatternIdentifiers.RowSpanProperty");
+    }
 }

@@ -4,24 +4,18 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-namespace System.Windows.Automation
-{
-  public sealed class AsyncContentLoadedEventArgs : AutomationEventArgs
-  {
-    private AsyncContentLoadedState _asyncContentState;
-    private double _percentComplete;
+namespace System.Windows.Automation {
+    public sealed class AsyncContentLoadedEventArgs : AutomationEventArgs {
+        public AsyncContentLoadedEventArgs(
+            AsyncContentLoadedState asyncContentState,
+            double percentComplete)
+            : base(eventId: AutomationElementIdentifiers.AsyncContentLoadedEvent) {
+            AsyncContentLoadedState = asyncContentState;
+            PercentComplete = percentComplete;
+        }
 
-    public AsyncContentLoadedEventArgs(
-      AsyncContentLoadedState asyncContentState,
-      double percentComplete)
-      : base(AutomationElementIdentifiers.AsyncContentLoadedEvent)
-    {
-      this._asyncContentState = asyncContentState;
-      this._percentComplete = percentComplete;
+        public AsyncContentLoadedState AsyncContentLoadedState { get; }
+
+        public double PercentComplete { get; }
     }
-
-    public AsyncContentLoadedState AsyncContentLoadedState => this._asyncContentState;
-
-    public double PercentComplete => this._percentComplete;
-  }
 }

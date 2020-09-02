@@ -6,25 +6,22 @@
 
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class AndExpression : Expression
-  {
-    private Expression _leftExpression;
-    private Expression _rightExpression;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class AndExpression : Expression {
+        readonly Expression _leftExpression;
+        readonly Expression _rightExpression;
 
-    public AndExpression(Expression leftExpression, Expression rightExpression)
-    {
-      this._leftExpression = leftExpression;
-      this._rightExpression = rightExpression;
+        public AndExpression(Expression leftExpression, Expression rightExpression) {
+            this._leftExpression = leftExpression;
+            this._rightExpression = rightExpression;
+        }
+
+        public override GlobalizableCondition GetCondition() {
+            return new GlobalizableAndCondition(this._leftExpression.GetCondition(), this._rightExpression.GetCondition());
+        }
+
+        public override bool Validate(StringBuilder errors) {
+            return this._leftExpression.Validate(errors: errors) & this._rightExpression.Validate(errors: errors);
+        }
     }
-
-    public override GlobalizableCondition GetCondition() => (GlobalizableCondition) new GlobalizableAndCondition(new GlobalizableCondition[2]
-    {
-      this._leftExpression.GetCondition(),
-      this._rightExpression.GetCondition()
-    });
-
-    public override bool Validate(StringBuilder errors) => this._leftExpression.Validate(errors) & this._rightExpression.Validate(errors);
-  }
 }

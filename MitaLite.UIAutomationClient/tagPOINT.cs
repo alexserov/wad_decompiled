@@ -6,12 +6,10 @@
 
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [StructLayout(LayoutKind.Sequential, Pack = 4)]
-  public struct tagPOINT
-  {
-    public int x;
-    public int y;
-  }
+namespace UIAutomationClient {
+    [StructLayout(layoutKind: LayoutKind.Sequential, Pack = 4)]
+    public struct tagPOINT {
+        public int x;
+        public int y;
+    }
 }

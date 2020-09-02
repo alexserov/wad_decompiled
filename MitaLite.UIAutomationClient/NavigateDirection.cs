@@ -4,14 +4,12 @@
 // MVID: 3836D12D-FB98-4220-906F-A977A4708DDF
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationClient.dll
 
-namespace UIAutomationClient
-{
-  public enum NavigateDirection
-  {
-    NavigateDirection_Parent,
-    NavigateDirection_NextSibling,
-    NavigateDirection_PreviousSibling,
-    NavigateDirection_FirstChild,
-    NavigateDirection_LastChild,
-  }
+namespace UIAutomationClient {
+    public enum NavigateDirection {
+        NavigateDirection_Parent,
+        NavigateDirection_NextSibling,
+        NavigateDirection_PreviousSibling,
+        NavigateDirection_FirstChild,
+        NavigateDirection_LastChild
+    }
 }

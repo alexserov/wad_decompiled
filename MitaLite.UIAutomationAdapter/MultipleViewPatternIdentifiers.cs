@@ -6,12 +6,10 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class MultipleViewPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<MultipleViewPattern, IUIAutomationMultipleViewPattern>(10008, "MultipleViewPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationMultipleViewPattern, MultipleViewPattern>(MultipleViewPattern.Wrap));
-    public static readonly AutomationProperty CurrentViewProperty = new AutomationProperty(30071, "MultipleViewPatternIdentifiers.CurrentViewProperty");
-    public static readonly AutomationProperty SupportedViewsProperty = new AutomationProperty(30072, "MultipleViewPatternIdentifiers.SupportedViewsProperty");
-  }
+namespace System.Windows.Automation {
+    public static class MultipleViewPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<MultipleViewPattern, IUIAutomationMultipleViewPattern>(id: 10008, programmaticName: "MultipleViewPatternIdentifiers.Pattern", wrap: MultipleViewPattern.Wrap);
+        public static readonly AutomationProperty CurrentViewProperty = new AutomationProperty(id: 30071, programmaticName: "MultipleViewPatternIdentifiers.CurrentViewProperty");
+        public static readonly AutomationProperty SupportedViewsProperty = new AutomationProperty(id: 30072, programmaticName: "MultipleViewPatternIdentifiers.SupportedViewsProperty");
+    }
 }

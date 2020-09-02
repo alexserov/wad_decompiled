@@ -6,142 +6,134 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class RangeValuePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = RangeValuePatternIdentifiers.Pattern;
-    public static readonly AutomationProperty IsReadOnlyProperty = RangeValuePatternIdentifiers.IsReadOnlyProperty;
-    public static readonly AutomationProperty LargeChangeProperty = RangeValuePatternIdentifiers.LargeChangeProperty;
-    public static readonly AutomationProperty MaximumProperty = RangeValuePatternIdentifiers.MaximumProperty;
-    public static readonly AutomationProperty MinimumProperty = RangeValuePatternIdentifiers.MinimumProperty;
-    public static readonly AutomationProperty SmallChangeProperty = RangeValuePatternIdentifiers.SmallChangeProperty;
-    public static readonly AutomationProperty ValueProperty = RangeValuePatternIdentifiers.ValueProperty;
-    private readonly IUIAutomationRangeValuePattern _rangeValuePattern;
+namespace System.Windows.Automation {
+    public class RangeValuePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = RangeValuePatternIdentifiers.Pattern;
+        public static readonly AutomationProperty IsReadOnlyProperty = RangeValuePatternIdentifiers.IsReadOnlyProperty;
+        public static readonly AutomationProperty LargeChangeProperty = RangeValuePatternIdentifiers.LargeChangeProperty;
+        public static readonly AutomationProperty MaximumProperty = RangeValuePatternIdentifiers.MaximumProperty;
+        public static readonly AutomationProperty MinimumProperty = RangeValuePatternIdentifiers.MinimumProperty;
+        public static readonly AutomationProperty SmallChangeProperty = RangeValuePatternIdentifiers.SmallChangeProperty;
+        public static readonly AutomationProperty ValueProperty = RangeValuePatternIdentifiers.ValueProperty;
+        readonly IUIAutomationRangeValuePattern _rangeValuePattern;
 
-    private RangeValuePattern(
-      AutomationElement element,
-      IUIAutomationRangeValuePattern rangeValuePattern)
-      : base(element)
-      => this._rangeValuePattern = rangeValuePattern;
-
-    internal static RangeValuePattern Wrap(
-      AutomationElement element,
-      IUIAutomationRangeValuePattern rangeValuePattern) => new RangeValuePattern(element, rangeValuePattern);
-
-    public void SetValue(double value) => this._rangeValuePattern.SetValue(value);
-
-    public RangeValuePattern.RangeValuePatternInformation Cached => new RangeValuePattern.RangeValuePatternInformation(this._el, true);
-
-    public RangeValuePattern.RangeValuePatternInformation Current => new RangeValuePattern.RangeValuePatternInformation(this._el, false);
-
-    public struct RangeValuePatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
-
-      internal RangeValuePatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
-
-      public double Value
-      {
-        get
-        {
-          object patternPropertyValue = this._el.GetPatternPropertyValue(RangeValuePattern.ValueProperty, this._useCache);
-          switch (patternPropertyValue)
-          {
-            case int num:
-              return (double) num;
-            case byte num:
-              return (double) num;
-            case DateTime dateTime:
-              return (double) dateTime.Year;
-            default:
-              return (double) patternPropertyValue;
-          }
+        RangeValuePattern(
+            AutomationElement element,
+            IUIAutomationRangeValuePattern rangeValuePattern)
+            : base(el: element) {
+            this._rangeValuePattern = rangeValuePattern;
         }
-      }
 
-      public bool IsReadOnly => (bool) this._el.GetPatternPropertyValue(RangeValuePattern.IsReadOnlyProperty, this._useCache);
-
-      public double Maximum
-      {
-        get
-        {
-          object patternPropertyValue = this._el.GetPatternPropertyValue(RangeValuePattern.MaximumProperty, this._useCache);
-          switch (patternPropertyValue)
-          {
-            case int num:
-              return (double) num;
-            case byte num:
-              return (double) num;
-            case DateTime dateTime:
-              return (double) dateTime.Year;
-            default:
-              return (double) patternPropertyValue;
-          }
+        public RangeValuePatternInformation Cached {
+            get { return new RangeValuePatternInformation(el: this._el, useCache: true); }
         }
-      }
 
-      public double Minimum
-      {
-        get
-        {
-          object patternPropertyValue = this._el.GetPatternPropertyValue(RangeValuePattern.MinimumProperty, this._useCache);
-          switch (patternPropertyValue)
-          {
-            case int num:
-              return (double) num;
-            case byte num:
-              return (double) num;
-            case DateTime dateTime:
-              return (double) dateTime.Year;
-            default:
-              return (double) patternPropertyValue;
-          }
+        public RangeValuePatternInformation Current {
+            get { return new RangeValuePatternInformation(el: this._el, useCache: false); }
         }
-      }
 
-      public double LargeChange
-      {
-        get
-        {
-          object patternPropertyValue = this._el.GetPatternPropertyValue(RangeValuePattern.LargeChangeProperty, this._useCache);
-          switch (patternPropertyValue)
-          {
-            case int num:
-              return (double) num;
-            case byte num:
-              return (double) num;
-            case DateTime dateTime:
-              return (double) dateTime.Year;
-            default:
-              return (double) patternPropertyValue;
-          }
+        internal static RangeValuePattern Wrap(
+            AutomationElement element,
+            IUIAutomationRangeValuePattern rangeValuePattern) {
+            return new RangeValuePattern(element: element, rangeValuePattern: rangeValuePattern);
         }
-      }
 
-      public double SmallChange
-      {
-        get
-        {
-          object patternPropertyValue = this._el.GetPatternPropertyValue(RangeValuePattern.SmallChangeProperty, this._useCache);
-          switch (patternPropertyValue)
-          {
-            case int num:
-              return (double) num;
-            case byte num:
-              return (double) num;
-            case DateTime dateTime:
-              return (double) dateTime.Year;
-            default:
-              return (double) patternPropertyValue;
-          }
+        public void SetValue(double value) {
+            this._rangeValuePattern.SetValue(val: value);
         }
-      }
+
+        public struct RangeValuePatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
+
+            internal RangeValuePatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
+
+            public double Value {
+                get {
+                    var patternPropertyValue = this._el.GetPatternPropertyValue(property: ValueProperty, useCache: this._useCache);
+                    switch (patternPropertyValue) {
+                        case int num:
+                            return num;
+                        case byte num:
+                            return num;
+                        case DateTime dateTime:
+                            return dateTime.Year;
+                        default:
+                            return (double) patternPropertyValue;
+                    }
+                }
+            }
+
+            public bool IsReadOnly {
+                get { return (bool) this._el.GetPatternPropertyValue(property: IsReadOnlyProperty, useCache: this._useCache); }
+            }
+
+            public double Maximum {
+                get {
+                    var patternPropertyValue = this._el.GetPatternPropertyValue(property: MaximumProperty, useCache: this._useCache);
+                    switch (patternPropertyValue) {
+                        case int num:
+                            return num;
+                        case byte num:
+                            return num;
+                        case DateTime dateTime:
+                            return dateTime.Year;
+                        default:
+                            return (double) patternPropertyValue;
+                    }
+                }
+            }
+
+            public double Minimum {
+                get {
+                    var patternPropertyValue = this._el.GetPatternPropertyValue(property: MinimumProperty, useCache: this._useCache);
+                    switch (patternPropertyValue) {
+                        case int num:
+                            return num;
+                        case byte num:
+                            return num;
+                        case DateTime dateTime:
+                            return dateTime.Year;
+                        default:
+                            return (double) patternPropertyValue;
+                    }
+                }
+            }
+
+            public double LargeChange {
+                get {
+                    var patternPropertyValue = this._el.GetPatternPropertyValue(property: LargeChangeProperty, useCache: this._useCache);
+                    switch (patternPropertyValue) {
+                        case int num:
+                            return num;
+                        case byte num:
+                            return num;
+                        case DateTime dateTime:
+                            return dateTime.Year;
+                        default:
+                            return (double) patternPropertyValue;
+                    }
+                }
+            }
+
+            public double SmallChange {
+                get {
+                    var patternPropertyValue = this._el.GetPatternPropertyValue(property: SmallChangeProperty, useCache: this._useCache);
+                    switch (patternPropertyValue) {
+                        case int num:
+                            return num;
+                        case byte num:
+                            return num;
+                        case DateTime dateTime:
+                            return dateTime.Year;
+                        default:
+                            return (double) patternPropertyValue;
+                    }
+                }
+            }
+        }
     }
-  }
 }

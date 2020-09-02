@@ -6,13 +6,9 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("54fcb24b-e18e-47a2-b4d3-eccbe77599a2")]
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [ComImport]
-  public interface IInvokeProvider
-  {
-    void Invoke();
-  }
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "54fcb24b-e18e-47a2-b4d3-eccbe77599a2"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), ComImport]
+    public interface IInvokeProvider {
+        void Invoke();
+    }
 }

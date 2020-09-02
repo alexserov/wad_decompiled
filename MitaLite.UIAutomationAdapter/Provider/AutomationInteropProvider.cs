@@ -7,84 +7,76 @@
 using System.Runtime.InteropServices;
 using UIAutomationClient;
 
-namespace System.Windows.Automation.Provider
-{
-  public static class AutomationInteropProvider
-  {
-    public const int AppendRuntimeId = 3;
-    public const int InvalidateLimit = 20;
-    public const int ItemsInvalidateLimit = 5;
-    public const int RootObjectId = -25;
-    private static readonly object lockObject = new object();
-    private static object notSupportedValue;
+namespace System.Windows.Automation.Provider {
+    public static class AutomationInteropProvider {
+        public const int AppendRuntimeId = 3;
+        public const int InvalidateLimit = 20;
+        public const int ItemsInvalidateLimit = 5;
+        public const int RootObjectId = -25;
+        static readonly object lockObject = new object();
+        static object notSupportedValue;
 
-    public static bool ClientsAreListening => NativeMethods.UiaClientsAreListening();
-
-    public static IRawElementProviderSimple HostProviderFromHandle(
-      IntPtr windowHandle)
-    {
-      IRawElementProviderSimple provider = (IRawElementProviderSimple) null;
-      Marshal.ThrowExceptionForHR(NativeMethods.UiaHostProviderFromHwnd(windowHandle, out provider));
-      return provider;
-    }
-
-    public static void RaiseAutomationEvent(
-      AutomationEvent eventId,
-      IRawElementProviderSimple provider,
-      AutomationEventArgs e)
-    {
-      Validate.ArgumentNotNull((object) provider, nameof (provider));
-      Validate.ArgumentNotNull((object) e, nameof (e));
-      if (e.EventId == AutomationElementIdentifiers.AsyncContentLoadedEvent)
-      {
-        if (!(e is AsyncContentLoadedEventArgs contentLoadedEventArgs))
-          throw new ArgumentException("args");
-        Marshal.ThrowExceptionForHR(NativeMethods.UiaRaiseAsyncContentLoadedEvent(provider, contentLoadedEventArgs.AsyncContentLoadedState, contentLoadedEventArgs.PercentComplete));
-      }
-      else
-      {
-        if (e.EventId == WindowPatternIdentifiers.WindowClosedEvent && !(e is WindowClosedEventArgs))
-          throw new ArgumentException("e.EventId");
-        Marshal.ThrowExceptionForHR(NativeMethods.UiaRaiseAutomationEvent(provider, eventId.Id));
-      }
-    }
-
-    public static void RaiseAutomationPropertyChangedEvent(
-      IRawElementProviderSimple element,
-      AutomationPropertyChangedEventArgs e)
-    {
-      Validate.ArgumentNotNull((object) element, nameof (element));
-      Validate.ArgumentNotNull((object) e, nameof (e));
-      Marshal.ThrowExceptionForHR(NativeMethods.UiaRaiseAutomationPropertyChangedEvent(element, e.Property.Id, e.OldValue, e.NewValue));
-    }
-
-    public static void RaiseStructureChangedEvent(
-      IRawElementProviderSimple provider,
-      StructureChangedEventArgs e)
-    {
-      Validate.ArgumentNotNull((object) provider, nameof (provider));
-      Validate.ArgumentNotNull((object) e, nameof (e));
-      int[] runtimeId = e.GetRuntimeId();
-      Marshal.ThrowExceptionForHR(NativeMethods.UiaRaiseStructureChangedEvent(provider, e.StructureChangeType, runtimeId, runtimeId.Length));
-    }
-
-    public static IntPtr ReturnRawElementProvider(
-      IntPtr windowHandle,
-      IntPtr wParam,
-      IntPtr lParam,
-      IRawElementProviderSimple el) => NativeMethods.UiaReturnRawElementProvider(windowHandle, wParam, lParam, el);
-
-    public static object NotSupportedValue
-    {
-      get
-      {
-        lock (AutomationInteropProvider.lockObject)
-        {
-          if (AutomationInteropProvider.notSupportedValue == null)
-            Marshal.ThrowExceptionForHR(NativeMethods.UiaGetReservedNotSupportedValue(out AutomationInteropProvider.notSupportedValue));
-          return AutomationInteropProvider.notSupportedValue;
+        public static bool ClientsAreListening {
+            get { return NativeMethods.UiaClientsAreListening(); }
         }
-      }
+
+        public static object NotSupportedValue {
+            get {
+                lock (lockObject) {
+                    if (notSupportedValue == null)
+                        Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaGetReservedNotSupportedValue(punkNotSupportedValue: out notSupportedValue));
+                    return notSupportedValue;
+                }
+            }
+        }
+
+        public static IRawElementProviderSimple HostProviderFromHandle(
+            IntPtr windowHandle) {
+            IRawElementProviderSimple provider = null;
+            Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaHostProviderFromHwnd(hwnd: windowHandle, provider: out provider));
+            return provider;
+        }
+
+        public static void RaiseAutomationEvent(
+            AutomationEvent eventId,
+            IRawElementProviderSimple provider,
+            AutomationEventArgs e) {
+            Validate.ArgumentNotNull(parameter: provider, parameterName: nameof(provider));
+            Validate.ArgumentNotNull(parameter: e, parameterName: nameof(e));
+            if (e.EventId == AutomationElementIdentifiers.AsyncContentLoadedEvent) {
+                if (!(e is AsyncContentLoadedEventArgs contentLoadedEventArgs))
+                    throw new ArgumentException(message: "args");
+                Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaRaiseAsyncContentLoadedEvent(provider: provider, asyncContentLoadedState: contentLoadedEventArgs.AsyncContentLoadedState, PercentComplete: contentLoadedEventArgs.PercentComplete));
+            } else {
+                if (e.EventId == WindowPatternIdentifiers.WindowClosedEvent && !(e is WindowClosedEventArgs))
+                    throw new ArgumentException(message: "e.EventId");
+                Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaRaiseAutomationEvent(provider: provider, id: eventId.Id));
+            }
+        }
+
+        public static void RaiseAutomationPropertyChangedEvent(
+            IRawElementProviderSimple element,
+            AutomationPropertyChangedEventArgs e) {
+            Validate.ArgumentNotNull(parameter: element, parameterName: nameof(element));
+            Validate.ArgumentNotNull(parameter: e, parameterName: nameof(e));
+            Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaRaiseAutomationPropertyChangedEvent(provider: element, id: e.Property.Id, oldValue: e.OldValue, newValue: e.NewValue));
+        }
+
+        public static void RaiseStructureChangedEvent(
+            IRawElementProviderSimple provider,
+            StructureChangedEventArgs e) {
+            Validate.ArgumentNotNull(parameter: provider, parameterName: nameof(provider));
+            Validate.ArgumentNotNull(parameter: e, parameterName: nameof(e));
+            var runtimeId = e.GetRuntimeId();
+            Marshal.ThrowExceptionForHR(errorCode: NativeMethods.UiaRaiseStructureChangedEvent(provider: provider, structureChangeType: e.StructureChangeType, runtimeId: runtimeId, runtimeIdLen: runtimeId.Length));
+        }
+
+        public static IntPtr ReturnRawElementProvider(
+            IntPtr windowHandle,
+            IntPtr wParam,
+            IntPtr lParam,
+            IRawElementProviderSimple el) {
+            return NativeMethods.UiaReturnRawElementProvider(hwnd: windowHandle, wParam: wParam, lParam: lParam, el: el);
+        }
     }
-  }
 }

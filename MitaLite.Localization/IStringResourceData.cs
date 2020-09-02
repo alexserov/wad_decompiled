@@ -4,20 +4,18 @@
 // MVID: 9FE6CFDB-BB88-427C-96A4-C26318ECB83B
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Localization.dll
 
-namespace MS.Internal.Mita.Localization
-{
-  public interface IStringResourceData
-  {
-    string Raw();
+namespace MS.Internal.Mita.Localization {
+    public interface IStringResourceData {
+        string Raw();
 
-    string Parsed();
+        string Parsed();
 
-    char Hotkey();
+        char Hotkey();
 
-    string Accelerator();
+        string Accelerator();
 
-    string DebugInfo();
+        string DebugInfo();
 
-    string DefaultString();
-  }
+        string DefaultString();
+    }
 }

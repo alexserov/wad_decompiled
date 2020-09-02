@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Localization
-{
-  public class LocalizationManagerException : Exception
-  {
-    public LocalizationManagerException()
-    {
-    }
+namespace MS.Internal.Mita.Localization {
+    public class LocalizationManagerException : Exception {
+        public LocalizationManagerException() {
+        }
 
-    public LocalizationManagerException(string message)
-      : base(message)
-    {
-    }
+        public LocalizationManagerException(string message)
+            : base(message: message) {
+        }
 
-    public LocalizationManagerException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public LocalizationManagerException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

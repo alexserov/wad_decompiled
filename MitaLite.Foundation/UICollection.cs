@@ -6,30 +6,25 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public abstract class UICollection
-  {
-    private static bool _autoRealize;
-    private static TimeSpan _timeout = TimeSpan.Zero;
-    private static int _retryCount = 5;
+namespace MS.Internal.Mita.Foundation {
+    public abstract class UICollection {
+        static bool _autoRealize;
+        static TimeSpan _timeout = TimeSpan.Zero;
+        static int _retryCount = 5;
 
-    public static TimeSpan Timeout
-    {
-      get => UICollection._timeout;
-      set => UICollection._timeout = value;
-    }
+        public static TimeSpan Timeout {
+            get { return _timeout; }
+            set { _timeout = value; }
+        }
 
-    public static int RetryCount
-    {
-      get => UICollection._retryCount;
-      set => UICollection._retryCount = value;
-    }
+        public static int RetryCount {
+            get { return _retryCount; }
+            set { _retryCount = value; }
+        }
 
-    public static bool AutoRealize
-    {
-      get => UICollection._autoRealize;
-      set => UICollection._autoRealize = value;
+        public static bool AutoRealize {
+            get { return _autoRealize; }
+            set { _autoRealize = value; }
+        }
     }
-  }
 }

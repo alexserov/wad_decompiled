@@ -4,50 +4,61 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class SubmenuItem : UIObject, IExpandCollapse
-  {
-    private IExpandCollapse _expandCollapsePattern;
-    private static IFactory<SubmenuItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class SubmenuItem : UIObject, IExpandCollapse {
+        static IFactory<SubmenuItem> _factory;
+        IExpandCollapse _expandCollapsePattern;
 
-    public SubmenuItem(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public SubmenuItem(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal SubmenuItem(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal SubmenuItem(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._expandCollapsePattern = (IExpandCollapse) new ExpandCollapseImplementation((UIObject) this);
+        public static IFactory<SubmenuItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new SubmenuItemFactory();
+                return _factory;
+            }
+        }
 
-    public virtual void Collapse() => this._expandCollapsePattern.Collapse();
+        public virtual void Collapse() {
+            this._expandCollapsePattern.Collapse();
+        }
 
-    public virtual void Expand() => this._expandCollapsePattern.Expand();
+        public virtual void Expand() {
+            this._expandCollapsePattern.Expand();
+        }
 
-    public virtual ExpandCollapseState ExpandCollapseState => this._expandCollapsePattern.ExpandCollapseState;
+        public virtual ExpandCollapseState ExpandCollapseState {
+            get { return this._expandCollapsePattern.ExpandCollapseState; }
+        }
 
-    public UIEventWaiter GetCollapsedWaiter() => this._expandCollapsePattern.GetCollapsedWaiter();
+        public UIEventWaiter GetCollapsedWaiter() {
+            return this._expandCollapsePattern.GetCollapsedWaiter();
+        }
 
-    public UIEventWaiter GetExpandedWaiter() => this._expandCollapsePattern.GetExpandedWaiter();
+        public UIEventWaiter GetExpandedWaiter() {
+            return this._expandCollapsePattern.GetExpandedWaiter();
+        }
 
-    public static IFactory<SubmenuItem> Factory
-    {
-      get
-      {
-        if (SubmenuItem._factory == null)
-          SubmenuItem._factory = (IFactory<SubmenuItem>) new SubmenuItem.SubmenuItemFactory();
-        return SubmenuItem._factory;
-      }
+        void Initialize() {
+            this._expandCollapsePattern = new ExpandCollapseImplementation(uiObject: this);
+        }
+
+        class SubmenuItemFactory : IFactory<SubmenuItem> {
+            public SubmenuItem Create(UIObject element) {
+                return new SubmenuItem(uiObject: element);
+            }
+        }
     }
-
-    private class SubmenuItemFactory : IFactory<SubmenuItem>
-    {
-      public SubmenuItem Create(UIObject element) => new SubmenuItem(element);
-    }
-  }
 }

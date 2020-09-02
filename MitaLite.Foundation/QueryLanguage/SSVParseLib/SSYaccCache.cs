@@ -6,18 +6,17 @@
 
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib
-{
-  internal class SSYaccCache : Queue<object>
-  {
-    public bool hasElements() => this.Count != 0;
+namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib {
+    internal class SSYaccCache : Queue<object> {
+        public bool hasElements() {
+            return Count != 0;
+        }
 
-    public SSLexLexeme remove()
-    {
-      SSLexLexeme ssLexLexeme = (SSLexLexeme) null;
-      if (this.Count != 0)
-        ssLexLexeme = (SSLexLexeme) this.Dequeue();
-      return ssLexLexeme;
+        public SSLexLexeme remove() {
+            SSLexLexeme ssLexLexeme = null;
+            if (Count != 0)
+                ssLexLexeme = (SSLexLexeme) Dequeue();
+            return ssLexLexeme;
+        }
     }
-  }
 }

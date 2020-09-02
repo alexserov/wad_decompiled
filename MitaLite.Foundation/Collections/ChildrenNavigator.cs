@@ -6,53 +6,52 @@
 
 using System.Collections.Generic;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class ChildrenNavigator : UINavigator
-  {
-    private AutomationElement _root;
-    private TreeWalker _treeWalker;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class ChildrenNavigator : UINavigator {
+        AutomationElement _root;
+        TreeWalker _treeWalker;
 
-    public ChildrenNavigator(UIObject root, UICondition treeCondition)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      this.Initialize(root.AutomationElement, treeCondition);
+        public ChildrenNavigator(UIObject root, UICondition treeCondition) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Initialize(root: root.AutomationElement, treeCondition: treeCondition);
+        }
+
+        public ChildrenNavigator(AutomationElement root, UICondition treeCondition) {
+            Initialize(root: root, treeCondition: treeCondition);
+        }
+
+        public ChildrenNavigator(ChildrenNavigator previous)
+            : base(previous: previous) {
+            Validate.ArgumentNotNull(parameter: previous, parameterName: nameof(previous));
+            this._root = previous._root;
+            this._treeWalker = previous._treeWalker;
+        }
+
+        void Initialize(AutomationElement root, UICondition treeCondition) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Validate.ArgumentNotNull(parameter: treeCondition, parameterName: nameof(treeCondition));
+            this._root = root;
+            this._treeWalker = new TreeWalker(condition: treeCondition.Condition);
+        }
+
+        public override UINavigator Duplicate() {
+            return new ChildrenNavigator(previous: this);
+        }
+
+        public override IEnumerator<AutomationElement> GetEnumerator() {
+            var childrenNavigator = this;
+            var filter = childrenNavigator.Filter;
+            AutomationElement current;
+            for (current = childrenNavigator._treeWalker.GetFirstChild(element: childrenNavigator._root); current != (AutomationElement) null; current = childrenNavigator._treeWalker.GetNextSibling(element: current))
+                if (filter.Matches(element: current))
+                    yield return current;
+            current = null;
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "ChildrenNavigator_ToString_3", (object) new UIObject(element: this._root).ToString(), (object) UICondition.ToString(condition: this._treeWalker.Condition), (object) Filter.ToString());
+        }
     }
-
-    public ChildrenNavigator(AutomationElement root, UICondition treeCondition) => this.Initialize(root, treeCondition);
-
-    public ChildrenNavigator(ChildrenNavigator previous)
-      : base((UINavigator) previous)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) previous, nameof (previous));
-      this._root = previous._root;
-      this._treeWalker = previous._treeWalker;
-    }
-
-    private void Initialize(AutomationElement root, UICondition treeCondition)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) treeCondition, nameof (treeCondition));
-      this._root = root;
-      this._treeWalker = new TreeWalker(treeCondition.Condition);
-    }
-
-    public override UINavigator Duplicate() => (UINavigator) new ChildrenNavigator(this);
-
-    public override IEnumerator<AutomationElement> GetEnumerator()
-    {
-      ChildrenNavigator childrenNavigator = this;
-      UIObjectFilter filter = childrenNavigator.Filter;
-      AutomationElement current;
-      for (current = childrenNavigator._treeWalker.GetFirstChild(childrenNavigator._root); current != (AutomationElement) null; current = childrenNavigator._treeWalker.GetNextSibling(current))
-      {
-        if (filter.Matches(current))
-          yield return current;
-      }
-      current = (AutomationElement) null;
-    }
-
-    public override string ToString() => StringResource.Get("ChildrenNavigator_ToString_3", (object) new UIObject(this._root).ToString(), (object) UICondition.ToString(this._treeWalker.Condition), (object) this.Filter.ToString());
-  }
 }

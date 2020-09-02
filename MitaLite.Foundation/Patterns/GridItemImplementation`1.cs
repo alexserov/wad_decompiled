@@ -5,69 +5,57 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class GridItemImplementation<C> : PatternImplementation<GridItemPattern>, IGridItem<C>
-    where C : UIObject
-  {
-    private IFactory<C> _containerFactory;
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class GridItemImplementation<C> : PatternImplementation<GridItemPattern>, IGridItem<C>
+        where C : UIObject {
+        readonly IFactory<C> _containerFactory;
 
-    public GridItemImplementation(UIObject uiObject, IFactory<C> containerFactory)
-      : base(uiObject, GridItemPattern.Pattern)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) containerFactory, nameof (containerFactory));
-      this._containerFactory = containerFactory;
+        public GridItemImplementation(UIObject uiObject, IFactory<C> containerFactory)
+            : base(uiObject: uiObject, patternIdentifier: GridItemPattern.Pattern) {
+            Validate.ArgumentNotNull(parameter: containerFactory, parameterName: nameof(containerFactory));
+            this._containerFactory = containerFactory;
+        }
+
+        public C ContainingGrid {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(ContainingGrid)), overridden: out overridden) == ActionResult.Handled ? this._containerFactory.Create(element: (UIObject) overridden) : this._containerFactory.Create(element: new UIObject(element: Pattern.Current.ContainingGrid));
+            }
+        }
+
+        public int Row {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Row)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.Row;
+            }
+        }
+
+        public int Column {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Column)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.Column;
+            }
+        }
+
+        public int RowSpan {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(RowSpan)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.RowSpan;
+            }
+        }
+
+        public int ColumnSpan {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(ColumnSpan)), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.ColumnSpan;
+            }
+        }
     }
-
-    public C ContainingGrid
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (ContainingGrid)), out overridden) == ActionResult.Handled ? this._containerFactory.Create((UIObject) overridden) : this._containerFactory.Create(new UIObject(this.Pattern.Current.ContainingGrid));
-      }
-    }
-
-    public int Row
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Row)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.Row;
-      }
-    }
-
-    public int Column
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Column)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.Column;
-      }
-    }
-
-    public int RowSpan
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (RowSpan)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.RowSpan;
-      }
-    }
-
-    public int ColumnSpan
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (ColumnSpan)), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.ColumnSpan;
-      }
-    }
-  }
 }

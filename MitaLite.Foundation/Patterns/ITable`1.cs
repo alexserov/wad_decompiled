@@ -6,14 +6,12 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface ITable<I> : IGrid<I> where I : UIObject
-  {
-    UICollection<UIObject> RowHeaders { get; }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface ITable<I> : IGrid<I> where I : UIObject {
+        UICollection<UIObject> RowHeaders { get; }
 
-    UICollection<UIObject> ColumnHeaders { get; }
+        UICollection<UIObject> ColumnHeaders { get; }
 
-    RowOrColumnMajor RowOrColumnMajor { get; }
-  }
+        RowOrColumnMajor RowOrColumnMajor { get; }
+    }
 }

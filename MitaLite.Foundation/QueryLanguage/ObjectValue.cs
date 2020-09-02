@@ -8,42 +8,35 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class ObjectValue : Value
-  {
-    private object[] _parameterObjects;
-    private int _index;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class ObjectValue : Value {
+        readonly int _index;
+        readonly object[] _parameterObjects;
 
-    public ObjectValue(string lexeme, object[] parameterObjects)
-    {
-      this._parameterObjects = parameterObjects;
-      if (lexeme.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-        this._index = int.Parse(lexeme.Substring(2), NumberStyles.HexNumber, (IFormatProvider) CultureInfo.InvariantCulture);
-      else
-        this._index = int.Parse(lexeme, (IFormatProvider) CultureInfo.InvariantCulture);
-    }
+        public ObjectValue(string lexeme, object[] parameterObjects) {
+            this._parameterObjects = parameterObjects;
+            if (lexeme.StartsWith(value: "0x", comparisonType: StringComparison.OrdinalIgnoreCase))
+                this._index = int.Parse(s: lexeme.Substring(startIndex: 2), style: NumberStyles.HexNumber, provider: CultureInfo.InvariantCulture);
+            else
+                this._index = int.Parse(s: lexeme, provider: CultureInfo.InvariantCulture);
+        }
 
-    public override bool Validate(Type requiredType, StringBuilder errors)
-    {
-      bool flag;
-      if (this._index >= 0 && this._index < this._parameterObjects.Length)
-      {
-        flag = true;
-      }
-      else
-      {
-        errors.AppendLine(StringResource.Get("InvalidIndex"));
-        flag = false;
-      }
-      return flag;
-    }
+        public override bool Validate(Type requiredType, StringBuilder errors) {
+            bool flag;
+            if (this._index >= 0 && this._index < this._parameterObjects.Length) {
+                flag = true;
+            } else {
+                errors.AppendLine(value: StringResource.Get(id: "InvalidIndex"));
+                flag = false;
+            }
 
-    public override object GetValueObject(Type requiredType)
-    {
-      if (this._index >= 0 && this._index < this._parameterObjects.Length)
-        return this._parameterObjects[this._index];
-      throw new UIQueryException(StringResource.Get("InvalidIndex"));
+            return flag;
+        }
+
+        public override object GetValueObject(Type requiredType) {
+            if (this._index >= 0 && this._index < this._parameterObjects.Length)
+                return this._parameterObjects[this._index];
+            throw new UIQueryException(message: StringResource.Get(id: "InvalidIndex"));
+        }
     }
-  }
 }

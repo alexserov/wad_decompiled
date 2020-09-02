@@ -6,53 +6,70 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TableItemPattern : GridItemPattern
-  {
-    public new static readonly AutomationPattern Pattern = TableItemPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty ColumnHeaderItemsProperty = TableItemPatternIdentifiers.ColumnHeaderItemsProperty;
-    public static readonly AutomationProperty RowHeaderItemsProperty = TableItemPatternIdentifiers.RowHeaderItemsProperty;
-    private readonly IUIAutomationTableItemPattern _tableItemPattern;
+namespace System.Windows.Automation {
+    public class TableItemPattern : GridItemPattern {
+        public new static readonly AutomationPattern Pattern = TableItemPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty ColumnHeaderItemsProperty = TableItemPatternIdentifiers.ColumnHeaderItemsProperty;
+        public static readonly AutomationProperty RowHeaderItemsProperty = TableItemPatternIdentifiers.RowHeaderItemsProperty;
+        readonly IUIAutomationTableItemPattern _tableItemPattern;
 
-    private TableItemPattern(
-      AutomationElement element,
-      IUIAutomationTableItemPattern tableItemPattern)
-      : base(element, (object) tableItemPattern)
-      => this._tableItemPattern = tableItemPattern;
+        TableItemPattern(
+            AutomationElement element,
+            IUIAutomationTableItemPattern tableItemPattern)
+            : base(element: element, gridItemPattern: tableItemPattern) {
+            this._tableItemPattern = tableItemPattern;
+        }
 
-    internal static TableItemPattern Wrap(
-      AutomationElement element,
-      IUIAutomationTableItemPattern pattern) => new TableItemPattern(element, pattern);
+        public TableItemPatternInformation Cached {
+            get { return new TableItemPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public TableItemPattern.TableItemPatternInformation Cached => new TableItemPattern.TableItemPatternInformation(this._el, true);
+        public TableItemPatternInformation Current {
+            get { return new TableItemPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public TableItemPattern.TableItemPatternInformation Current => new TableItemPattern.TableItemPatternInformation(this._el, false);
+        internal static TableItemPattern Wrap(
+            AutomationElement element,
+            IUIAutomationTableItemPattern pattern) {
+            return new TableItemPattern(element: element, tableItemPattern: pattern);
+        }
 
-    public struct TableItemPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct TableItemPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal TableItemPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal TableItemPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public int Row => (int) this._el.GetPatternPropertyValue(GridItemPattern.RowProperty, this._useCache);
+            public int Row {
+                get { return (int) this._el.GetPatternPropertyValue(property: RowProperty, useCache: this._useCache); }
+            }
 
-      public int Column => (int) this._el.GetPatternPropertyValue(GridItemPattern.ColumnProperty, this._useCache);
+            public int Column {
+                get { return (int) this._el.GetPatternPropertyValue(property: ColumnProperty, useCache: this._useCache); }
+            }
 
-      public int RowSpan => (int) this._el.GetPatternPropertyValue(GridItemPattern.RowSpanProperty, this._useCache);
+            public int RowSpan {
+                get { return (int) this._el.GetPatternPropertyValue(property: RowSpanProperty, useCache: this._useCache); }
+            }
 
-      public int ColumnSpan => (int) this._el.GetPatternPropertyValue(GridItemPattern.ColumnSpanProperty, this._useCache);
+            public int ColumnSpan {
+                get { return (int) this._el.GetPatternPropertyValue(property: ColumnSpanProperty, useCache: this._useCache); }
+            }
 
-      public AutomationElement ContainingGrid => (AutomationElement) this._el.GetPatternPropertyValue(GridItemPattern.ContainingGridProperty, this._useCache);
+            public AutomationElement ContainingGrid {
+                get { return (AutomationElement) this._el.GetPatternPropertyValue(property: ContainingGridProperty, useCache: this._useCache); }
+            }
 
-      public AutomationElement[] GetRowHeaderItems() => (AutomationElement[]) (AutomationElementCollection) this._el.GetPatternPropertyValue(TableItemPattern.RowHeaderItemsProperty, this._useCache);
+            public AutomationElement[] GetRowHeaderItems() {
+                return (AutomationElement[]) (AutomationElementCollection) this._el.GetPatternPropertyValue(property: RowHeaderItemsProperty, useCache: this._useCache);
+            }
 
-      public AutomationElement[] GetColumnHeaderItems() => (AutomationElement[]) (AutomationElementCollection) this._el.GetPatternPropertyValue(TableItemPattern.ColumnHeaderItemsProperty, this._useCache);
+            public AutomationElement[] GetColumnHeaderItems() {
+                return (AutomationElement[]) (AutomationElementCollection) this._el.GetPatternPropertyValue(property: ColumnHeaderItemsProperty, useCache: this._useCache);
+            }
+        }
     }
-  }
 }

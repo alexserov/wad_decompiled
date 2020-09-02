@@ -7,10 +7,10 @@
 using System;
 using System.Linq;
 
-namespace UIAutomationAdapter.Utilities
-{
-  internal static class ArrayMarshaller
-  {
-    public static T[] ToTypedArray<T>(this Array value) => value.Cast<T>().ToArray<T>();
-  }
+namespace UIAutomationAdapter.Utilities {
+    internal static class ArrayMarshaller {
+        public static T[] ToTypedArray<T>(this Array value) {
+            return value.Cast<T>().ToArray();
+        }
+    }
 }

@@ -4,44 +4,49 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class MenuItem : UIObject, IInvoke
-  {
-    private static IFactory<MenuItem> _factory;
-    private IInvoke _invokePattern;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class MenuItem : UIObject, IInvoke {
+        static IFactory<MenuItem> _factory;
+        IInvoke _invokePattern;
 
-    public MenuItem(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public MenuItem(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal MenuItem(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal MenuItem(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._invokePattern = (IInvoke) new InvokeImplementation((UIObject) this);
+        public static IFactory<MenuItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new MenuItemFactory();
+                return _factory;
+            }
+        }
 
-    public virtual void Invoke() => this._invokePattern.Invoke();
+        public virtual void Invoke() {
+            this._invokePattern.Invoke();
+        }
 
-    public UIEventWaiter GetInvokedWaiter() => this._invokePattern.GetInvokedWaiter();
+        public UIEventWaiter GetInvokedWaiter() {
+            return this._invokePattern.GetInvokedWaiter();
+        }
 
-    public static IFactory<MenuItem> Factory
-    {
-      get
-      {
-        if (MenuItem._factory == null)
-          MenuItem._factory = (IFactory<MenuItem>) new MenuItem.MenuItemFactory();
-        return MenuItem._factory;
-      }
+        void Initialize() {
+            this._invokePattern = new InvokeImplementation(uiObject: this);
+        }
+
+        class MenuItemFactory : IFactory<MenuItem> {
+            public MenuItem Create(UIObject element) {
+                return new MenuItem(uiObject: element);
+            }
+        }
     }
-
-    private class MenuItemFactory : IFactory<MenuItem>
-    {
-      public MenuItem Create(UIObject element) => new MenuItem(element);
-    }
-  }
 }

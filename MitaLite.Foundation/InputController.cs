@@ -6,48 +6,43 @@
 
 using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class InputController
-  {
-    private static PointerInputType activeInputType = PointerInputType.Mouse;
+namespace MS.Internal.Mita.Foundation {
+    public static class InputController {
+        static PointerInputType activeInputType = PointerInputType.Mouse;
 
-    public static CompositeInputControllerMartyr Activate(
-      PointerInputType inputType)
-    {
-      CompositeInputControllerMartyr controllerMartyr = new CompositeInputControllerMartyr(InputController.ActiveInputType);
-      switch (inputType)
-      {
-        case PointerInputType.Mouse:
-          controllerMartyr.Add(PointerInput.Activate((IPointerInput) Mouse.Instance));
-          controllerMartyr.Add(MouseWheelInput.Activate((IMouseWheelInput) Mouse.Instance));
-          break;
-        case PointerInputType.Pen:
-          controllerMartyr.Add(PointerInput.Activate((IPointerInput) Pen.Instance));
-          controllerMartyr.Add(SinglePointGesture.Activate((ISinglePointGestureInput) Pen.Instance));
-          break;
-        case PointerInputType.SingleTouch:
-          controllerMartyr.Add(PointerInput.Activate((IPointerInput) SingleTouch.Instance));
-          controllerMartyr.Add(SinglePointGesture.Activate((ISinglePointGestureInput) SingleTouch.Instance));
-          break;
-        case PointerInputType.MultiTouch:
-          controllerMartyr.Add(PointerInput.Activate((IPointerInput) MultiTouch.Instance));
-          controllerMartyr.Add(SinglePointGesture.Activate((ISinglePointGestureInput) MultiTouch.Instance));
-          controllerMartyr.Add(MultiPointGesture.Activate((IMultiPointGestureInput) MultiTouch.Instance));
-          break;
-      }
-      InputController.ActiveInputType = inputType;
-      return controllerMartyr;
-    }
+        public static PointerInputType ActiveInputType {
+            get { return activeInputType; }
+            internal set {
+                activeInputType = value;
+                Log.Out(msg: "Active Input Type: {0}", (object) value);
+            }
+        }
 
-    public static PointerInputType ActiveInputType
-    {
-      get => InputController.activeInputType;
-      internal set
-      {
-        InputController.activeInputType = value;
-        Log.Out("Active Input Type: {0}", (object) value);
-      }
+        public static CompositeInputControllerMartyr Activate(
+            PointerInputType inputType) {
+            var controllerMartyr = new CompositeInputControllerMartyr(previousInputType: ActiveInputType);
+            switch (inputType) {
+                case PointerInputType.Mouse:
+                    controllerMartyr.Add(martyr: PointerInput.Activate(pointer: Mouse.Instance));
+                    controllerMartyr.Add(martyr: MouseWheelInput.Activate(mouseWheel: Mouse.Instance));
+                    break;
+                case PointerInputType.Pen:
+                    controllerMartyr.Add(martyr: PointerInput.Activate(pointer: Pen.Instance));
+                    controllerMartyr.Add(martyr: SinglePointGesture.Activate(pointer: Pen.Instance));
+                    break;
+                case PointerInputType.SingleTouch:
+                    controllerMartyr.Add(martyr: PointerInput.Activate(pointer: SingleTouch.Instance));
+                    controllerMartyr.Add(martyr: SinglePointGesture.Activate(pointer: SingleTouch.Instance));
+                    break;
+                case PointerInputType.MultiTouch:
+                    controllerMartyr.Add(martyr: PointerInput.Activate(pointer: MultiTouch.Instance));
+                    controllerMartyr.Add(martyr: SinglePointGesture.Activate(pointer: MultiTouch.Instance));
+                    controllerMartyr.Add(martyr: MultiPointGesture.Activate(pointer: MultiTouch.Instance));
+                    break;
+            }
+
+            ActiveInputType = inputType;
+            return controllerMartyr;
+        }
     }
-  }
 }

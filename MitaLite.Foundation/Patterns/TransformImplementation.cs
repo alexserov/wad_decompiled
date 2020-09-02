@@ -6,81 +6,58 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class TransformImplementation : PatternImplementation<TransformPattern>, ITransform
-  {
-    public TransformImplementation(UIObject uiObject)
-      : base(uiObject, TransformPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class TransformImplementation : PatternImplementation<TransformPattern>, ITransform {
+        public TransformImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: TransformPattern.Pattern) {
+        }
 
-    public void Rotate(double degrees)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (Rotate), new object[1]
-      {
-        (object) degrees
-      })) != ActionResult.Unhandled)
-        return;
-      this.Pattern.Rotate(degrees);
-    }
+        public void Rotate(double degrees) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(Rotate), degrees)) != ActionResult.Unhandled)
+                return;
+            Pattern.Rotate(degrees: degrees);
+        }
 
-    public void Resize(double width, double height)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (Resize), new object[2]
-      {
-        (object) width,
-        (object) height
-      })) != ActionResult.Unhandled)
-        return;
-      this.Pattern.Resize(width, height);
-    }
+        public void Resize(double width, double height) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(Resize), width, (object) height)) != ActionResult.Unhandled)
+                return;
+            Pattern.Resize(width: width, height: height);
+        }
 
-    public void Move(double x, double y)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (Move), new object[2]
-      {
-        (object) x,
-        (object) y
-      })) != ActionResult.Unhandled)
-        return;
-      this.Pattern.Move(x, y);
-    }
+        public void Move(double x, double y) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(Move), x, (object) y)) != ActionResult.Unhandled)
+                return;
+            Pattern.Move(x: x, y: y);
+        }
 
-    public bool CanRotate
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanRotate)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanRotate;
-      }
-    }
+        public bool CanRotate {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanRotate)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanRotate;
+            }
+        }
 
-    public bool CanResize
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanResize)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanResize;
-      }
-    }
+        public bool CanResize {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanResize)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanResize;
+            }
+        }
 
-    public bool CanMove
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanMove)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanMove;
-      }
+        public bool CanMove {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanMove)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanMove;
+            }
+        }
     }
-  }
 }

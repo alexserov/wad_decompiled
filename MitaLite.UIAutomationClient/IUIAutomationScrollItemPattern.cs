@@ -7,14 +7,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("B488300F-D015-4F19-9C29-BB595E3645EF")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationScrollItemPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void ScrollIntoView();
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "B488300F-D015-4F19-9C29-BB595E3645EF"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationScrollItemPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void ScrollIntoView();
+    }
 }

@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public abstract class MitaException : Exception
-  {
-    protected MitaException()
-    {
-    }
+namespace MS.Internal.Mita.Foundation {
+    public abstract class MitaException : Exception {
+        protected MitaException() {
+        }
 
-    protected MitaException(string message)
-      : base(message)
-    {
-    }
+        protected MitaException(string message)
+            : base(message: message) {
+        }
 
-    protected MitaException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        protected MitaException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

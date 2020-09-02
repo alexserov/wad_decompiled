@@ -7,14 +7,13 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("1B4E1F2E-75EB-4D0B-8952-5A69988E2307")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationBoolCondition : IUIAutomationCondition
-  {
-    [DispId(1610743808)]
-    int BooleanValue { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "1B4E1F2E-75EB-4D0B-8952-5A69988E2307"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationBoolCondition : IUIAutomationCondition {
+        [DispId(dispId: 1610743808)]
+        int BooleanValue {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+    }
 }

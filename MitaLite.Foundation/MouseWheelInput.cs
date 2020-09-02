@@ -7,36 +7,33 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class MouseWheelInput
-  {
-    private static Stack<IMouseWheelInput> _mouseWheelInputStack = new Stack<IMouseWheelInput>();
+namespace MS.Internal.Mita.Foundation {
+    public static class MouseWheelInput {
+        static readonly Stack<IMouseWheelInput> _mouseWheelInputStack = new Stack<IMouseWheelInput>();
 
-    public static void RotateWheel(int delta) => MouseWheelInput.Current.RotateWheel(delta);
+        public static IMouseWheelInput Current {
+            get {
+                if (_mouseWheelInputStack.Count == 0)
+                    lock (_mouseWheelInputStack) {
+                        if (_mouseWheelInputStack.Count == 0)
+                            _mouseWheelInputStack.Push(item: Mouse.Instance);
+                    }
 
-    public static void RotateWheel(UIObject uiObject, int delta)
-    {
-      PointerInput.Move(uiObject);
-      MouseWheelInput.RotateWheel(delta);
-    }
-
-    public static IDisposable Activate(IMouseWheelInput mouseWheel) => (IDisposable) new InputControllerMartyr<IMouseWheelInput>(MouseWheelInput._mouseWheelInputStack, mouseWheel);
-
-    public static IMouseWheelInput Current
-    {
-      get
-      {
-        if (MouseWheelInput._mouseWheelInputStack.Count == 0)
-        {
-          lock (MouseWheelInput._mouseWheelInputStack)
-          {
-            if (MouseWheelInput._mouseWheelInputStack.Count == 0)
-              MouseWheelInput._mouseWheelInputStack.Push((IMouseWheelInput) Mouse.Instance);
-          }
+                return _mouseWheelInputStack.Peek();
+            }
         }
-        return MouseWheelInput._mouseWheelInputStack.Peek();
-      }
+
+        public static void RotateWheel(int delta) {
+            Current.RotateWheel(delta: delta);
+        }
+
+        public static void RotateWheel(UIObject uiObject, int delta) {
+            PointerInput.Move(uiObject: uiObject);
+            RotateWheel(delta: delta);
+        }
+
+        public static IDisposable Activate(IMouseWheelInput mouseWheel) {
+            return new InputControllerMartyr<IMouseWheelInput>(inputStack: _mouseWheelInputStack, inputController: mouseWheel);
+        }
     }
-  }
 }

@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class StatusBar : StatusBar<UIObject>
-  {
-    private static IFactory<StatusBar> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class StatusBar : StatusBar<UIObject> {
+        static IFactory<StatusBar> _factory;
 
-    public StatusBar(UIObject uiObject)
-      : base(uiObject, UIObject.Factory)
-    {
-    }
+        public StatusBar(UIObject uiObject)
+            : base(uiObject: uiObject, itemFactory: UIObject.Factory) {
+        }
 
-    internal StatusBar(AutomationElement element)
-      : base(element, UIObject.Factory)
-    {
-    }
+        internal StatusBar(AutomationElement element)
+            : base(element: element, itemFactory: UIObject.Factory) {
+        }
 
-    public static IFactory<StatusBar> Factory
-    {
-      get
-      {
-        if (StatusBar._factory == null)
-          StatusBar._factory = (IFactory<StatusBar>) new StatusBar.StatusBarFactory();
-        return StatusBar._factory;
-      }
-    }
+        public static IFactory<StatusBar> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new StatusBarFactory();
+                return _factory;
+            }
+        }
 
-    private class StatusBarFactory : IFactory<StatusBar>
-    {
-      public StatusBar Create(UIObject element) => new StatusBar(element);
+        class StatusBarFactory : IFactory<StatusBar> {
+            public StatusBar Create(UIObject element) {
+                return new StatusBar(uiObject: element);
+            }
+        }
     }
-  }
 }

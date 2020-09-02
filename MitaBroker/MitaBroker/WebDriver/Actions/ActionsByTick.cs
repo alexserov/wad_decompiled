@@ -6,9 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal sealed class ActionsByTick : List<ActionSequence>
-  {
-  }
+namespace MitaBroker.WebDriver.Actions {
+    internal sealed class ActionsByTick : List<ActionSequence> {
+    }
 }

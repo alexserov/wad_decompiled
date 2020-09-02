@@ -6,196 +6,187 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using Windows.System.Profile;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  public static class ScreenCapture
-  {
-    private static long XboxLastCaptureTicks = 0;
-    internal static INativeMethods nativeMethods = (INativeMethods) new MS.Internal.Mita.Foundation.NativeMethods();
+namespace MS.Internal.Mita.Foundation.Utilities {
+    public static class ScreenCapture {
+        static long XboxLastCaptureTicks;
+        internal static INativeMethods nativeMethods = new NativeMethods();
 
-    public static void SaveImage(string fileName, ImageFormat format = ImageFormat.Png) => ScreenCapture.SaveImage(ScreenCapture.nativeMethods.GetClientArea(), fileName, format);
-
-    public static void SaveImage(RectangleI rectangle, string fileName, ImageFormat format = ImageFormat.Png) => ScreenCapture.SaveImage(ScreenCapture.GetImage(rectangle) ?? throw new Exception("Unable to capture screen. GetImage returned null."), fileName, format);
-
-    private static ImageHelpers.IWICBitmap GetImage(RectangleI rectangle)
-    {
-      Log.Out("Dimensions: Left: {0} Top: {1} Right: {2} Bottom {3}", (object) rectangle.Left, (object) rectangle.Top, (object) rectangle.Right, (object) rectangle.Bottom);
-      string deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
-      if (deviceFamily.Equals("Windows.Desktop", StringComparison.OrdinalIgnoreCase) || deviceFamily.Equals("Windows.Server", StringComparison.OrdinalIgnoreCase) || deviceFamily.Equals("Windows.Team", StringComparison.OrdinalIgnoreCase))
-        return ScreenCapture.GetImageDesktop(rectangle);
-      if (deviceFamily.Equals("Windows.Mobile", StringComparison.OrdinalIgnoreCase))
-        return ScreenCapture.GetImageMobile(rectangle);
-      if (deviceFamily.Equals("Windows.Xbox", StringComparison.OrdinalIgnoreCase))
-        return ScreenCapture.GetImageXbox(rectangle);
-      throw new NotImplementedException(string.Format("Screen Capture not implemented on this platform: {0}", (object) deviceFamily));
-    }
-
-    private static ImageHelpers.IWICBitmap GetImageDesktop(RectangleI rectangle)
-    {
-      string deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
-      if (!deviceFamily.Equals("Windows.Desktop", StringComparison.OrdinalIgnoreCase) && !deviceFamily.Equals("Windows.Server", StringComparison.OrdinalIgnoreCase) && !deviceFamily.Equals("Windows.Team", StringComparison.OrdinalIgnoreCase))
-        throw new InvalidOperationException(string.Format("GetImageDesktop not supported on your platform: {0}", (object) deviceFamily));
-      IntPtr num1 = IntPtr.Zero;
-      IntPtr num2 = IntPtr.Zero;
-      IntPtr num3 = IntPtr.Zero;
-      if (rectangle.Width <= 0)
-        throw new ArgumentOutOfRangeException("width", (object) rectangle.Width, StringResource.Get("RectangleMustBeNonEmpty"));
-      if (rectangle.Height <= 0)
-        throw new ArgumentOutOfRangeException("height", (object) rectangle.Height, StringResource.Get("RectangleMustBeNonEmpty"));
-      try
-      {
-        IntPtr zero = IntPtr.Zero;
-        num1 = ImageHelpers.GDI.CreateDC("DISPLAY", IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-        if (num1 == IntPtr.Zero)
-        {
-          int lastWin32Error = Marshal.GetLastWin32Error();
-          throw new DisplayException(StringResource.Get("UnableToGetDC"), lastWin32Error);
+        public static void SaveImage(string fileName, ImageFormat format = ImageFormat.Png) {
+            SaveImage(rectangle: nativeMethods.GetClientArea(), fileName: fileName, format: format);
         }
-        num2 = ImageHelpers.GDI.CreateCompatibleDC(num1);
-        if (num2 == IntPtr.Zero)
-        {
-          int lastWin32Error = Marshal.GetLastWin32Error();
-          throw new DisplayException(StringResource.Get("UnableToCreateDC"), lastWin32Error);
+
+        public static void SaveImage(RectangleI rectangle, string fileName, ImageFormat format = ImageFormat.Png) {
+            SaveImage(bitmap: GetImage(rectangle: rectangle) ?? throw new Exception(message: "Unable to capture screen. GetImage returned null."), filename: fileName, format: format);
         }
-        num3 = ImageHelpers.GDI.CreateCompatibleBitmap(num1, rectangle.Width, rectangle.Height);
-        if (num3 == IntPtr.Zero)
-        {
-          int lastWin32Error = Marshal.GetLastWin32Error();
-          throw new DisplayException(StringResource.Get("UnableToCreateBitmap"), lastWin32Error);
+
+        static ImageHelpers.IWICBitmap GetImage(RectangleI rectangle) {
+            Log.Out(msg: "Dimensions: Left: {0} Top: {1} Right: {2} Bottom {3}", (object) rectangle.Left, (object) rectangle.Top, (object) rectangle.Right, (object) rectangle.Bottom);
+            var deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
+            if (deviceFamily.Equals(value: "Windows.Desktop", comparisonType: StringComparison.OrdinalIgnoreCase) || deviceFamily.Equals(value: "Windows.Server", comparisonType: StringComparison.OrdinalIgnoreCase) || deviceFamily.Equals(value: "Windows.Team", comparisonType: StringComparison.OrdinalIgnoreCase))
+                return GetImageDesktop(rectangle: rectangle);
+            if (deviceFamily.Equals(value: "Windows.Mobile", comparisonType: StringComparison.OrdinalIgnoreCase))
+                return GetImageMobile(rectangle: rectangle);
+            if (deviceFamily.Equals(value: "Windows.Xbox", comparisonType: StringComparison.OrdinalIgnoreCase))
+                return GetImageXbox(rectangle: rectangle);
+            throw new NotImplementedException(message: string.Format(format: "Screen Capture not implemented on this platform: {0}", arg0: deviceFamily));
         }
-        if (ImageHelpers.GDI.SelectObject(num2, num3) == IntPtr.Zero)
-        {
-          int lastWin32Error = Marshal.GetLastWin32Error();
-          throw new DisplayException(StringResource.Get("CannotSelectBitmapIntoDC"), lastWin32Error);
+
+        static ImageHelpers.IWICBitmap GetImageDesktop(RectangleI rectangle) {
+            var deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
+            if (!deviceFamily.Equals(value: "Windows.Desktop", comparisonType: StringComparison.OrdinalIgnoreCase) && !deviceFamily.Equals(value: "Windows.Server", comparisonType: StringComparison.OrdinalIgnoreCase) && !deviceFamily.Equals(value: "Windows.Team", comparisonType: StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(message: string.Format(format: "GetImageDesktop not supported on your platform: {0}", arg0: deviceFamily));
+            var num1 = IntPtr.Zero;
+            var num2 = IntPtr.Zero;
+            var num3 = IntPtr.Zero;
+            if (rectangle.Width <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "width", actualValue: rectangle.Width, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            if (rectangle.Height <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "height", actualValue: rectangle.Height, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            try {
+                var zero = IntPtr.Zero;
+                num1 = ImageHelpers.GDI.CreateDC(driver: "DISPLAY", device: IntPtr.Zero, output: IntPtr.Zero, devMode: IntPtr.Zero);
+                if (num1 == IntPtr.Zero) {
+                    var lastWin32Error = Marshal.GetLastWin32Error();
+                    throw new DisplayException(message: StringResource.Get(id: "UnableToGetDC"), windowsError: lastWin32Error);
+                }
+
+                num2 = ImageHelpers.GDI.CreateCompatibleDC(dc: num1);
+                if (num2 == IntPtr.Zero) {
+                    var lastWin32Error = Marshal.GetLastWin32Error();
+                    throw new DisplayException(message: StringResource.Get(id: "UnableToCreateDC"), windowsError: lastWin32Error);
+                }
+
+                num3 = ImageHelpers.GDI.CreateCompatibleBitmap(dc: num1, width: rectangle.Width, height: rectangle.Height);
+                if (num3 == IntPtr.Zero) {
+                    var lastWin32Error = Marshal.GetLastWin32Error();
+                    throw new DisplayException(message: StringResource.Get(id: "UnableToCreateBitmap"), windowsError: lastWin32Error);
+                }
+
+                if (ImageHelpers.GDI.SelectObject(dc: num2, gdi: num3) == IntPtr.Zero) {
+                    var lastWin32Error = Marshal.GetLastWin32Error();
+                    throw new DisplayException(message: StringResource.Get(id: "CannotSelectBitmapIntoDC"), windowsError: lastWin32Error);
+                }
+
+                if (ImageHelpers.GDI.BitBlt(destDC: num2, xDest: 0, yDest: 0, width: rectangle.Width, height: rectangle.Height, sourceDC: num1, xSource: rectangle.Left, ySource: rectangle.Top, rasterOperation: 13369376U) == 0) {
+                    var lastWin32Error = Marshal.GetLastWin32Error();
+                    throw new DisplayException(message: StringResource.Get(id: "BitBlitFailed"), windowsError: lastWin32Error);
+                }
+
+                var imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
+                var num4 = new IntPtr();
+                var hBitmap = num3;
+                var hPalette = num4;
+                return imagingFactory.CreateBitmapFromHBITMAP(hBitmap: hBitmap, hPalette: hPalette, options: ImageHelpers.WICBitmapAlphaChannelOption.WICBitmapIgnoreAlpha) ?? throw new DisplayException(message: StringResource.Get(id: "CreateBitmapFailed"));
+            } finally {
+                ImageHelpers.GDI.DeleteDC(dc: num1);
+                ImageHelpers.GDI.DeleteDC(dc: num2);
+                ImageHelpers.GDI.DeleteObject(gdiObject: num3);
+            }
         }
-        if (ImageHelpers.GDI.BitBlt(num2, 0, 0, rectangle.Width, rectangle.Height, num1, rectangle.Left, rectangle.Top, 13369376U) == 0)
-        {
-          int lastWin32Error = Marshal.GetLastWin32Error();
-          throw new DisplayException(StringResource.Get("BitBlitFailed"), lastWin32Error);
+
+        static ImageHelpers.IWICBitmap GetImageMobile(RectangleI rectangle) {
+            var deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
+            if (!deviceFamily.Equals(value: "Windows.Mobile", comparisonType: StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(message: string.Format(format: "GetImageMobile not supported on your platform: {0}", arg0: deviceFamily));
+            if (rectangle.Width <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "width", actualValue: rectangle.Width, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            if (rectangle.Height <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "height", actualValue: rectangle.Height, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            var bitmap = ImageHelpers.CaptureMobileScreenshot();
+            if (bitmap == null)
+                throw new ScreenCaptureException(message: "CaptureMobileScreenshot failed to capture screen. Returned bitmap is null.");
+            uint puiWidth = 0;
+            uint puiHeight = 0;
+            bitmap.GetSize(puiWidth: out puiWidth, puiHeight: out puiHeight);
+            if (rectangle.Width == puiWidth && rectangle.Height == puiHeight)
+                return bitmap;
+            Log.Out(msg: "Requested capture area is different than screen size:");
+            Log.Out(msg: "    Requested: Width: {0} Height: {1} Left: {2} Top {3}", (object) rectangle.Width, (object) rectangle.Height, (object) rectangle.Left, (object) rectangle.Top);
+            Log.Out(msg: "    Screen: Width: {0} Height: {1}", (object) puiWidth, (object) puiHeight);
+            return ClipImage(bitmap: bitmap, rectangle: rectangle);
         }
-        ImageHelpers.IWICImagingFactory imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
-        IntPtr num4 = new IntPtr();
-        IntPtr hBitmap = num3;
-        IntPtr hPalette = num4;
-        return imagingFactory.CreateBitmapFromHBITMAP(hBitmap, hPalette, ImageHelpers.WICBitmapAlphaChannelOption.WICBitmapIgnoreAlpha) ?? throw new DisplayException(StringResource.Get("CreateBitmapFailed"));
-      }
-      finally
-      {
-        ImageHelpers.GDI.DeleteDC(num1);
-        ImageHelpers.GDI.DeleteDC(num2);
-        ImageHelpers.GDI.DeleteObject(num3);
-      }
-    }
 
-    private static ImageHelpers.IWICBitmap GetImageMobile(RectangleI rectangle)
-    {
-      string deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
-      if (!deviceFamily.Equals("Windows.Mobile", StringComparison.OrdinalIgnoreCase))
-        throw new InvalidOperationException(string.Format("GetImageMobile not supported on your platform: {0}", (object) deviceFamily));
-      if (rectangle.Width <= 0)
-        throw new ArgumentOutOfRangeException("width", (object) rectangle.Width, StringResource.Get("RectangleMustBeNonEmpty"));
-      if (rectangle.Height <= 0)
-        throw new ArgumentOutOfRangeException("height", (object) rectangle.Height, StringResource.Get("RectangleMustBeNonEmpty"));
-      ImageHelpers.IWICBitmap bitmap = ImageHelpers.CaptureMobileScreenshot();
-      if (bitmap == null)
-        throw new ScreenCaptureException("CaptureMobileScreenshot failed to capture screen. Returned bitmap is null.");
-      uint puiWidth = 0;
-      uint puiHeight = 0;
-      bitmap.GetSize(out puiWidth, out puiHeight);
-      if ((long) rectangle.Width == (long) puiWidth && (long) rectangle.Height == (long) puiHeight)
-        return bitmap;
-      Log.Out("Requested capture area is different than screen size:");
-      Log.Out("    Requested: Width: {0} Height: {1} Left: {2} Top {3}", (object) rectangle.Width, (object) rectangle.Height, (object) rectangle.Left, (object) rectangle.Top);
-      Log.Out("    Screen: Width: {0} Height: {1}", (object) puiWidth, (object) puiHeight);
-      return ScreenCapture.ClipImage(bitmap, rectangle);
-    }
+        static ImageHelpers.IWICBitmap GetImageXbox(RectangleI rectangle) {
+            var ticks = TimeSpan.FromMilliseconds(value: 1000.0).Ticks;
+            var deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
+            if (!deviceFamily.Equals(value: "Windows.Xbox", comparisonType: StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(message: string.Format(format: "GetImageXbox not supported on your platform: {0}", arg0: deviceFamily));
+            if (rectangle.Width <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "width", actualValue: rectangle.Width, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            if (rectangle.Height <= 0)
+                throw new ArgumentOutOfRangeException(paramName: "height", actualValue: rectangle.Height, message: StringResource.Get(id: "RectangleMustBeNonEmpty"));
+            var now = DateTime.Now;
+            var num = now.Ticks - XboxLastCaptureTicks;
+            if (num < ticks) {
+                var timeSpan1 = TimeSpan.FromTicks(value: ticks);
+                var timeSpan2 = TimeSpan.FromTicks(value: ticks - num);
+                Log.Out(msg: "Cannot capture Xbox screenshots more than once every {0} milliseconds. Waiting {1} milliseconds before proceeding.", (object) timeSpan1.Milliseconds, (object) timeSpan2.Milliseconds);
+                Thread.Sleep(millisecondsTimeout: timeSpan2.Milliseconds);
+            }
 
-    private static ImageHelpers.IWICBitmap GetImageXbox(RectangleI rectangle)
-    {
-      long ticks = TimeSpan.FromMilliseconds(1000.0).Ticks;
-      string deviceFamily = AnalyticsInfo.VersionInfo.DeviceFamily;
-      if (!deviceFamily.Equals("Windows.Xbox", StringComparison.OrdinalIgnoreCase))
-        throw new InvalidOperationException(string.Format("GetImageXbox not supported on your platform: {0}", (object) deviceFamily));
-      if (rectangle.Width <= 0)
-        throw new ArgumentOutOfRangeException("width", (object) rectangle.Width, StringResource.Get("RectangleMustBeNonEmpty"));
-      if (rectangle.Height <= 0)
-        throw new ArgumentOutOfRangeException("height", (object) rectangle.Height, StringResource.Get("RectangleMustBeNonEmpty"));
-      DateTime now = DateTime.Now;
-      long num = now.Ticks - ScreenCapture.XboxLastCaptureTicks;
-      if (num < ticks)
-      {
-        TimeSpan timeSpan1 = TimeSpan.FromTicks(ticks);
-        TimeSpan timeSpan2 = TimeSpan.FromTicks(ticks - num);
-        Log.Out("Cannot capture Xbox screenshots more than once every {0} milliseconds. Waiting {1} milliseconds before proceeding.", (object) timeSpan1.Milliseconds, (object) timeSpan2.Milliseconds);
-        Thread.Sleep(timeSpan2.Milliseconds);
-      }
-      now = DateTime.Now;
-      ScreenCapture.XboxLastCaptureTicks = now.Ticks;
-      ImageHelpers.IWICBitmap bitmap = ImageHelpers.CaptureXboxScreenshot();
-      if (bitmap == null)
-        throw new ScreenCaptureException("CaptureXboxScreenshot failed to capture screen. Returned bitmap is null.");
-      uint puiWidth = 0;
-      uint puiHeight = 0;
-      bitmap.GetSize(out puiWidth, out puiHeight);
-      if ((long) rectangle.Width == (long) puiWidth && (long) rectangle.Height == (long) puiHeight)
-        return bitmap;
-      Log.Out("Requested capture area is different than screen size:");
-      Log.Out("    Requested: Width: {0} Height: {1} Left: {2} Top {3}", (object) rectangle.Width, (object) rectangle.Height, (object) rectangle.Left, (object) rectangle.Top);
-      Log.Out("    Screen: Width: {0} Height: {1}", (object) puiWidth, (object) puiHeight);
-      return ScreenCapture.ClipImage(bitmap, rectangle);
-    }
+            now = DateTime.Now;
+            XboxLastCaptureTicks = now.Ticks;
+            var bitmap = ImageHelpers.CaptureXboxScreenshot();
+            if (bitmap == null)
+                throw new ScreenCaptureException(message: "CaptureXboxScreenshot failed to capture screen. Returned bitmap is null.");
+            uint puiWidth = 0;
+            uint puiHeight = 0;
+            bitmap.GetSize(puiWidth: out puiWidth, puiHeight: out puiHeight);
+            if (rectangle.Width == puiWidth && rectangle.Height == puiHeight)
+                return bitmap;
+            Log.Out(msg: "Requested capture area is different than screen size:");
+            Log.Out(msg: "    Requested: Width: {0} Height: {1} Left: {2} Top {3}", (object) rectangle.Width, (object) rectangle.Height, (object) rectangle.Left, (object) rectangle.Top);
+            Log.Out(msg: "    Screen: Width: {0} Height: {1}", (object) puiWidth, (object) puiHeight);
+            return ClipImage(bitmap: bitmap, rectangle: rectangle);
+        }
 
-    private static void SaveImage(
-      ImageHelpers.IWICBitmap bitmap,
-      string filename,
-      ImageFormat format)
-    {
-      if (bitmap == null)
-        throw new ArgumentNullException(nameof (bitmap), "bitmap cannot be null.");
-      if (filename == null)
-        throw new ArgumentNullException(nameof (filename), "filename cannot be null.");
-      ImageHelpers.IWICImagingFactory imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
-      ImageHelpers.IWICStream stream = imagingFactory.CreateStream();
-      stream.InitializeFromFilename(filename, ImageHelpers.GenericAccessRights.GENERIC_WRITE);
-      ImageHelpers.IWICBitmapEncoder encoder = imagingFactory.CreateEncoder(ImageHelpers.GetContainerFormat(format), (Guid[]) null);
-      encoder.Initialize((IStream) stream, ImageHelpers.WICBitmapEncoderCacheOption.WICBitmapEncoderNoCache);
-      ImageHelpers.IWICBitmapFrameEncode ppIFrameEncode = (ImageHelpers.IWICBitmapFrameEncode) null;
-      ImageHelpers.IPropertyBag2[] encoderOptions = new ImageHelpers.IPropertyBag2[1];
-      encoder.CreateNewFrame(out ppIFrameEncode, encoderOptions);
-      ppIFrameEncode.Initialize(encoderOptions[0]);
-      ppIFrameEncode.WriteSource(bitmap, (ImageHelpers.WICRect) null);
-      ppIFrameEncode.Commit();
-      encoder.Commit();
-      Marshal.ReleaseComObject((object) stream);
-      Marshal.ReleaseComObject((object) encoder);
-      Marshal.ReleaseComObject((object) ppIFrameEncode);
-    }
+        static void SaveImage(
+            ImageHelpers.IWICBitmap bitmap,
+            string filename,
+            ImageFormat format) {
+            if (bitmap == null)
+                throw new ArgumentNullException(paramName: nameof(bitmap), message: "bitmap cannot be null.");
+            if (filename == null)
+                throw new ArgumentNullException(paramName: nameof(filename), message: "filename cannot be null.");
+            var imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
+            var stream = imagingFactory.CreateStream();
+            stream.InitializeFromFilename(wzFileName: filename, dwDesiredAccess: ImageHelpers.GenericAccessRights.GENERIC_WRITE);
+            var encoder = imagingFactory.CreateEncoder(guidContainerFormat: ImageHelpers.GetContainerFormat(format: format), pguidVendor: null);
+            encoder.Initialize(pIStream: stream, cacheOption: ImageHelpers.WICBitmapEncoderCacheOption.WICBitmapEncoderNoCache);
+            ImageHelpers.IWICBitmapFrameEncode ppIFrameEncode = null;
+            var encoderOptions = new ImageHelpers.IPropertyBag2[1];
+            encoder.CreateNewFrame(ppIFrameEncode: out ppIFrameEncode, encoderOptions: encoderOptions);
+            ppIFrameEncode.Initialize(pIEncoderOptions: encoderOptions[0]);
+            ppIFrameEncode.WriteSource(pIBitmapSource: bitmap, prc: null);
+            ppIFrameEncode.Commit();
+            encoder.Commit();
+            Marshal.ReleaseComObject(o: stream);
+            Marshal.ReleaseComObject(o: encoder);
+            Marshal.ReleaseComObject(o: ppIFrameEncode);
+        }
 
-    private static ImageHelpers.IWICBitmap ClipImage(
-      ImageHelpers.IWICBitmap bitmap,
-      RectangleI rectangle)
-    {
-      ImageHelpers.WICRect prc = new ImageHelpers.WICRect();
-      prc.X = rectangle.X;
-      prc.Y = rectangle.Y;
-      prc.Width = rectangle.Width;
-      prc.Height = rectangle.Height;
-      ImageHelpers.IWICImagingFactory imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
-      ImageHelpers.IWICBitmapClipper bitmapClipper = imagingFactory.CreateBitmapClipper();
-      bitmapClipper.Initialize((ImageHelpers.IWICBitmapSource) bitmap, prc);
-      ImageHelpers.IWICBitmap bitmapFromSource = imagingFactory.CreateBitmapFromSource((ImageHelpers.IWICBitmapSource) bitmapClipper, ImageHelpers.WICBitmapCreateCacheOption.WICBitmapNoCache);
-      Marshal.ReleaseComObject((object) bitmapClipper);
-      return bitmapFromSource;
-    }
+        static ImageHelpers.IWICBitmap ClipImage(
+            ImageHelpers.IWICBitmap bitmap,
+            RectangleI rectangle) {
+            var prc = new ImageHelpers.WICRect();
+            prc.X = rectangle.X;
+            prc.Y = rectangle.Y;
+            prc.Width = rectangle.Width;
+            prc.Height = rectangle.Height;
+            var imagingFactory = ImageHelpers.WIC.CreateImagingFactory();
+            var bitmapClipper = imagingFactory.CreateBitmapClipper();
+            bitmapClipper.Initialize(pISource: bitmap, prc: prc);
+            var bitmapFromSource = imagingFactory.CreateBitmapFromSource(pIBitmapSource: bitmapClipper, option: ImageHelpers.WICBitmapCreateCacheOption.WICBitmapNoCache);
+            Marshal.ReleaseComObject(o: bitmapClipper);
+            return bitmapFromSource;
+        }
 
-    [StructLayout(LayoutKind.Sequential, Size = 1)]
-    private struct RasterOperation
-    {
-      public const uint SRCCOPY = 13369376;
+        [StructLayout(layoutKind: LayoutKind.Sequential, Size = 1)]
+        struct RasterOperation {
+            public const uint SRCCOPY = 13369376;
+        }
     }
-  }
 }

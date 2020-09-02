@@ -5,53 +5,50 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class ElementAddedWaiter : UIEventWaiter
-  {
-    private UICondition _condition;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class ElementAddedWaiter : UIEventWaiter {
+        UICondition _condition;
 
-    public ElementAddedWaiter(UIObject root, Scope scope)
-      : this(root, scope, UICondition.True)
-    {
+        public ElementAddedWaiter(UIObject root, Scope scope)
+            : this(root: root, scope: scope, condition: UICondition.True) {
+        }
+
+        public ElementAddedWaiter(UIObject root, Scope scope, string automationId)
+            : this(root: root, scope: scope, condition: UICondition.CreateFromId(automationId: automationId)) {
+        }
+
+        public ElementAddedWaiter(UIObject root, Scope scope, UIProperty uiProperty, object value)
+            : this(root: root, scope: scope, condition: UICondition.Create(property: uiProperty, value: value)) {
+        }
+
+        public ElementAddedWaiter(UIObject root, Scope scope, UICondition condition)
+            : base(eventSource: new StructureChangedEventSource(root: root, scope: scope)) {
+            Validate.ArgumentNotNull(parameter: condition, parameterName: nameof(condition));
+            this._condition = condition;
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+            this._condition = null;
+        }
+
+        protected override bool Matches(WaiterEventArgs eventArgs) {
+            var eventArgs1 = (StructureChangedEventArgs) eventArgs.EventArgs;
+            var flag = false;
+            if (eventArgs1.StructureChangeType == StructureChangeType.ChildAdded)
+                flag = UIObject.Matches(uiObject: eventArgs.Sender, condition: this._condition);
+            return flag;
+        }
+
+        public override string ToString() {
+            return "ElementAddedWaiter with Condition:  " + this._condition;
+        }
     }
-
-    public ElementAddedWaiter(UIObject root, Scope scope, string automationId)
-      : this(root, scope, UICondition.CreateFromId(automationId))
-    {
-    }
-
-    public ElementAddedWaiter(UIObject root, Scope scope, UIProperty uiProperty, object value)
-      : this(root, scope, UICondition.Create(uiProperty, value))
-    {
-    }
-
-    public ElementAddedWaiter(UIObject root, Scope scope, UICondition condition)
-      : base((IEventSource) new StructureChangedEventSource(root, scope))
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) condition, nameof (condition));
-      this._condition = condition;
-      this.Start();
-    }
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing)
-    {
-      base.Dispose(disposing);
-      this._condition = (UICondition) null;
-    }
-
-    protected override bool Matches(WaiterEventArgs eventArgs)
-    {
-      StructureChangedEventArgs eventArgs1 = (StructureChangedEventArgs) eventArgs.EventArgs;
-      bool flag = false;
-      if (eventArgs1.StructureChangeType == StructureChangeType.ChildAdded)
-        flag = UIObject.Matches(eventArgs.Sender, this._condition);
-      return flag;
-    }
-
-    public override string ToString() => "ElementAddedWaiter with Condition:  " + this._condition.ToString();
-  }
 }

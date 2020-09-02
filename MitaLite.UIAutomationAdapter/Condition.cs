@@ -6,48 +6,40 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class Condition
-  {
-    public static readonly Condition TrueCondition = (Condition) new Condition.BoolCondition(true);
-    public static readonly Condition FalseCondition = (Condition) new Condition.BoolCondition(false);
-    protected IUIAutomationCondition _condition;
+namespace System.Windows.Automation {
+    public class Condition {
+        public static readonly Condition TrueCondition = new BoolCondition(trueCondition: true);
+        public static readonly Condition FalseCondition = new BoolCondition(trueCondition: false);
+        protected IUIAutomationCondition _condition;
 
-    internal Condition(IUIAutomationCondition condition)
-    {
-      Validate.ArgumentNotNull((object) condition, nameof (condition));
-      this._condition = condition;
-    }
+        internal Condition(IUIAutomationCondition condition) {
+            Validate.ArgumentNotNull(parameter: condition, parameterName: nameof(condition));
+            this._condition = condition;
+        }
 
-    internal Condition()
-    {
-    }
+        internal Condition() {
+        }
 
-    internal IUIAutomationCondition IUIAutomationCondition
-    {
-      get => this._condition;
-      set => this._condition = value;
-    }
+        internal IUIAutomationCondition IUIAutomationCondition {
+            get { return this._condition; }
+            set { this._condition = value; }
+        }
 
-    internal static IUIAutomationCondition[] GetIUIAutomationConditions(
-      Condition[] conditions)
-    {
-      IUIAutomationCondition[] automationConditionArray = new IUIAutomationCondition[conditions.Length];
-      for (int index = 0; index < conditions.Length; ++index)
-        automationConditionArray[index] = conditions[index].IUIAutomationCondition;
-      return automationConditionArray;
-    }
+        internal static IUIAutomationCondition[] GetIUIAutomationConditions(
+            Condition[] conditions) {
+            var automationConditionArray = new IUIAutomationCondition[conditions.Length];
+            for (var index = 0; index < conditions.Length; ++index)
+                automationConditionArray[index] = conditions[index].IUIAutomationCondition;
+            return automationConditionArray;
+        }
 
-    private class BoolCondition : Condition
-    {
-      internal BoolCondition(bool trueCondition)
-      {
-        if (trueCondition)
-          this._condition = System.Windows.Automation.Automation.AutomationClass.CreateTrueCondition();
-        else
-          this._condition = System.Windows.Automation.Automation.AutomationClass.CreateFalseCondition();
-      }
+        class BoolCondition : Condition {
+            internal BoolCondition(bool trueCondition) {
+                if (trueCondition)
+                    this._condition = Automation.AutomationClass.CreateTrueCondition();
+                else
+                    this._condition = Automation.AutomationClass.CreateFalseCondition();
+            }
+        }
     }
-  }
 }

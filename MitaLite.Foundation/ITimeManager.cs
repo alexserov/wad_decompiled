@@ -6,9 +6,7 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal interface ITimeManager : IDisposable
-  {
-  }
+namespace MS.Internal.Mita.Foundation {
+    internal interface ITimeManager : IDisposable {
+    }
 }

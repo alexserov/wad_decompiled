@@ -6,73 +6,82 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public struct PointI : IFormattable
-  {
-    internal int _x;
-    internal int _y;
+namespace MS.Internal.Mita.Foundation {
+    public struct PointI : IFormattable {
+        internal int _x;
+        internal int _y;
 
-    public static bool operator ==(PointI point1, PointI point2) => point1.X == point2.X && point1.Y == point2.Y;
+        public static bool operator ==(PointI point1, PointI point2) {
+            return point1.X == point2.X && point1.Y == point2.Y;
+        }
 
-    public static bool operator !=(PointI point1, PointI point2) => !(point1 == point2);
+        public static bool operator !=(PointI point1, PointI point2) {
+            return !(point1 == point2);
+        }
 
-    public static bool Equals(PointI point1, PointI point2) => point1.X.Equals(point2.X) && point1.Y.Equals(point2.Y);
+        public static bool Equals(PointI point1, PointI point2) {
+            return point1.X.Equals(obj: point2.X) && point1.Y.Equals(obj: point2.Y);
+        }
 
-    public override bool Equals(object o) => o != null && o is PointI point2 && PointI.Equals(this, point2);
+        public override bool Equals(object o) {
+            return o != null && o is PointI point2 && Equals(point1: this, point2: point2);
+        }
 
-    public bool Equals(PointI value) => PointI.Equals(this, value);
+        public bool Equals(PointI value) {
+            return Equals(point1: this, point2: value);
+        }
 
-    public override int GetHashCode()
-    {
-      int num = this.X;
-      int hashCode1 = num.GetHashCode();
-      num = this.Y;
-      int hashCode2 = num.GetHashCode();
-      return hashCode1 ^ hashCode2;
+        public override int GetHashCode() {
+            var num = X;
+            var hashCode1 = num.GetHashCode();
+            num = Y;
+            var hashCode2 = num.GetHashCode();
+            return hashCode1 ^ hashCode2;
+        }
+
+        public int X {
+            get { return this._x; }
+            set { this._x = value; }
+        }
+
+        public int Y {
+            get { return this._y; }
+            set { this._y = value; }
+        }
+
+        public override string ToString() {
+            return ConvertToString(format: null, provider: null);
+        }
+
+        public string ToString(IFormatProvider provider) {
+            return ConvertToString(format: null, provider: provider);
+        }
+
+        string IFormattable.ToString(string format, IFormatProvider provider) {
+            return ConvertToString(format: format, provider: provider);
+        }
+
+        internal string ConvertToString(string format, IFormatProvider provider) {
+            var ch = ',';
+            return string.Format(provider: provider, format: "{1:" + format + "}{0}{2:" + format + "}", args: new object[3] {
+                ch,
+                this._x,
+                this._y
+            });
+        }
+
+        public PointI(int x, int y) {
+            this._x = x;
+            this._y = y;
+        }
+
+        public void Offset(int offsetX, int offsetY) {
+            this._x += offsetX;
+            this._y += offsetY;
+        }
+
+        public static explicit operator SizeI(PointI point) {
+            return new SizeI(width: Math.Abs(value: point._x), height: Math.Abs(value: point._y));
+        }
     }
-
-    public int X
-    {
-      get => this._x;
-      set => this._x = value;
-    }
-
-    public int Y
-    {
-      get => this._y;
-      set => this._y = value;
-    }
-
-    public override string ToString() => this.ConvertToString((string) null, (IFormatProvider) null);
-
-    public string ToString(IFormatProvider provider) => this.ConvertToString((string) null, provider);
-
-    string IFormattable.ToString(string format, IFormatProvider provider) => this.ConvertToString(format, provider);
-
-    internal string ConvertToString(string format, IFormatProvider provider)
-    {
-      char ch = ',';
-      return string.Format(provider, "{1:" + format + "}{0}{2:" + format + "}", new object[3]
-      {
-        (object) ch,
-        (object) this._x,
-        (object) this._y
-      });
-    }
-
-    public PointI(int x, int y)
-    {
-      this._x = x;
-      this._y = y;
-    }
-
-    public void Offset(int offsetX, int offsetY)
-    {
-      this._x += offsetX;
-      this._y += offsetY;
-    }
-
-    public static explicit operator SizeI(PointI point) => new SizeI(Math.Abs(point._x), Math.Abs(point._y));
-  }
 }

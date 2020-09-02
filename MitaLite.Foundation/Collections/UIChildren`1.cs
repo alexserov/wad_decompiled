@@ -6,28 +6,22 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIChildren<I> : UICollection<I> where I : UIObject
-  {
-    public UIChildren(UIObject root, IFactory<I> factory)
-      : base((UINavigator) new ChildrenNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIChildren<I> : UICollection<I> where I : UIObject {
+        public UIChildren(UIObject root, IFactory<I> factory)
+            : base(navigator: new ChildrenNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIChildren(AutomationElement root, IFactory<I> factory)
-      : base((UINavigator) new ChildrenNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIChildren(AutomationElement root, IFactory<I> factory)
+            : base(navigator: new ChildrenNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIChildren(UIObject root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new ChildrenNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIChildren(UIObject root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new ChildrenNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIChildren(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new ChildrenNavigator(root, treeCondition), factory)
-    {
+        internal UIChildren(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new ChildrenNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

@@ -6,12 +6,8 @@
 
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("352FFBA8-0973-437C-A61F-F64CAFD81DF9")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationCondition
-  {
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "352FFBA8-0973-437C-A61F-F64CAFD81DF9"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationCondition {
+    }
 }

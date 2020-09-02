@@ -7,22 +7,23 @@
 using System;
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class BooleanValue : Value
-  {
-    private bool _booleanValue;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class BooleanValue : Value {
+        readonly bool _booleanValue;
 
-    public BooleanValue(bool value) => this._booleanValue = value;
+        public BooleanValue(bool value) {
+            this._booleanValue = value;
+        }
 
-    public override bool Validate(Type requiredType, StringBuilder errors)
-    {
-      if (requiredType.Equals(typeof (object)) || requiredType.Equals(typeof (bool)))
-        return true;
-      errors.AppendLine(StringResource.Get("ParameterTypeMismatch_2", (object) requiredType.FullName, (object) typeof (bool).FullName));
-      return false;
+        public override bool Validate(Type requiredType, StringBuilder errors) {
+            if (requiredType.Equals(o: typeof(object)) || requiredType.Equals(o: typeof(bool)))
+                return true;
+            errors.AppendLine(value: StringResource.Get(id: "ParameterTypeMismatch_2", (object) requiredType.FullName, (object) typeof(bool).FullName));
+            return false;
+        }
+
+        public override object GetValueObject(Type requiredType) {
+            return this._booleanValue;
+        }
     }
-
-    public override object GetValueObject(Type requiredType) => (object) this._booleanValue;
-  }
 }

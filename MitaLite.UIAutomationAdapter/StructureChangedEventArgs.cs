@@ -4,23 +4,21 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-namespace System.Windows.Automation
-{
-  public sealed class StructureChangedEventArgs : AutomationEventArgs
-  {
-    private int[] _runtimeId;
-    private StructureChangeType _structureChangeType;
+namespace System.Windows.Automation {
+    public sealed class StructureChangedEventArgs : AutomationEventArgs {
+        readonly int[] _runtimeId;
 
-    public StructureChangedEventArgs(StructureChangeType structureChangeType, int[] runtimeId)
-      : base(AutomationElement.StructureChangedEvent)
-    {
-      Validate.ArgumentNotNull((object) runtimeId, nameof (runtimeId));
-      this._structureChangeType = structureChangeType;
-      this._runtimeId = (int[]) runtimeId.Clone();
+        public StructureChangedEventArgs(StructureChangeType structureChangeType, int[] runtimeId)
+            : base(eventId: AutomationElement.StructureChangedEvent) {
+            Validate.ArgumentNotNull(parameter: runtimeId, parameterName: nameof(runtimeId));
+            StructureChangeType = structureChangeType;
+            this._runtimeId = (int[]) runtimeId.Clone();
+        }
+
+        public StructureChangeType StructureChangeType { get; }
+
+        public int[] GetRuntimeId() {
+            return (int[]) this._runtimeId.Clone();
+        }
     }
-
-    public int[] GetRuntimeId() => (int[]) this._runtimeId.Clone();
-
-    public StructureChangeType StructureChangeType => this._structureChangeType;
-  }
 }

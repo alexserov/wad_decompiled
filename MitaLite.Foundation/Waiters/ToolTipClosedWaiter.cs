@@ -5,35 +5,37 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class ToolTipClosedWaiter : UIEventWaiter
-  {
-    private string _uiObjectDescription;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class ToolTipClosedWaiter : UIEventWaiter {
+        readonly string _uiObjectDescription;
 
-    public ToolTipClosedWaiter()
-      : this(UIObject.Root, Scope.Descendants)
-    {
+        public ToolTipClosedWaiter()
+            : this(root: UIObject.Root, scope: Scope.Descendants) {
+        }
+
+        public ToolTipClosedWaiter(UIObject root)
+            : this(root: root, scope: Scope.Element) {
+        }
+
+        public ToolTipClosedWaiter(UIObject root, Scope scope)
+            : base(eventSource: new AutomationEventSource(eventId: AutomationElement.ToolTipClosedEvent, root: root, scope: scope)) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            this._uiObjectDescription = root.ToString();
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+        }
+
+        public override string ToString() {
+            return "ToolTipClosedWaiter for element " + this._uiObjectDescription;
+        }
     }
-
-    public ToolTipClosedWaiter(UIObject root)
-      : this(root, Scope.Element)
-    {
-    }
-
-    public ToolTipClosedWaiter(UIObject root, Scope scope)
-      : base((IEventSource) new AutomationEventSource(AutomationElement.ToolTipClosedEvent, root, scope))
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      this._uiObjectDescription = root.ToString();
-      this.Start();
-    }
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing) => base.Dispose(disposing);
-
-    public override string ToString() => "ToolTipClosedWaiter for element " + this._uiObjectDescription;
-  }
 }

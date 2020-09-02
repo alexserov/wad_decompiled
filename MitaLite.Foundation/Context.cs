@@ -4,58 +4,50 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
+using System.Collections.Generic;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class Context
-  {
-    private bool _activated;
-    private UICondition _treeCondition;
-    [ThreadStatic]
-    private static System.Collections.Generic.Stack<Context> _stack;
-    private static readonly Context _rawContext = new Context(UICondition.RawTree);
-    private static readonly Context _contentContext = new Context(UICondition.ContentTree);
-    private static readonly Context _controlContext = new Context(UICondition.ControlTree);
-    private static readonly Context _defaultContext = Context.ControlContext;
+namespace MS.Internal.Mita.Foundation {
+    public class Context {
+        [ThreadStatic]
+        static Stack<Context> _stack;
 
-    public Context(UICondition treeCondition)
-    {
-      Validate.ArgumentNotNull((object) treeCondition, nameof (treeCondition));
-      this._activated = false;
-      this._treeCondition = treeCondition;
-    }
+        static readonly Context _defaultContext = ControlContext;
 
-    public IDisposable Activate() => (IDisposable) new ContextMartyr(this);
-
-    public bool IsActivated
-    {
-      get => this._activated;
-      set => this._activated = value;
-    }
-
-    public UICondition TreeCondition => this._treeCondition;
-
-    public static Context Current => Context.Stack.Peek();
-
-    public static Context RawContext => Context._rawContext;
-
-    public static Context ContentContext => Context._contentContext;
-
-    public static Context ControlContext => Context._controlContext;
-
-    internal static System.Collections.Generic.Stack<Context> Stack
-    {
-      get
-      {
-        if (Context._stack == null)
-        {
-          Context._stack = new System.Collections.Generic.Stack<Context>();
-          Context._stack.Push(Context._defaultContext);
+        public Context(UICondition treeCondition) {
+            Validate.ArgumentNotNull(parameter: treeCondition, parameterName: nameof(treeCondition));
+            IsActivated = false;
+            TreeCondition = treeCondition;
         }
-        return Context._stack;
-      }
+
+        public bool IsActivated { get; set; }
+
+        public UICondition TreeCondition { get; }
+
+        public static Context Current {
+            get { return Stack.Peek(); }
+        }
+
+        public static Context RawContext { get; } = new Context(treeCondition: UICondition.RawTree);
+
+        public static Context ContentContext { get; } = new Context(treeCondition: UICondition.ContentTree);
+
+        public static Context ControlContext { get; } = new Context(treeCondition: UICondition.ControlTree);
+
+        internal static Stack<Context> Stack {
+            get {
+                if (_stack == null) {
+                    _stack = new Stack<Context>();
+                    _stack.Push(item: _defaultContext);
+                }
+
+                return _stack;
+            }
+        }
+
+        public IDisposable Activate() {
+            return new ContextMartyr(currentContext: this);
+        }
     }
-  }
 }

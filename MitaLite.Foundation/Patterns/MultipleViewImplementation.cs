@@ -7,51 +7,37 @@
 using System;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class MultipleViewImplementation : PatternImplementation<MultipleViewPattern>, IMultipleView
-  {
-    public MultipleViewImplementation(UIObject uiObject)
-      : base(uiObject, MultipleViewPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class MultipleViewImplementation : PatternImplementation<MultipleViewPattern>, IMultipleView {
+        public MultipleViewImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: MultipleViewPattern.Pattern) {
+        }
 
-    public string GetViewName(int viewId)
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (GetViewName), new object[1]
-      {
-        (object) viewId
-      }), out overridden) == ActionResult.Handled ? (string) overridden : this.Pattern.GetViewName(viewId);
-    }
+        public string GetViewName(int viewId) {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(GetViewName), viewId), overridden: out overridden) == ActionResult.Handled ? (string) overridden : Pattern.GetViewName(viewId: viewId);
+        }
 
-    public void SetCurrentView(int viewId)
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (SetCurrentView), new object[1]
-      {
-        (object) viewId
-      })) == ActionResult.Unhandled)
-        this.Pattern.SetCurrentView(viewId);
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void SetCurrentView(int viewId) {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(SetCurrentView), viewId)) == ActionResult.Unhandled)
+                Pattern.SetCurrentView(viewId: viewId);
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public int[] GetSupportedViews()
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (GetSupportedViews), Array.Empty<object>()), out overridden) == ActionResult.Handled ? (int[]) overridden : this.Pattern.Current.GetSupportedViews();
-    }
+        public int[] GetSupportedViews() {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(GetSupportedViews), args: Array.Empty<object>()), overridden: out overridden) == ActionResult.Handled ? (int[]) overridden : Pattern.Current.GetSupportedViews();
+        }
 
-    public int CurrentView
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (CurrentView), Array.Empty<object>()), out overridden) == ActionResult.Handled ? (int) overridden : this.Pattern.Current.CurrentView;
-      }
+        public int CurrentView {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(CurrentView), args: Array.Empty<object>()), overridden: out overridden) == ActionResult.Handled ? (int) overridden : Pattern.Current.CurrentView;
+            }
+        }
     }
-  }
 }

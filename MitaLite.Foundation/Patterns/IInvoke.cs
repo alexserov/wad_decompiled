@@ -6,12 +6,10 @@
 
 using MS.Internal.Mita.Foundation.Waiters;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IInvoke
-  {
-    void Invoke();
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IInvoke {
+        void Invoke();
 
-    UIEventWaiter GetInvokedWaiter();
-  }
+        UIEventWaiter GetInvokedWaiter();
+    }
 }

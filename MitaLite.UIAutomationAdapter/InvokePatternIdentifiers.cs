@@ -6,11 +6,9 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class InvokePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<InvokePattern, IUIAutomationInvokePattern>(10000, "InvokePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationInvokePattern, InvokePattern>(InvokePattern.Wrap));
-    public static readonly AutomationEvent InvokedEvent = new AutomationEvent(20009, "InvokePatternIdentifiers.InvokedEvent");
-  }
+namespace System.Windows.Automation {
+    public static class InvokePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<InvokePattern, IUIAutomationInvokePattern>(id: 10000, programmaticName: "InvokePatternIdentifiers.Pattern", wrap: InvokePattern.Wrap);
+        public static readonly AutomationEvent InvokedEvent = new AutomationEvent(id: 20009, programmaticName: "InvokePatternIdentifiers.InvokedEvent");
+    }
 }

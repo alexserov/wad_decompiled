@@ -6,44 +6,36 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class InputDeviceFactory : IInputDeviceFactory
-  {
-    public IInputDevice Get(INPUT_DEVICE_TYPE type)
-    {
-      if (AppModelStatus.IsInAppContainer)
-      {
-        switch (type)
-        {
-          case INPUT_DEVICE_TYPE.TOUCH:
-            return (IInputDevice) new InputDeviceTouch();
-          case INPUT_DEVICE_TYPE.PEN:
-            return (IInputDevice) new InputDevicePen();
-          case INPUT_DEVICE_TYPE.MOUSE:
-            return (IInputDevice) new InputDeviceMouse();
-          case INPUT_DEVICE_TYPE.KEYBOARD:
-            return (IInputDevice) new InputDeviceKeyboard();
-          default:
-            throw new ArgumentException(string.Format("Invalid input device type {0}", (object) type));
+namespace MS.Internal.Mita.Foundation {
+    internal class InputDeviceFactory : IInputDeviceFactory {
+        public IInputDevice Get(INPUT_DEVICE_TYPE type) {
+            if (AppModelStatus.IsInAppContainer) {
+                switch (type) {
+                    case INPUT_DEVICE_TYPE.TOUCH:
+                        return new InputDeviceTouch();
+                    case INPUT_DEVICE_TYPE.PEN:
+                        return new InputDevicePen();
+                    case INPUT_DEVICE_TYPE.MOUSE:
+                        return new InputDeviceMouse();
+                    case INPUT_DEVICE_TYPE.KEYBOARD:
+                        return new InputDeviceKeyboard();
+                    default:
+                        throw new ArgumentException(message: string.Format(format: "Invalid input device type {0}", arg0: type));
+                }
+            }
+
+            switch (type) {
+                case INPUT_DEVICE_TYPE.TOUCH:
+                    return new InputDeviceTouchRIMLegacy();
+                case INPUT_DEVICE_TYPE.PEN:
+                    return new InputDevicePenRIM();
+                case INPUT_DEVICE_TYPE.MOUSE:
+                    return new InputDeviceMouseRIM();
+                case INPUT_DEVICE_TYPE.KEYBOARD:
+                    return new InputDeviceKeyboardRIM();
+                default:
+                    throw new ArgumentException(message: string.Format(format: "Invalid input device type {0}", arg0: type));
+            }
         }
-      }
-      else
-      {
-        switch (type)
-        {
-          case INPUT_DEVICE_TYPE.TOUCH:
-            return (IInputDevice) new InputDeviceTouchRIMLegacy();
-          case INPUT_DEVICE_TYPE.PEN:
-            return (IInputDevice) new InputDevicePenRIM();
-          case INPUT_DEVICE_TYPE.MOUSE:
-            return (IInputDevice) new InputDeviceMouseRIM();
-          case INPUT_DEVICE_TYPE.KEYBOARD:
-            return (IInputDevice) new InputDeviceKeyboardRIM();
-          default:
-            throw new ArgumentException(string.Format("Invalid input device type {0}", (object) type));
-        }
-      }
     }
-  }
 }

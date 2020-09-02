@@ -6,37 +6,37 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  public static class Log
-  {
-    public static Action<string, object[]> OutImplementation = (Action<string, object[]>) null;
-    internal static Func<string, string> CreateUniqueObjectIdImplementation = (Func<string, string>) (s => string.Format("{0}#{1}", (object) s, (object) Log.objCount++));
-    private static long objCount = 0;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    public static class Log {
+        public static Action<string, object[]> OutImplementation = null;
+        internal static Func<string, string> CreateUniqueObjectIdImplementation = s => string.Format(format: "{0}#{1}", arg0: s, arg1: objCount++);
+        static long objCount;
 
-    internal static void Out(string msg, params object[] args)
-    {
-      Action<string, object[]> outImplementation = Log.OutImplementation;
-      if (outImplementation == null)
-        return;
-      outImplementation(msg, args);
+        internal static void Out(string msg, params object[] args) {
+            var outImplementation = OutImplementation;
+            if (outImplementation == null)
+                return;
+            outImplementation(arg1: msg, arg2: args);
+        }
+
+        internal static string CreateUniqueObjectId(string baseName) {
+            return CreateUniqueObjectIdImplementation(arg: baseName);
+        }
+
+        public static void DisplayVisualTree(UIObject root, uint maxDepth, uint depth = 0) {
+            var uiObject = root;
+            if (uiObject == null)
+                uiObject = UIObject.Root;
+            Out(msg: "{0}{1} - {2} - {3}", (object) Indent(count: depth), (object) uiObject, (object) uiObject.AutomationId, (object) uiObject.ControlType);
+            if (depth >= maxDepth)
+                return;
+            ++depth;
+            foreach (var child in uiObject.Children)
+                DisplayVisualTree(root: child, maxDepth: maxDepth, depth: depth);
+        }
+
+        static string Indent(uint count) {
+            return "".PadLeft(totalWidth: (int) count * 4);
+        }
     }
-
-    internal static string CreateUniqueObjectId(string baseName) => Log.CreateUniqueObjectIdImplementation(baseName);
-
-    public static void DisplayVisualTree(UIObject root, uint maxDepth, uint depth = 0)
-    {
-      UIObject uiObject = root;
-      if (uiObject == (UIObject) null)
-        uiObject = UIObject.Root;
-      Log.Out("{0}{1} - {2} - {3}", (object) Log.Indent(depth), (object) uiObject, (object) uiObject.AutomationId, (object) uiObject.ControlType);
-      if (depth >= maxDepth)
-        return;
-      ++depth;
-      foreach (UIObject child in uiObject.Children)
-        Log.DisplayVisualTree(child, maxDepth, depth);
-    }
-
-    private static string Indent(uint count) => "".PadLeft((int) count * 4);
-  }
 }

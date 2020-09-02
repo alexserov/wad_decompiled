@@ -4,20 +4,17 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface ITransform
-  {
-    void Rotate(double degrees);
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface ITransform {
+        bool CanRotate { get; }
 
-    void Resize(double width, double height);
+        bool CanResize { get; }
 
-    void Move(double x, double y);
+        bool CanMove { get; }
+        void Rotate(double degrees);
 
-    bool CanRotate { get; }
+        void Resize(double width, double height);
 
-    bool CanResize { get; }
-
-    bool CanMove { get; }
-  }
+        void Move(double x, double y);
+    }
 }

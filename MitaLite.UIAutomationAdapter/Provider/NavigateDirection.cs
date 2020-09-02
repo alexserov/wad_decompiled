@@ -6,15 +6,13 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("670c3006-bf4c-428b-8534-e1848f645122")]
-  public enum NavigateDirection
-  {
-    Parent,
-    NextSibling,
-    PreviousSibling,
-    FirstChild,
-    LastChild,
-  }
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "670c3006-bf4c-428b-8534-e1848f645122")]
+    public enum NavigateDirection {
+        Parent,
+        NextSibling,
+        PreviousSibling,
+        FirstChild,
+        LastChild
+    }
 }

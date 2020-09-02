@@ -6,31 +6,25 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIItemContainerChildren<I> : UICollection<I> where I : UIObject
-  {
-    public UIItemContainerChildren(UIObject root, IFactory<I> factory)
-      : base((UINavigator) new ItemContainerChildrenNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIItemContainerChildren<I> : UICollection<I> where I : UIObject {
+        public UIItemContainerChildren(UIObject root, IFactory<I> factory)
+            : base(navigator: new ItemContainerChildrenNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIItemContainerChildren(AutomationElement root, IFactory<I> factory)
-      : base((UINavigator) new ItemContainerChildrenNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIItemContainerChildren(AutomationElement root, IFactory<I> factory)
+            : base(navigator: new ItemContainerChildrenNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIItemContainerChildren(UIObject root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new ItemContainerChildrenNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIItemContainerChildren(UIObject root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new ItemContainerChildrenNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIItemContainerChildren(
-      AutomationElement root,
-      UICondition treeCondition,
-      IFactory<I> factory)
-      : base((UINavigator) new ItemContainerChildrenNavigator(root, treeCondition), factory)
-    {
+        internal UIItemContainerChildren(
+            AutomationElement root,
+            UICondition treeCondition,
+            IFactory<I> factory)
+            : base(navigator: new ItemContainerChildrenNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

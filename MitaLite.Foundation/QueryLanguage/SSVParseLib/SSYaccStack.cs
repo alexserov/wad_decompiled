@@ -6,30 +6,34 @@
 
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib
-{
-  internal class SSYaccStack : List<object>
-  {
-    public int m_size;
+namespace MS.Internal.Mita.Foundation.QueryLanguage.SSVParseLib {
+    internal class SSYaccStack : List<object> {
+        public int m_size;
 
-    public SSYaccStack(int q_size, int q_inc) => this.m_size = 0;
+        public SSYaccStack(int q_size, int q_inc) {
+            this.m_size = 0;
+        }
 
-    public void push(object q_ele)
-    {
-      this.Add(q_ele);
-      ++this.m_size;
+        public void push(object q_ele) {
+            Add(item: q_ele);
+            ++this.m_size;
+        }
+
+        public void pop() {
+            --this.m_size;
+            RemoveAt(index: this.m_size);
+        }
+
+        public object elementAt(int index) {
+            return this[index: index];
+        }
+
+        public int getSize() {
+            return Count;
+        }
+
+        public object peek() {
+            return elementAt(index: this.m_size - 1);
+        }
     }
-
-    public void pop()
-    {
-      --this.m_size;
-      this.RemoveAt(this.m_size);
-    }
-
-    public object elementAt(int index) => this[index];
-
-    public int getSize() => this.Count;
-
-    public object peek() => this.elementAt(this.m_size - 1);
-  }
 }

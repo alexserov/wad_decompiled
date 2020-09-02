@@ -8,24 +8,23 @@ using System.Runtime.InteropServices;
 using System.Windows.Types;
 using UIAutomationClient;
 
-namespace System.Windows.Automation.Provider
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [Guid("f7063da8-8359-439c-9297-bbc5299a7d87")]
-  [ComImport]
-  public interface IRawElementProviderFragment : IRawElementProviderSimple
-  {
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IRawElementProviderFragment Navigate(NavigateDirection direction);
+namespace System.Windows.Automation.Provider {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), Guid(guid: "f7063da8-8359-439c-9297-bbc5299a7d87"), ComImport]
+    public interface IRawElementProviderFragment : IRawElementProviderSimple {
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IRawElementProviderFragment Navigate(NavigateDirection direction);
 
-    int[] GetRuntimeId();
+        int[] GetRuntimeId();
 
-    Rect BoundingRectangle { get; }
+        Rect BoundingRectangle { get; }
 
-    IRawElementProviderSimple[] GetEmbeddedFragmentRoots();
+        IRawElementProviderSimple[] GetEmbeddedFragmentRoots();
 
-    void SetFocus();
+        void SetFocus();
 
-    IRawElementProviderFragmentRoot FragmentRoot { [return: MarshalAs(UnmanagedType.Interface)] get; }
-  }
+        IRawElementProviderFragmentRoot FragmentRoot {
+            [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+    }
 }

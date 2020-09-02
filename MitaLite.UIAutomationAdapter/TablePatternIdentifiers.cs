@@ -6,13 +6,11 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class TablePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TablePattern, IUIAutomationTablePattern>(10012, "TablePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTablePattern, TablePattern>(TablePattern.Wrap));
-    public static readonly AutomationProperty ColumnHeadersProperty = new AutomationProperty(30082, "TablePatternIdentifiers.ColumnHeadersProperty");
-    public static readonly AutomationProperty RowHeadersProperty = new AutomationProperty(30081, "TablePatternIdentifiers.RowHeadersProperty");
-    public static readonly AutomationProperty RowOrColumnMajorProperty = new AutomationProperty(30083, "TablePatternIdentifiers.RowOrColumnMajorProperty");
-  }
+namespace System.Windows.Automation {
+    public static class TablePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<TablePattern, IUIAutomationTablePattern>(id: 10012, programmaticName: "TablePatternIdentifiers.Pattern", wrap: TablePattern.Wrap);
+        public static readonly AutomationProperty ColumnHeadersProperty = new AutomationProperty(id: 30082, programmaticName: "TablePatternIdentifiers.ColumnHeadersProperty");
+        public static readonly AutomationProperty RowHeadersProperty = new AutomationProperty(id: 30081, programmaticName: "TablePatternIdentifiers.RowHeadersProperty");
+        public static readonly AutomationProperty RowOrColumnMajorProperty = new AutomationProperty(id: 30083, programmaticName: "TablePatternIdentifiers.RowOrColumnMajorProperty");
+    }
 }

@@ -6,16 +6,14 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class RangeValuePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<RangeValuePattern, IUIAutomationRangeValuePattern>(10003, "RangeValuePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationRangeValuePattern, RangeValuePattern>(RangeValuePattern.Wrap));
-    public static readonly AutomationProperty IsReadOnlyProperty = new AutomationProperty(30048, "RangeValuePatternIdentifiers.IsReadOnlyProperty");
-    public static readonly AutomationProperty LargeChangeProperty = new AutomationProperty(30051, "RangeValuePatternIdentifiers.LargeChangeProperty");
-    public static readonly AutomationProperty MaximumProperty = new AutomationProperty(30050, "RangeValuePatternIdentifiers.MaximumProperty");
-    public static readonly AutomationProperty MinimumProperty = new AutomationProperty(30049, "RangeValuePatternIdentifiers.MinimumProperty");
-    public static readonly AutomationProperty SmallChangeProperty = new AutomationProperty(30052, "RangeValuePatternIdentifiers.SmallChangeProperty");
-    public static readonly AutomationProperty ValueProperty = new AutomationProperty(30047, "RangeValuePatternIdentifiers.ValueProperty");
-  }
+namespace System.Windows.Automation {
+    public static class RangeValuePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<RangeValuePattern, IUIAutomationRangeValuePattern>(id: 10003, programmaticName: "RangeValuePatternIdentifiers.Pattern", wrap: RangeValuePattern.Wrap);
+        public static readonly AutomationProperty IsReadOnlyProperty = new AutomationProperty(id: 30048, programmaticName: "RangeValuePatternIdentifiers.IsReadOnlyProperty");
+        public static readonly AutomationProperty LargeChangeProperty = new AutomationProperty(id: 30051, programmaticName: "RangeValuePatternIdentifiers.LargeChangeProperty");
+        public static readonly AutomationProperty MaximumProperty = new AutomationProperty(id: 30050, programmaticName: "RangeValuePatternIdentifiers.MaximumProperty");
+        public static readonly AutomationProperty MinimumProperty = new AutomationProperty(id: 30049, programmaticName: "RangeValuePatternIdentifiers.MinimumProperty");
+        public static readonly AutomationProperty SmallChangeProperty = new AutomationProperty(id: 30052, programmaticName: "RangeValuePatternIdentifiers.SmallChangeProperty");
+        public static readonly AutomationProperty ValueProperty = new AutomationProperty(id: 30047, programmaticName: "RangeValuePatternIdentifiers.ValueProperty");
+    }
 }

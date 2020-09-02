@@ -6,33 +6,33 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ItemContainerPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<ItemContainerPattern, IUIAutomationItemContainerPattern>(10019, "ItemContainerPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationItemContainerPattern, ItemContainerPattern>(ItemContainerPattern.Wrap));
-    private readonly IUIAutomationItemContainerPattern _itemContainerPattern;
+namespace System.Windows.Automation {
+    public class ItemContainerPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<ItemContainerPattern, IUIAutomationItemContainerPattern>(id: 10019, programmaticName: "ItemContainerPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationItemContainerPattern _itemContainerPattern;
 
-    private ItemContainerPattern(
-      AutomationElement element,
-      IUIAutomationItemContainerPattern itemContainerPattern)
-      : base(element)
-      => this._itemContainerPattern = itemContainerPattern;
+        ItemContainerPattern(
+            AutomationElement element,
+            IUIAutomationItemContainerPattern itemContainerPattern)
+            : base(el: element) {
+            this._itemContainerPattern = itemContainerPattern;
+        }
 
-    internal static ItemContainerPattern Wrap(
-      AutomationElement element,
-      IUIAutomationItemContainerPattern itemContainerPattern) => new ItemContainerPattern(element, itemContainerPattern);
+        internal static ItemContainerPattern Wrap(
+            AutomationElement element,
+            IUIAutomationItemContainerPattern itemContainerPattern) {
+            return new ItemContainerPattern(element: element, itemContainerPattern: itemContainerPattern);
+        }
 
-    public AutomationElement FindItemByProperty(
-      AutomationElement element,
-      AutomationProperty property,
-      object value)
-    {
-      Validate.ArgumentNotNull((object) property, nameof (property));
-      Variant variant = value.ToVariant();
-      IUIAutomationElement autoElement = element == (AutomationElement) null ? this._itemContainerPattern.FindItemByProperty((IUIAutomationElement) null, property.Id, variant) : this._itemContainerPattern.FindItemByProperty(element.IUIAutomationElement, property.Id, variant);
-      variant.Free();
-      return autoElement != null ? new AutomationElement(autoElement) : (AutomationElement) null;
+        public AutomationElement FindItemByProperty(
+            AutomationElement element,
+            AutomationProperty property,
+            object value) {
+            Validate.ArgumentNotNull(parameter: property, parameterName: nameof(property));
+            var variant = value.ToVariant();
+            var autoElement = element == (AutomationElement) null ? this._itemContainerPattern.FindItemByProperty(pStartAfter: null, propertyId: property.Id, value: variant) : this._itemContainerPattern.FindItemByProperty(pStartAfter: element.IUIAutomationElement, propertyId: property.Id, value: variant);
+            variant.Free();
+            return autoElement != null ? new AutomationElement(autoElement: autoElement) : null;
+        }
     }
-  }
 }

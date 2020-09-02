@@ -6,34 +6,32 @@
 
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class RegexFilter : IFilter<AutomationElement>
-  {
-    private UIProperty _property;
-    private Regex _regularExpression;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class RegexFilter : IFilter<AutomationElement> {
+        readonly UIProperty _property;
+        readonly Regex _regularExpression;
 
-    public RegexFilter(UIProperty property, string regularExpression)
-      : this(property, new Regex(regularExpression, RegexOptions.Compiled))
-    {
+        public RegexFilter(UIProperty property, string regularExpression)
+            : this(property: property, regularExpression: new Regex(pattern: regularExpression, options: RegexOptions.Compiled)) {
+        }
+
+        public RegexFilter(UIProperty property, Regex regularExpression) {
+            Validate.ArgumentNotNull(parameter: property, parameterName: nameof(property));
+            Validate.ArgumentNotNull(parameter: regularExpression, parameterName: nameof(regularExpression));
+            this._property = property;
+            this._regularExpression = regularExpression;
+        }
+
+        public bool Matches(AutomationElement item) {
+            Validate.ArgumentNotNull(parameter: item, parameterName: nameof(item));
+            var currentPropertyValue = item.GetCurrentPropertyValue(property: this._property.Property);
+            return currentPropertyValue != null && this._regularExpression.IsMatch(input: currentPropertyValue.ToString());
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "RegexFilter_ToString_2", (object) this._property.ToString(), (object) this._regularExpression.ToString());
+        }
     }
-
-    public RegexFilter(UIProperty property, Regex regularExpression)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) property, nameof (property));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) regularExpression, nameof (regularExpression));
-      this._property = property;
-      this._regularExpression = regularExpression;
-    }
-
-    public bool Matches(AutomationElement item)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) item, nameof (item));
-      object currentPropertyValue = item.GetCurrentPropertyValue(this._property.Property);
-      return currentPropertyValue != null && this._regularExpression.IsMatch(currentPropertyValue.ToString());
-    }
-
-    public override string ToString() => StringResource.Get("RegexFilter_ToString_2", (object) this._property.ToString(), (object) this._regularExpression.ToString());
-  }
 }

@@ -6,14 +6,12 @@
 
 using System.Runtime.InteropServices;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal interface INativeMethods
-  {
-    void GetKeyboardState([Out] byte[] keyState);
+namespace MS.Internal.Mita.Foundation {
+    internal interface INativeMethods {
+        void GetKeyboardState([Out] byte[] keyState);
 
-    bool GetMouseButtonsSwapped();
+        bool GetMouseButtonsSwapped();
 
-    RectangleI GetClientArea();
-  }
+        RectangleI GetClientArea();
+    }
 }

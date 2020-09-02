@@ -7,15 +7,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [TypeLibType(TypeLibTypeFlags.FHidden)]
-  [Guid("146C3C17-F12E-4E22-8C27-F894B9B79C69")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationEventHandler
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void HandleAutomationEvent([MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement sender, [In] int eventId);
-  }
+namespace UIAutomationClient {
+    [TypeLibType(flags: TypeLibTypeFlags.FHidden), Guid(guid: "146C3C17-F12E-4E22-8C27-F894B9B79C69"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationEventHandler {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void HandleAutomationEvent([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                                   IUIAutomationElement sender, [In] int eventId);
+    }
 }

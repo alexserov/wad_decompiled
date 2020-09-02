@@ -6,10 +6,8 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class ScrollItemPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<ScrollItemPattern, IUIAutomationScrollItemPattern>(10017, "ScrollItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationScrollItemPattern, ScrollItemPattern>(ScrollItemPattern.Wrap));
-  }
+namespace System.Windows.Automation {
+    public static class ScrollItemPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<ScrollItemPattern, IUIAutomationScrollItemPattern>(id: 10017, programmaticName: "ScrollItemPatternIdentifiers.Pattern", wrap: ScrollItemPattern.Wrap);
+    }
 }

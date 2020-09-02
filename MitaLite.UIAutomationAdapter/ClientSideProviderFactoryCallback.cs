@@ -6,10 +6,9 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public delegate IRawElementProviderSimple ClientSideProviderFactoryCallback(
-    IntPtr hwnd,
-    int idChild,
-    int idObject);
+namespace System.Windows.Automation {
+    public delegate IRawElementProviderSimple ClientSideProviderFactoryCallback(
+        IntPtr hwnd,
+        int idChild,
+        int idObject);
 }

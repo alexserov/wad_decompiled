@@ -4,31 +4,28 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Waiters;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Waiters;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IWindow
-  {
-    void SetWindowVisualState(WindowVisualState state);
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IWindow {
+        bool CanMaximize { get; }
 
-    void Close();
+        bool CanMinimize { get; }
 
-    void WaitForInputIdle(int milliseconds);
+        bool IsModal { get; }
 
-    UIEventWaiter GetWindowClosedWaiter();
+        WindowVisualState WindowVisualState { get; }
 
-    bool CanMaximize { get; }
+        WindowInteractionState WindowInteractionState { get; }
 
-    bool CanMinimize { get; }
+        bool IsTopmost { get; }
+        void SetWindowVisualState(WindowVisualState state);
 
-    bool IsModal { get; }
+        void Close();
 
-    WindowVisualState WindowVisualState { get; }
+        void WaitForInputIdle(int milliseconds);
 
-    WindowInteractionState WindowInteractionState { get; }
-
-    bool IsTopmost { get; }
-  }
+        UIEventWaiter GetWindowClosedWaiter();
+    }
 }

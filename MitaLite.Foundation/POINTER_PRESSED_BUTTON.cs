@@ -6,14 +6,12 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  [Flags]
-  public enum POINTER_PRESSED_BUTTON : uint
-  {
-    NONE = 0,
-    BARREL = 1,
-    INVERTED = 2,
-    ERASER = 4,
-  }
+namespace MS.Internal.Mita.Foundation {
+    [Flags]
+    public enum POINTER_PRESSED_BUTTON : uint {
+        NONE = 0,
+        BARREL = 1,
+        INVERTED = 2,
+        ERASER = 4
+    }
 }

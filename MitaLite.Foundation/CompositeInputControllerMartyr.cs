@@ -7,50 +7,43 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class CompositeInputControllerMartyr : IDisposable
-  {
-    private Stack<IDisposable> _inputControllerMartyrStack;
-    private PointerInputType _previousInputType;
-    private bool _disposed;
+namespace MS.Internal.Mita.Foundation {
+    public class CompositeInputControllerMartyr : IDisposable {
+        bool _disposed;
+        readonly Stack<IDisposable> _inputControllerMartyrStack;
+        readonly PointerInputType _previousInputType;
 
-    public CompositeInputControllerMartyr()
-      : this(PointerInputType.Mouse)
-    {
-    }
-
-    public CompositeInputControllerMartyr(PointerInputType previousInputType)
-    {
-      this._inputControllerMartyrStack = new Stack<IDisposable>();
-      this._previousInputType = previousInputType;
-    }
-
-    public void Add(IDisposable martyr) => this._inputControllerMartyrStack.Push(martyr);
-
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      try
-      {
-        if (this._disposed || !disposing)
-          return;
-        lock (this._inputControllerMartyrStack)
-        {
-          while (this._inputControllerMartyrStack.Count > 0)
-            this._inputControllerMartyrStack.Pop().Dispose();
+        public CompositeInputControllerMartyr()
+            : this(previousInputType: PointerInputType.Mouse) {
         }
-        InputController.ActiveInputType = this._previousInputType;
-      }
-      finally
-      {
-        this._disposed = true;
-      }
+
+        public CompositeInputControllerMartyr(PointerInputType previousInputType) {
+            this._inputControllerMartyrStack = new Stack<IDisposable>();
+            this._previousInputType = previousInputType;
+        }
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        public void Add(IDisposable martyr) {
+            this._inputControllerMartyrStack.Push(item: martyr);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            try {
+                if (this._disposed || !disposing)
+                    return;
+                lock (this._inputControllerMartyrStack) {
+                    while (this._inputControllerMartyrStack.Count > 0)
+                        this._inputControllerMartyrStack.Pop().Dispose();
+                }
+
+                InputController.ActiveInputType = this._previousInputType;
+            } finally {
+                this._disposed = true;
+            }
+        }
     }
-  }
 }

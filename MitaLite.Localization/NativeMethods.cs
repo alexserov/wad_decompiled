@@ -6,41 +6,40 @@
 
 using System.Runtime.InteropServices;
 
-namespace MS.Internal.Mita.Localization
-{
-  internal class NativeMethods : INativeMethods
-  {
-    public const int GEOID_NOT_AVAILABLE = -1;
+namespace MS.Internal.Mita.Localization {
+    internal class NativeMethods : INativeMethods {
+        public const int GEOID_NOT_AVAILABLE = -1;
 
-    public void SetUserGeoID([In] int geoId)
-    {
-      if (NativeMethods.InternalNativeMethods.SetUserGeoID(geoId) == -1)
-        throw new LanguageRegionManagerException(string.Format("GEO ID specified was not found on the system: {0}", (object) geoId));
+        public void SetUserGeoID([In] int geoId) {
+            if (InternalNativeMethods.SetUserGeoID(geoId: geoId) == -1)
+                throw new LanguageRegionManagerException(message: string.Format(format: "GEO ID specified was not found on the system: {0}", arg0: geoId));
+        }
+
+        public string GetUserLanguages([In] char languageDelimiter) {
+            var empty = string.Empty;
+            InternalNativeMethods.GetUserLanguages(delimiter: languageDelimiter, userLanguages: ref empty);
+            return empty;
+        }
+
+        public void SetUserLanguages([In] string languages, [In] char languageDelimiter) {
+            InternalNativeMethods.SetUserLanguages(delimiter: languageDelimiter, userLanguages: languages);
+        }
+
+        static class InternalNativeMethods {
+            const string LOCALIZATION_DLL = "api-ms-win-core-localization-l1-2-1.dll";
+            const string LANGS_DLL = "bcp47langs.dll";
+            const string LANGDB_DLL = "winlangdb.dll";
+
+            [DllImport(dllName: "api-ms-win-core-localization-l1-2-1.dll", CharSet = CharSet.Unicode)]
+            public static extern int SetUserGeoID([In] int geoId);
+
+            [DllImport(dllName: "bcp47langs.dll", CharSet = CharSet.Unicode)]
+            public static extern int GetUserLanguages(char delimiter, [MarshalAs(unmanagedType: UnmanagedType.HString)]
+                                                      ref string userLanguages);
+
+            [DllImport(dllName: "winlangdb.dll", CharSet = CharSet.Unicode)]
+            public static extern int SetUserLanguages(char delimiter, [MarshalAs(unmanagedType: UnmanagedType.HString)]
+                                                      string userLanguages);
+        }
     }
-
-    public string GetUserLanguages([In] char languageDelimiter)
-    {
-      string empty = string.Empty;
-      NativeMethods.InternalNativeMethods.GetUserLanguages(languageDelimiter, ref empty);
-      return empty;
-    }
-
-    public void SetUserLanguages([In] string languages, [In] char languageDelimiter) => NativeMethods.InternalNativeMethods.SetUserLanguages(languageDelimiter, languages);
-
-    private static class InternalNativeMethods
-    {
-      private const string LOCALIZATION_DLL = "api-ms-win-core-localization-l1-2-1.dll";
-      private const string LANGS_DLL = "bcp47langs.dll";
-      private const string LANGDB_DLL = "winlangdb.dll";
-
-      [DllImport("api-ms-win-core-localization-l1-2-1.dll", CharSet = CharSet.Unicode)]
-      public static extern int SetUserGeoID([In] int geoId);
-
-      [DllImport("bcp47langs.dll", CharSet = CharSet.Unicode)]
-      public static extern int GetUserLanguages(char delimiter, [MarshalAs(UnmanagedType.HString)] ref string userLanguages);
-
-      [DllImport("winlangdb.dll", CharSet = CharSet.Unicode)]
-      public static extern int SetUserLanguages(char delimiter, [MarshalAs(UnmanagedType.HString)] string userLanguages);
-    }
-  }
 }

@@ -6,24 +6,21 @@
 
 using System.Collections.Generic;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal class KeyInputState : NullInputState
-  {
-    public HashSet<string> Pressed { get; set; }
+namespace MitaBroker.WebDriver.Actions {
+    internal class KeyInputState : NullInputState {
+        public KeyInputState() {
+            Pressed = new HashSet<string>();
+            Alt = Shift = Ctrl = Meta = false;
+        }
 
-    public bool Alt { get; set; }
+        public HashSet<string> Pressed { get; set; }
 
-    public bool Shift { get; set; }
+        public bool Alt { get; set; }
 
-    public bool Ctrl { get; set; }
+        public bool Shift { get; set; }
 
-    public bool Meta { get; set; }
+        public bool Ctrl { get; set; }
 
-    public KeyInputState()
-    {
-      this.Pressed = new HashSet<string>();
-      this.Alt = this.Shift = this.Ctrl = this.Meta = false;
+        public bool Meta { get; set; }
     }
-  }
 }

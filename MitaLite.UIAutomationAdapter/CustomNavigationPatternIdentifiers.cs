@@ -6,10 +6,8 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class CustomNavigationPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<CustomNavigationPattern, IUIAutomationCustomNavigationPattern>(10033, "CustomNavigationPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationCustomNavigationPattern, CustomNavigationPattern>(CustomNavigationPattern.Wrap));
-  }
+namespace System.Windows.Automation {
+    public static class CustomNavigationPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<CustomNavigationPattern, IUIAutomationCustomNavigationPattern>(id: 10033, programmaticName: "CustomNavigationPatternIdentifiers.Pattern", wrap: CustomNavigationPattern.Wrap);
+    }
 }

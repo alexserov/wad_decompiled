@@ -6,12 +6,8 @@
 
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("34723AFF-0C9D-49D0-9896-7AB52DF8CD8A")]
-  [CoClass(typeof (CUIAutomation8Class))]
-  [ComImport]
-  public interface CUIAutomation8 : IUIAutomation2
-  {
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "34723AFF-0C9D-49D0-9896-7AB52DF8CD8A"), CoClass(coClass: typeof(CUIAutomation8Class)), ComImport]
+    public interface CUIAutomation8 : IUIAutomation2 {
+    }
 }

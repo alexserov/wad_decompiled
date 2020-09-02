@@ -6,21 +6,23 @@
 
 using System;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class DelegateFilter : IFilter<AutomationElement>
-  {
-    private Predicate<UIObject> _callback;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class DelegateFilter : IFilter<AutomationElement> {
+        readonly Predicate<UIObject> _callback;
 
-    public DelegateFilter(Predicate<UIObject> callback)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) callback, nameof (callback));
-      this._callback = callback;
+        public DelegateFilter(Predicate<UIObject> callback) {
+            Validate.ArgumentNotNull(parameter: callback, parameterName: nameof(callback));
+            this._callback = callback;
+        }
+
+        public bool Matches(AutomationElement item) {
+            return this._callback(obj: new UIObject(element: item));
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "DelegateFilter_ToString");
+        }
     }
-
-    public bool Matches(AutomationElement item) => this._callback(new UIObject(item));
-
-    public override string ToString() => StringResource.Get("DelegateFilter_ToString");
-  }
 }

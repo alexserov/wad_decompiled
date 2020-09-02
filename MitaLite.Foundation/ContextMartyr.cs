@@ -6,34 +6,31 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class ContextMartyr : IDisposable
-  {
-    private Context currentContext;
+namespace MS.Internal.Mita.Foundation {
+    internal class ContextMartyr : IDisposable {
+        Context currentContext;
 
-    public ContextMartyr(Context currentContext)
-    {
-      this.currentContext = currentContext;
-      this.currentContext.IsActivated = true;
-      Context.Stack.Push(this.currentContext);
+        public ContextMartyr(Context currentContext) {
+            this.currentContext = currentContext;
+            this.currentContext.IsActivated = true;
+            Context.Stack.Push(item: this.currentContext);
+        }
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        ~ContextMartyr() {
+            Dispose(disposing: false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (this.currentContext == null || !disposing || Context.Stack.Peek() != this.currentContext)
+                return;
+            Context.Stack.Pop();
+            this.currentContext.IsActivated = false;
+            this.currentContext = null;
+        }
     }
-
-    ~ContextMartyr() => this.Dispose(false);
-
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (this.currentContext == null || !disposing || Context.Stack.Peek() != this.currentContext)
-        return;
-      Context.Stack.Pop();
-      this.currentContext.IsActivated = false;
-      this.currentContext = (Context) null;
-    }
-  }
 }

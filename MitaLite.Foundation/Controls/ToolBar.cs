@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ToolBar : UIObject
-  {
-    private static IFactory<ToolBar> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ToolBar : UIObject {
+        static IFactory<ToolBar> _factory;
 
-    public ToolBar(UIObject uiObject)
-      : base(uiObject)
-    {
-    }
+        public ToolBar(UIObject uiObject)
+            : base(uiObject: uiObject) {
+        }
 
-    internal ToolBar(AutomationElement element)
-      : base(element)
-    {
-    }
+        internal ToolBar(AutomationElement element)
+            : base(element: element) {
+        }
 
-    public static IFactory<ToolBar> Factory
-    {
-      get
-      {
-        if (ToolBar._factory == null)
-          ToolBar._factory = (IFactory<ToolBar>) new ToolBar.ToolBarFactory();
-        return ToolBar._factory;
-      }
-    }
+        public static IFactory<ToolBar> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ToolBarFactory();
+                return _factory;
+            }
+        }
 
-    private class ToolBarFactory : IFactory<ToolBar>
-    {
-      public ToolBar Create(UIObject element) => new ToolBar(element);
+        class ToolBarFactory : IFactory<ToolBar> {
+            public ToolBar Create(UIObject element) {
+                return new ToolBar(uiObject: element);
+            }
+        }
     }
-  }
 }

@@ -4,81 +4,79 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class CheckBox : UIObject, IToggle
-  {
-    private IToggle _togglePattern;
-    private static IFactory<CheckBox> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class CheckBox : UIObject, IToggle {
+        static IFactory<CheckBox> _factory;
+        IToggle _togglePattern;
 
-    public CheckBox(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
-
-    internal CheckBox(AutomationElement element)
-      : base(element)
-      => this.Initialize();
-
-    private void Initialize() => this._togglePattern = (IToggle) new ToggleImplementation((UIObject) this);
-
-    public UIEventWaiter GetToggledWaiter() => this._togglePattern.GetToggledWaiter();
-
-    public virtual void Toggle() => this._togglePattern.Toggle();
-
-    public virtual ToggleState ToggleState => this._togglePattern.ToggleState;
-
-    public void Check()
-    {
-      int num = (int) ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault(nameof (Check))) != ActionResult.Handled && !this.SetToggleState(ToggleState.On))
-        throw new ActionException(StringResource.Get("CheckBox_CheckFailed", (object) UIObject.SafeGetName((UIObject) this)));
-    }
-
-    public void Uncheck()
-    {
-      int num = (int) ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault(nameof (Uncheck))) != ActionResult.Handled && !this.SetToggleState(ToggleState.Off))
-        throw new ActionException(StringResource.Get("CheckBox_UncheckFailed", (object) UIObject.SafeGetName((UIObject) this)));
-    }
-
-    public static IFactory<CheckBox> Factory
-    {
-      get
-      {
-        if (CheckBox._factory == null)
-          CheckBox._factory = (IFactory<CheckBox>) new CheckBox.CheckBoxFactory();
-        return CheckBox._factory;
-      }
-    }
-
-    private bool SetToggleState(ToggleState toggleState)
-    {
-      for (int index = 0; index < 3; ++index)
-      {
-        if (this._togglePattern.ToggleState == toggleState)
-          return true;
-        if (index < 2)
-        {
-          using (PropertyChangedEventWaiter changedEventWaiter = new PropertyChangedEventWaiter((UIObject) this, Scope.Element, new UIProperty[1]
-          {
-            UIProperty.Get("Toggle.ToggleState")
-          }))
-          {
-            this.Toggle();
-            changedEventWaiter.TryWait(500);
-          }
+        public CheckBox(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
         }
-      }
-      return false;
-    }
 
-    private class CheckBoxFactory : IFactory<CheckBox>
-    {
-      public CheckBox Create(UIObject element) => new CheckBox(element);
+        internal CheckBox(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
+
+        public static IFactory<CheckBox> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new CheckBoxFactory();
+                return _factory;
+            }
+        }
+
+        public UIEventWaiter GetToggledWaiter() {
+            return this._togglePattern.GetToggledWaiter();
+        }
+
+        public virtual void Toggle() {
+            this._togglePattern.Toggle();
+        }
+
+        public virtual ToggleState ToggleState {
+            get { return this._togglePattern.ToggleState; }
+        }
+
+        void Initialize() {
+            this._togglePattern = new ToggleImplementation(uiObject: this);
+        }
+
+        public void Check() {
+            var num = (int) ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: nameof(Check))) != ActionResult.Handled && !SetToggleState(toggleState: ToggleState.On))
+                throw new ActionException(message: StringResource.Get(id: "CheckBox_CheckFailed", (object) SafeGetName(uiObject: this)));
+        }
+
+        public void Uncheck() {
+            var num = (int) ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: nameof(Uncheck))) != ActionResult.Handled && !SetToggleState(toggleState: ToggleState.Off))
+                throw new ActionException(message: StringResource.Get(id: "CheckBox_UncheckFailed", (object) SafeGetName(uiObject: this)));
+        }
+
+        bool SetToggleState(ToggleState toggleState) {
+            for (var index = 0; index < 3; ++index) {
+                if (this._togglePattern.ToggleState == toggleState)
+                    return true;
+                if (index < 2)
+                    using (var changedEventWaiter = new PropertyChangedEventWaiter(root: this, scope: Scope.Element, UIProperty.Get(name: "Toggle.ToggleState"))) {
+                        Toggle();
+                        changedEventWaiter.TryWait(timeout: 500);
+                    }
+            }
+
+            return false;
+        }
+
+        class CheckBoxFactory : IFactory<CheckBox> {
+            public CheckBox Create(UIObject element) {
+                return new CheckBox(uiObject: element);
+            }
+        }
     }
-  }
 }

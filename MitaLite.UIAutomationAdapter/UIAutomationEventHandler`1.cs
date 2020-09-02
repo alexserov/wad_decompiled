@@ -6,39 +6,34 @@
 
 using System.Collections.Generic;
 
-namespace System.Windows.Automation
-{
-  internal abstract class UIAutomationEventHandler<T> where T : UIAutomationEventHandler<T>
-  {
-    internal static List<T> _events = new List<T>();
+namespace System.Windows.Automation {
+    internal abstract class UIAutomationEventHandler<T> where T : UIAutomationEventHandler<T> {
+        internal static List<T> _events = new List<T>();
 
-    protected abstract void Remove();
+        protected abstract void Remove();
 
-    protected static void Add(T instance)
-    {
-      lock (UIAutomationEventHandler<T>._events)
-        UIAutomationEventHandler<T>._events.Add(instance);
+        protected static void Add(T instance) {
+            lock (_events) {
+                _events.Add(item: instance);
+            }
+        }
+
+        protected static bool Remove(Predicate<T> predicate) {
+            lock (_events) {
+                var index = _events.FindIndex(match: predicate);
+                if (index == -1)
+                    return false;
+                var obj = _events[index: index];
+                _events.RemoveAt(index: index);
+                obj.Remove();
+                return true;
+            }
+        }
+
+        public static void RemoveAll() {
+            do {
+                ;
+            } while (Remove(predicate: item => true));
+        }
     }
-
-    protected static bool Remove(Predicate<T> predicate)
-    {
-      lock (UIAutomationEventHandler<T>._events)
-      {
-        int index = UIAutomationEventHandler<T>._events.FindIndex(predicate);
-        if (index == -1)
-          return false;
-        T obj = UIAutomationEventHandler<T>._events[index];
-        UIAutomationEventHandler<T>._events.RemoveAt(index);
-        obj.Remove();
-        return true;
-      }
-    }
-
-    public static void RemoveAll()
-    {
-      do
-        ;
-      while (UIAutomationEventHandler<T>.Remove((Predicate<T>) (item => true)));
-    }
-  }
 }

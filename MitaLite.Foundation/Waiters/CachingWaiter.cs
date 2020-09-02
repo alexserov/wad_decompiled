@@ -4,123 +4,127 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class CachingWaiter : Waiter, IDisposable
-  {
-    private Predicate<WaiterEventArgs> _filterDelegate;
-    private Queue<WaiterEventArgs> _eventQueue;
-    private ManualResetEvent _resetEvent;
-    private bool _disposed;
-    private bool _shutdown;
-    private Timer _timer;
-    private UIEventWaiter _waiter;
-    private object _syncRoot;
-    private UIObject _source;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class CachingWaiter : Waiter, IDisposable {
+        bool _disposed;
+        Queue<WaiterEventArgs> _eventQueue;
+        Predicate<WaiterEventArgs> _filterDelegate;
+        ManualResetEvent _resetEvent;
+        bool _shutdown;
+        UIObject _source;
+        readonly object _syncRoot;
+        Timer _timer;
+        UIEventWaiter _waiter;
 
-    public CachingWaiter(UIEventWaiter waiter)
-    {
-      Validate.ArgumentNotNull((object) waiter, nameof (waiter));
-      this._eventQueue = new Queue<WaiterEventArgs>();
-      this._resetEvent = new ManualResetEvent(false);
-      this._shutdown = false;
-      this._disposed = false;
-      this._waiter = waiter;
-      this._syncRoot = new object();
-      this._waiter.Notify += new EventHandler<WaiterEventArgs>(this.NotifyHandler);
-    }
-
-    ~CachingWaiter() => this.Dispose(false);
-
-    public override void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!this._disposed)
-      {
-        if (disposing)
-        {
-          this._waiter.Notify -= new EventHandler<WaiterEventArgs>(this.NotifyHandler);
-          this._eventQueue.Clear();
-          if (this._timer != null)
-            this._timer.Dispose();
-          this._resetEvent.Dispose();
+        public CachingWaiter(UIEventWaiter waiter) {
+            Validate.ArgumentNotNull(parameter: waiter, parameterName: nameof(waiter));
+            this._eventQueue = new Queue<WaiterEventArgs>();
+            this._resetEvent = new ManualResetEvent(initialState: false);
+            this._shutdown = false;
+            this._disposed = false;
+            this._waiter = waiter;
+            this._syncRoot = new object();
+            this._waiter.Notify += NotifyHandler;
         }
-        this._resetEvent = (ManualResetEvent) null;
-        this._eventQueue = (Queue<WaiterEventArgs>) null;
-        this._waiter = (UIEventWaiter) null;
-        this._source = (UIObject) null;
-        this._timer = (Timer) null;
-      }
-      this._disposed = true;
-    }
 
-    public override bool TryWait(TimeSpan timeout)
-    {
-      bool flag = false;
-      this._shutdown = false;
-      this._source = (UIObject) null;
-      this._timer = new Timer(new TimerCallback(this.TimerHandler), (object) null, timeout, TimeSpan.FromMilliseconds(-1.0));
-      while (!this._shutdown)
-      {
-        this._resetEvent.WaitOne(timeout);
-        this._resetEvent.Reset();
-        while (this._eventQueue.Count != 0)
-        {
-          WaiterEventArgs waiterEventArgs;
-          lock (this._syncRoot)
-            waiterEventArgs = this._eventQueue.Dequeue();
-          flag = true;
-          if (this._filterDelegate != null)
-          {
-            foreach (Predicate<WaiterEventArgs> invocation in this._filterDelegate.GetInvocationList())
-            {
-              flag = invocation(waiterEventArgs);
-              if (!flag)
-                break;
+        public virtual UIObject Source {
+            get { return (UIObject) null != this._source ? this._waiter.Factory.Create(element: this._source) : null; }
+        }
+
+        public override void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        ~CachingWaiter() {
+            Dispose(disposing: false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!this._disposed) {
+                if (disposing) {
+                    this._waiter.Notify -= NotifyHandler;
+                    this._eventQueue.Clear();
+                    if (this._timer != null)
+                        this._timer.Dispose();
+                    this._resetEvent.Dispose();
+                }
+
+                this._resetEvent = null;
+                this._eventQueue = null;
+                this._waiter = null;
+                this._source = null;
+                this._timer = null;
             }
-          }
-          if (flag)
-          {
-            this._source = waiterEventArgs.Sender;
-            this._shutdown = true;
-            break;
-          }
+
+            this._disposed = true;
         }
-      }
-      return flag;
+
+        public override bool TryWait(TimeSpan timeout) {
+            var flag = false;
+            this._shutdown = false;
+            this._source = null;
+            this._timer = new Timer(callback: TimerHandler, state: null, dueTime: timeout, period: TimeSpan.FromMilliseconds(value: -1.0));
+            while (!this._shutdown) {
+                this._resetEvent.WaitOne(timeout: timeout);
+                this._resetEvent.Reset();
+                while (this._eventQueue.Count != 0) {
+                    WaiterEventArgs waiterEventArgs;
+                    lock (this._syncRoot) {
+                        waiterEventArgs = this._eventQueue.Dequeue();
+                    }
+
+                    flag = true;
+                    if (this._filterDelegate != null)
+                        foreach (Predicate<WaiterEventArgs> invocation in this._filterDelegate.GetInvocationList()) {
+                            flag = invocation(obj: waiterEventArgs);
+                            if (!flag)
+                                break;
+                        }
+
+                    if (flag) {
+                        this._source = waiterEventArgs.Sender;
+                        this._shutdown = true;
+                        break;
+                    }
+                }
+            }
+
+            return flag;
+        }
+
+        public override void Reset() {
+            this._eventQueue.Clear();
+        }
+
+        public void AddFilter(Predicate<WaiterEventArgs> callback) {
+            this._filterDelegate += callback;
+        }
+
+        public void RemoveFilter(Predicate<WaiterEventArgs> callback) {
+            this._filterDelegate -= callback;
+        }
+
+        public override string ToString() {
+            return "CachingWaiter constructed around " + this._waiter;
+        }
+
+        void NotifyHandler(object sender, WaiterEventArgs args) {
+            lock (this._syncRoot) {
+                this._eventQueue.Enqueue(item: args);
+            }
+
+            this._resetEvent.Set();
+        }
+
+        void TimerHandler(object state) {
+            this._shutdown = true;
+            this._resetEvent.Set();
+        }
     }
-
-    public override void Reset() => this._eventQueue.Clear();
-
-    public void AddFilter(Predicate<WaiterEventArgs> callback) => this._filterDelegate += callback;
-
-    public void RemoveFilter(Predicate<WaiterEventArgs> callback) => this._filterDelegate -= callback;
-
-    public virtual UIObject Source => (UIObject) null != this._source ? this._waiter.Factory.Create(this._source) : (UIObject) null;
-
-    public override string ToString() => "CachingWaiter constructed around " + this._waiter.ToString();
-
-    private void NotifyHandler(object sender, WaiterEventArgs args)
-    {
-      lock (this._syncRoot)
-        this._eventQueue.Enqueue(args);
-      this._resetEvent.Set();
-    }
-
-    private void TimerHandler(object state)
-    {
-      this._shutdown = true;
-      this._resetEvent.Set();
-    }
-  }
 }

@@ -7,82 +7,83 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("A543CC6A-F4AE-494B-8239-C814481187A8")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationTextRange
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationTextRange Clone();
+namespace UIAutomationClient {
+    [Guid(guid: "A543CC6A-F4AE-494B-8239-C814481187A8"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationTextRange {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationTextRange Clone();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    int Compare([MarshalAs(UnmanagedType.Interface), In] IUIAutomationTextRange range);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int Compare([MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+                    IUIAutomationTextRange range);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    int CompareEndpoints(
-      [In] TextPatternRangeEndpoint srcEndPoint,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationTextRange range,
-      [In] TextPatternRangeEndpoint targetEndPoint);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int CompareEndpoints(
+            [In] TextPatternRangeEndpoint srcEndPoint,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationTextRange range,
+            [In] TextPatternRangeEndpoint targetEndPoint);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void ExpandToEnclosingUnit([In] TextUnit TextUnit);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void ExpandToEnclosingUnit([In] TextUnit TextUnit);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationTextRange FindAttribute([In] int attr, [MarshalAs(UnmanagedType.Struct), In] Variant val, [In] int backward);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationTextRange FindAttribute([In] int attr, [MarshalAs(unmanagedType: UnmanagedType.Struct), In]
+                                             Variant val, [In] int backward);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationTextRange FindText(
-      [MarshalAs(UnmanagedType.BStr), In] string text,
-      [In] int backward,
-      [In] int ignoreCase);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationTextRange FindText(
+            [MarshalAs(unmanagedType: UnmanagedType.BStr), In]
+            string text,
+            [In] int backward,
+            [In] int ignoreCase);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    Variant GetAttributeValue([In] int attr);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        Variant GetAttributeValue([In] int attr);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_R8)]
-    double[] GetBoundingRectangles();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_R8)]
+        double[] GetBoundingRectangles();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement GetEnclosingElement();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement GetEnclosingElement();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string GetText([In] int maxLength);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string GetText([In] int maxLength);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    int Move([In] TextUnit unit, [In] int count);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int Move([In] TextUnit unit, [In] int count);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    int MoveEndpointByUnit([In] TextPatternRangeEndpoint endpoint, [In] TextUnit unit, [In] int count);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int MoveEndpointByUnit([In] TextPatternRangeEndpoint endpoint, [In] TextUnit unit, [In] int count);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void MoveEndpointByRange(
-      [In] TextPatternRangeEndpoint srcEndPoint,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationTextRange range,
-      [In] TextPatternRangeEndpoint targetEndPoint);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void MoveEndpointByRange(
+            [In] TextPatternRangeEndpoint srcEndPoint,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationTextRange range,
+            [In] TextPatternRangeEndpoint targetEndPoint);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void Select();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void Select();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void AddToSelection();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void AddToSelection();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void RemoveFromSelection();
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void RemoveFromSelection();
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void ScrollIntoView([In] int alignToTop);
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void ScrollIntoView([In] int alignToTop);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElementArray GetChildren();
-  }
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElementArray GetChildren();
+    }
 }

@@ -4,35 +4,37 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Patterns;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Patterns;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public abstract class StatusBar<I> : UIObject, IGrid<I> where I : UIObject
-  {
-    private IGrid<I> _gridPattern;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public abstract class StatusBar<I> : UIObject, IGrid<I> where I : UIObject {
+        protected StatusBar(UIObject uiObject, IFactory<I> itemFactory)
+            : base(uiObject: uiObject) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    protected StatusBar(UIObject uiObject, IFactory<I> itemFactory)
-      : base(uiObject)
-      => this.Initialize(itemFactory);
+        internal StatusBar(AutomationElement element, IFactory<I> itemFactory)
+            : base(element: element) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    internal StatusBar(AutomationElement element, IFactory<I> itemFactory)
-      : base(element)
-      => this.Initialize(itemFactory);
+        protected IGrid<I> GridProvider { get; set; }
 
-    private void Initialize(IFactory<I> itemFactory) => this.GridProvider = (IGrid<I>) new GridImplementation<I>((UIObject) this, itemFactory);
+        public virtual I GetCell(int row, int column) {
+            return GridProvider.GetCell(row: row, column: column);
+        }
 
-    public virtual I GetCell(int row, int column) => this.GridProvider.GetCell(row, column);
+        public virtual int RowCount {
+            get { return GridProvider.RowCount; }
+        }
 
-    public virtual int RowCount => this.GridProvider.RowCount;
+        public virtual int ColumnCount {
+            get { return GridProvider.ColumnCount; }
+        }
 
-    public virtual int ColumnCount => this.GridProvider.ColumnCount;
-
-    protected IGrid<I> GridProvider
-    {
-      get => this._gridPattern;
-      set => this._gridPattern = value;
+        void Initialize(IFactory<I> itemFactory) {
+            GridProvider = new GridImplementation<I>(uiObject: this, itemFactory: itemFactory);
+        }
     }
-  }
 }

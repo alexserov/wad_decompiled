@@ -6,45 +6,44 @@
 
 using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class FocusAcquiredWaiter : UIEventWaiter
-  {
-    private UICondition _condition;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class FocusAcquiredWaiter : UIEventWaiter {
+        UICondition _condition;
 
-    public FocusAcquiredWaiter()
-      : this(UICondition.True)
-    {
+        public FocusAcquiredWaiter()
+            : this(condition: UICondition.True) {
+        }
+
+        public FocusAcquiredWaiter(string automationId)
+            : this(condition: UICondition.CreateFromId(automationId: automationId)) {
+        }
+
+        public FocusAcquiredWaiter(UIProperty uiProperty, string value)
+            : this(condition: UICondition.Create(property: uiProperty, value: value)) {
+        }
+
+        public FocusAcquiredWaiter(UICondition condition)
+            : base(eventSource: new FocusChangedEventSource()) {
+            Validate.ArgumentNotNull(parameter: condition, parameterName: nameof(condition));
+            this._condition = condition;
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+            this._condition = null;
+        }
+
+        protected override bool Matches(WaiterEventArgs eventArgs) {
+            return UIObject.Matches(uiObject: eventArgs.Sender, condition: this._condition);
+        }
+
+        public override string ToString() {
+            return "FocusAcquiredWaiter with Condition:  " + this._condition;
+        }
     }
-
-    public FocusAcquiredWaiter(string automationId)
-      : this(UICondition.CreateFromId(automationId))
-    {
-    }
-
-    public FocusAcquiredWaiter(UIProperty uiProperty, string value)
-      : this(UICondition.Create(uiProperty, (object) value))
-    {
-    }
-
-    public FocusAcquiredWaiter(UICondition condition)
-      : base((IEventSource) new FocusChangedEventSource())
-    {
-      Validate.ArgumentNotNull((object) condition, nameof (condition));
-      this._condition = condition;
-      this.Start();
-    }
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing)
-    {
-      base.Dispose(disposing);
-      this._condition = (UICondition) null;
-    }
-
-    protected override bool Matches(WaiterEventArgs eventArgs) => UIObject.Matches(eventArgs.Sender, this._condition);
-
-    public override string ToString() => "FocusAcquiredWaiter with Condition:  " + this._condition.ToString();
-  }
 }

@@ -4,106 +4,111 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Collections;
 using MS.Internal.Mita.Foundation.Patterns;
-using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public abstract class ItemsView<C, I> : UIObject, IContainer<I>, IMultipleView, IItemContainer, ISelection<I>, ITable<I>, IGrid<I>, IVirtualizedContainer<I>
-    where C : UIObject
-    where I : ItemsViewItem<C>
-  {
-    private IMultipleView _multipleViewPattern;
-    private IItemContainer _itemContainerPattern;
-    private ISelection<I> _selectionPattern;
-    private ITable<I> _tablePattern;
-    private IFactory<I> _itemFactory;
-    private static readonly UICondition _treeCondition = UICondition.Create("@ControlType=List or @ControlType=DataGrid Or @ControlType=ListItem Or @ControlType=DataItem");
+namespace MS.Internal.Mita.Foundation.Controls {
+    public abstract class ItemsView<C, I> : UIObject, IContainer<I>, IMultipleView, IItemContainer, ISelection<I>, ITable<I>, IGrid<I>, IVirtualizedContainer<I>
+        where C : UIObject
+        where I : ItemsViewItem<C> {
+        protected ItemsView(UIObject uiObject, IFactory<I> itemFactory)
+            : base(uiObject: uiObject) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    protected ItemsView(UIObject uiObject, IFactory<I> itemFactory)
-      : base(uiObject)
-      => this.Initialize(itemFactory);
+        internal ItemsView(AutomationElement element, IFactory<I> itemFactory)
+            : base(element: element) {
+            Initialize(itemFactory: itemFactory);
+        }
 
-    internal ItemsView(AutomationElement element, IFactory<I> itemFactory)
-      : base(element)
-      => this.Initialize(itemFactory);
+        protected IMultipleView MultipleViewProvider { get; set; }
 
-    private void Initialize(IFactory<I> itemFactory)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) itemFactory, nameof (itemFactory));
-      this.ItemFactory = itemFactory;
-      this.MultipleViewProvider = (IMultipleView) new MultipleViewImplementation((UIObject) this);
-      this.ItemContainerProvider = (IItemContainer) new ItemContainerImplementation((UIObject) this);
-      this.SelectionProvider = (ISelection<I>) new SelectionImplementation<I>((UIObject) this, itemFactory);
-      this.TableProvider = (ITable<I>) new TableImplementation<I>((UIObject) this, itemFactory);
+        protected IItemContainer ItemContainerProvider { get; set; }
+
+        protected ITable<I> TableProvider { get; set; }
+
+        protected IFactory<I> ItemFactory { get; set; }
+
+        protected ISelection<I> SelectionProvider { get; set; }
+
+        protected static UICondition TreeCondition { get; } = UICondition.Create(query: "@ControlType=List or @ControlType=DataGrid Or @ControlType=ListItem Or @ControlType=DataItem");
+
+        public virtual UICollection<I> Items {
+            get { return new UIChildren<I>(root: this, treeCondition: TreeCondition, factory: ItemFactory); }
+        }
+
+        public UIObject FindItemByProperty(
+            UIObject uiObject,
+            UIProperty property,
+            object value) {
+            return ItemContainerProvider.FindItemByProperty(uiObject: uiObject, uiProperty: property, value: value);
+        }
+
+        public virtual string GetViewName(int viewId) {
+            return MultipleViewProvider.GetViewName(viewId: viewId);
+        }
+
+        public virtual void SetCurrentView(int viewId) {
+            MultipleViewProvider.SetCurrentView(viewId: viewId);
+        }
+
+        public virtual int[] GetSupportedViews() {
+            return MultipleViewProvider.GetSupportedViews();
+        }
+
+        public virtual int CurrentView {
+            get { return MultipleViewProvider.CurrentView; }
+        }
+
+        public virtual UICollection<I> Selection {
+            get { return SelectionProvider.Selection; }
+        }
+
+        public virtual bool CanSelectMultiple {
+            get { return SelectionProvider.CanSelectMultiple; }
+        }
+
+        public virtual bool IsSelectionRequired {
+            get { return SelectionProvider.IsSelectionRequired; }
+        }
+
+        public virtual I GetCell(int row, int column) {
+            return TableProvider.GetCell(row: row, column: column);
+        }
+
+        public virtual int RowCount {
+            get { return TableProvider.RowCount; }
+        }
+
+        public virtual int ColumnCount {
+            get { return TableProvider.ColumnCount; }
+        }
+
+        public virtual UICollection<UIObject> RowHeaders {
+            get { return TableProvider.RowHeaders; }
+        }
+
+        public virtual UICollection<UIObject> ColumnHeaders {
+            get { return TableProvider.ColumnHeaders; }
+        }
+
+        public virtual RowOrColumnMajor RowOrColumnMajor {
+            get { return TableProvider.RowOrColumnMajor; }
+        }
+
+        public virtual UICollection<I> AllItems {
+            get { return new UIItemContainerChildren<I>(root: this, treeCondition: TreeCondition, factory: ItemFactory); }
+        }
+
+        void Initialize(IFactory<I> itemFactory) {
+            Validate.ArgumentNotNull(parameter: itemFactory, parameterName: nameof(itemFactory));
+            ItemFactory = itemFactory;
+            MultipleViewProvider = new MultipleViewImplementation(uiObject: this);
+            ItemContainerProvider = new ItemContainerImplementation(uiObject: this);
+            SelectionProvider = new SelectionImplementation<I>(uiObject: this, itemFactory: itemFactory);
+            TableProvider = new TableImplementation<I>(uiObject: this, itemFactory: itemFactory);
+        }
     }
-
-    public virtual UICollection<I> Items => (UICollection<I>) new UIChildren<I>((UIObject) this, ItemsView<C, I>.TreeCondition, this._itemFactory);
-
-    public virtual UICollection<I> AllItems => (UICollection<I>) new UIItemContainerChildren<I>((UIObject) this, ItemsView<C, I>.TreeCondition, this._itemFactory);
-
-    public virtual string GetViewName(int viewId) => this.MultipleViewProvider.GetViewName(viewId);
-
-    public virtual void SetCurrentView(int viewId) => this.MultipleViewProvider.SetCurrentView(viewId);
-
-    public virtual int[] GetSupportedViews() => this.MultipleViewProvider.GetSupportedViews();
-
-    public virtual int CurrentView => this.MultipleViewProvider.CurrentView;
-
-    public UIObject FindItemByProperty(
-      UIObject uiObject,
-      UIProperty property,
-      object value) => this.ItemContainerProvider.FindItemByProperty(uiObject, property, value);
-
-    public virtual UICollection<I> Selection => this.SelectionProvider.Selection;
-
-    public virtual bool CanSelectMultiple => this.SelectionProvider.CanSelectMultiple;
-
-    public virtual bool IsSelectionRequired => this.SelectionProvider.IsSelectionRequired;
-
-    public virtual I GetCell(int row, int column) => this.TableProvider.GetCell(row, column);
-
-    public virtual int RowCount => this.TableProvider.RowCount;
-
-    public virtual int ColumnCount => this.TableProvider.ColumnCount;
-
-    public virtual UICollection<UIObject> RowHeaders => this.TableProvider.RowHeaders;
-
-    public virtual UICollection<UIObject> ColumnHeaders => this.TableProvider.ColumnHeaders;
-
-    public virtual RowOrColumnMajor RowOrColumnMajor => this.TableProvider.RowOrColumnMajor;
-
-    protected IMultipleView MultipleViewProvider
-    {
-      get => this._multipleViewPattern;
-      set => this._multipleViewPattern = value;
-    }
-
-    protected IItemContainer ItemContainerProvider
-    {
-      get => this._itemContainerPattern;
-      set => this._itemContainerPattern = value;
-    }
-
-    protected ITable<I> TableProvider
-    {
-      get => this._tablePattern;
-      set => this._tablePattern = value;
-    }
-
-    protected IFactory<I> ItemFactory
-    {
-      get => this._itemFactory;
-      set => this._itemFactory = value;
-    }
-
-    protected ISelection<I> SelectionProvider
-    {
-      get => this._selectionPattern;
-      set => this._selectionPattern = value;
-    }
-
-    protected static UICondition TreeCondition => ItemsView<C, I>._treeCondition;
-  }
 }

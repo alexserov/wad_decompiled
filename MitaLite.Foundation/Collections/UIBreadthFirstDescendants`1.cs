@@ -6,31 +6,25 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIBreadthFirstDescendants<T> : UICollection<T> where T : UIObject
-  {
-    public UIBreadthFirstDescendants(UIObject root, IFactory<T> factory)
-      : base((UINavigator) new BreadthFirstDescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIBreadthFirstDescendants<T> : UICollection<T> where T : UIObject {
+        public UIBreadthFirstDescendants(UIObject root, IFactory<T> factory)
+            : base(navigator: new BreadthFirstDescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIBreadthFirstDescendants(AutomationElement root, IFactory<T> factory)
-      : base((UINavigator) new BreadthFirstDescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIBreadthFirstDescendants(AutomationElement root, IFactory<T> factory)
+            : base(navigator: new BreadthFirstDescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIBreadthFirstDescendants(UIObject root, UICondition treeCondition, IFactory<T> factory)
-      : base((UINavigator) new BreadthFirstDescendantsNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIBreadthFirstDescendants(UIObject root, UICondition treeCondition, IFactory<T> factory)
+            : base(navigator: new BreadthFirstDescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIBreadthFirstDescendants(
-      AutomationElement root,
-      UICondition treeCondition,
-      IFactory<T> factory)
-      : base((UINavigator) new BreadthFirstDescendantsNavigator(root, treeCondition), factory)
-    {
+        internal UIBreadthFirstDescendants(
+            AutomationElement root,
+            UICondition treeCondition,
+            IFactory<T> factory)
+            : base(navigator: new BreadthFirstDescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

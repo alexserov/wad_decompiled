@@ -6,25 +6,26 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TransformPattern2 : TransformPattern
-  {
-    public new static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TransformPattern2, IUIAutomationTransformPattern2>(10028, "TransformPattern2Identifiers.Pattern", new Func<AutomationElement, IUIAutomationTransformPattern2, TransformPattern2>(TransformPattern2.Wrap));
-    public static readonly AutomationProperty CanZoomProperty = new AutomationProperty(30133, "TransformPattern2Identifiers.CanZoomProperty");
-    public static readonly AutomationProperty ZoomLevelProperty = new AutomationProperty(30145, "TransformPattern2Identifiers.ZoomLevelProperty");
-    public static readonly AutomationProperty ZoomMinimumProperty = new AutomationProperty(30146, "TransformPattern2Identifiers.ZoomMinimumProperty");
-    public static readonly AutomationProperty ZoomMaximumProperty = new AutomationProperty(30147, "TransformPattern2Identifiers.ZoomMaximumProperty");
-    private readonly IUIAutomationTransformPattern2 _transformPattern2;
+namespace System.Windows.Automation {
+    public class TransformPattern2 : TransformPattern {
+        public new static readonly AutomationPattern Pattern = new AutomationPattern<TransformPattern2, IUIAutomationTransformPattern2>(id: 10028, programmaticName: "TransformPattern2Identifiers.Pattern", wrap: Wrap);
+        public static readonly AutomationProperty CanZoomProperty = new AutomationProperty(id: 30133, programmaticName: "TransformPattern2Identifiers.CanZoomProperty");
+        public static readonly AutomationProperty ZoomLevelProperty = new AutomationProperty(id: 30145, programmaticName: "TransformPattern2Identifiers.ZoomLevelProperty");
+        public static readonly AutomationProperty ZoomMinimumProperty = new AutomationProperty(id: 30146, programmaticName: "TransformPattern2Identifiers.ZoomMinimumProperty");
+        public static readonly AutomationProperty ZoomMaximumProperty = new AutomationProperty(id: 30147, programmaticName: "TransformPattern2Identifiers.ZoomMaximumProperty");
+        readonly IUIAutomationTransformPattern2 _transformPattern2;
 
-    private TransformPattern2(
-      AutomationElement element,
-      IUIAutomationTransformPattern2 transformPattern2)
-      : base(element, (IUIAutomationTransformPattern) transformPattern2)
-      => this._transformPattern2 = transformPattern2;
+        TransformPattern2(
+            AutomationElement element,
+            IUIAutomationTransformPattern2 transformPattern2)
+            : base(element: element, transformPattern: transformPattern2) {
+            this._transformPattern2 = transformPattern2;
+        }
 
-    internal static TransformPattern2 Wrap(
-      AutomationElement element,
-      IUIAutomationTransformPattern2 transformPattern2) => new TransformPattern2(element, transformPattern2);
-  }
+        internal static TransformPattern2 Wrap(
+            AutomationElement element,
+            IUIAutomationTransformPattern2 transformPattern2) {
+            return new TransformPattern2(element: element, transformPattern2: transformPattern2);
+        }
+    }
 }

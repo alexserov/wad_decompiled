@@ -5,32 +5,35 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class WindowClosedWaiter : UIEventWaiter
-  {
-    private string _uiObjectDescription;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class WindowClosedWaiter : UIEventWaiter {
+        readonly string _uiObjectDescription;
 
-    public WindowClosedWaiter()
-      : base((IEventSource) new AutomationEventSource(WindowPattern.WindowClosedEvent, UIObject.Root, Scope.Subtree))
-    {
-      this._uiObjectDescription = UIObject.Root.ToString();
-      this.Start();
+        public WindowClosedWaiter()
+            : base(eventSource: new AutomationEventSource(eventId: WindowPattern.WindowClosedEvent, root: UIObject.Root, scope: Scope.Subtree)) {
+            this._uiObjectDescription = UIObject.Root.ToString();
+            Start();
+        }
+
+        public WindowClosedWaiter(UIObject root)
+            : base(eventSource: new AutomationEventSource(eventId: WindowPattern.WindowClosedEvent, root: root, scope: Scope.Element)) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: "uiObject");
+            this._uiObjectDescription = root.ToString();
+            Start();
+        }
+
+        protected override void Start() {
+            base.Start();
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+        }
+
+        public override string ToString() {
+            return "WindowClosedWaiter for element " + this._uiObjectDescription;
+        }
     }
-
-    public WindowClosedWaiter(UIObject root)
-      : base((IEventSource) new AutomationEventSource(WindowPattern.WindowClosedEvent, root, Scope.Element))
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, "uiObject");
-      this._uiObjectDescription = root.ToString();
-      this.Start();
-    }
-
-    protected override void Start() => base.Start();
-
-    protected override void Dispose(bool disposing) => base.Dispose(disposing);
-
-    public override string ToString() => "WindowClosedWaiter for element " + this._uiObjectDescription;
-  }
 }

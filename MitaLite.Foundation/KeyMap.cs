@@ -6,10 +6,10 @@
 
 using System.Collections.ObjectModel;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class KeyMap : KeyedCollection<VirtualKey, KeyMapItem>
-  {
-    protected override VirtualKey GetKeyForItem(KeyMapItem item) => item.VirtualKey;
-  }
+namespace MS.Internal.Mita.Foundation {
+    internal class KeyMap : KeyedCollection<VirtualKey, KeyMapItem> {
+        protected override VirtualKey GetKeyForItem(KeyMapItem item) {
+            return item.VirtualKey;
+        }
+    }
 }

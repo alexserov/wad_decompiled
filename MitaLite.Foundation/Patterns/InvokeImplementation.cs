@@ -4,28 +4,26 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Waiters;
 using System;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Waiters;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class InvokeImplementation : PatternImplementation<InvokePattern>, IInvoke
-  {
-    public InvokeImplementation(UIObject uiObject)
-      : base(uiObject, InvokePattern.Pattern)
-    {
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class InvokeImplementation : PatternImplementation<InvokePattern>, IInvoke {
+        public InvokeImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: InvokePattern.Pattern) {
+        }
+
+        public void Invoke() {
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(Invoke), args: Array.Empty<object>())) != ActionResult.Unhandled)
+                return;
+            Pattern.Invoke();
+        }
+
+        public UIEventWaiter GetInvokedWaiter() {
+            return new AutomationEventWaiter(eventId: InvokePattern.InvokedEvent, uiObject: UIObject, scope: Scope.Element);
+        }
     }
-
-    public void Invoke()
-    {
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (Invoke), Array.Empty<object>())) != ActionResult.Unhandled)
-        return;
-      this.Pattern.Invoke();
-    }
-
-    public UIEventWaiter GetInvokedWaiter() => (UIEventWaiter) new AutomationEventWaiter(InvokePattern.InvokedEvent, this.UIObject, Scope.Element);
-  }
 }

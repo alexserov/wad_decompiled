@@ -6,43 +6,52 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class GridPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = GridPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty ColumnCountProperty = GridPatternIdentifiers.ColumnCountProperty;
-    public static readonly AutomationProperty RowCountProperty = GridPatternIdentifiers.RowCountProperty;
-    private readonly IUIAutomationGridPattern _gridPattern;
+namespace System.Windows.Automation {
+    public class GridPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = GridPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty ColumnCountProperty = GridPatternIdentifiers.ColumnCountProperty;
+        public static readonly AutomationProperty RowCountProperty = GridPatternIdentifiers.RowCountProperty;
+        readonly IUIAutomationGridPattern _gridPattern;
 
-    internal GridPattern(AutomationElement element, IUIAutomationGridPattern gridPattern)
-      : base(element)
-      => this._gridPattern = gridPattern;
+        internal GridPattern(AutomationElement element, IUIAutomationGridPattern gridPattern)
+            : base(el: element) {
+            this._gridPattern = gridPattern;
+        }
 
-    internal static GridPattern Wrap(
-      AutomationElement element,
-      IUIAutomationGridPattern gridPattern) => new GridPattern(element, gridPattern);
+        public GridPatternInformation Cached {
+            get { return new GridPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public AutomationElement GetItem(int row, int column) => new AutomationElement(this._gridPattern.GetItem(row, column));
+        public GridPatternInformation Current {
+            get { return new GridPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public GridPattern.GridPatternInformation Cached => new GridPattern.GridPatternInformation(this._el, true);
+        internal static GridPattern Wrap(
+            AutomationElement element,
+            IUIAutomationGridPattern gridPattern) {
+            return new GridPattern(element: element, gridPattern: gridPattern);
+        }
 
-    public GridPattern.GridPatternInformation Current => new GridPattern.GridPatternInformation(this._el, false);
+        public AutomationElement GetItem(int row, int column) {
+            return new AutomationElement(autoElement: this._gridPattern.GetItem(row: row, column: column));
+        }
 
-    public struct GridPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct GridPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal GridPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal GridPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public int RowCount => (int) this._el.GetPatternPropertyValue(GridPattern.RowCountProperty, this._useCache);
+            public int RowCount {
+                get { return (int) this._el.GetPatternPropertyValue(property: RowCountProperty, useCache: this._useCache); }
+            }
 
-      public int ColumnCount => (int) this._el.GetPatternPropertyValue(GridPattern.ColumnCountProperty, this._useCache);
+            public int ColumnCount {
+                get { return (int) this._el.GetPatternPropertyValue(property: ColumnCountProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

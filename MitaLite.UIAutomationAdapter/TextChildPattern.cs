@@ -6,21 +6,22 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TextChildPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TextChildPattern, IUIAutomationTextChildPattern>(10029, "TextChildPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTextChildPattern, TextChildPattern>(TextChildPattern.Wrap));
-    private readonly IUIAutomationTextChildPattern _textChildPattern;
+namespace System.Windows.Automation {
+    public class TextChildPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<TextChildPattern, IUIAutomationTextChildPattern>(id: 10029, programmaticName: "TextChildPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationTextChildPattern _textChildPattern;
 
-    private TextChildPattern(
-      AutomationElement element,
-      IUIAutomationTextChildPattern textChildPattern)
-      : base(element)
-      => this._textChildPattern = textChildPattern;
+        TextChildPattern(
+            AutomationElement element,
+            IUIAutomationTextChildPattern textChildPattern)
+            : base(el: element) {
+            this._textChildPattern = textChildPattern;
+        }
 
-    internal static TextChildPattern Wrap(
-      AutomationElement element,
-      IUIAutomationTextChildPattern textChildPattern) => new TextChildPattern(element, textChildPattern);
-  }
+        internal static TextChildPattern Wrap(
+            AutomationElement element,
+            IUIAutomationTextChildPattern textChildPattern) {
+            return new TextChildPattern(element: element, textChildPattern: textChildPattern);
+        }
+    }
 }

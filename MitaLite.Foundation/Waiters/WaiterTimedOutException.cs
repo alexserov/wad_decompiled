@@ -6,22 +6,17 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class WaiterTimedOutException : WaiterException
-  {
-    public WaiterTimedOutException()
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class WaiterTimedOutException : WaiterException {
+        public WaiterTimedOutException() {
+        }
 
-    public WaiterTimedOutException(string message)
-      : base(message)
-    {
-    }
+        public WaiterTimedOutException(string message)
+            : base(message: message) {
+        }
 
-    public WaiterTimedOutException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public WaiterTimedOutException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

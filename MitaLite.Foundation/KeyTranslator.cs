@@ -8,244 +8,242 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class KeyTranslator
-  {
-    private NonPrintableMap nonPrintableMap;
-    private KeyMap keyMap;
-    private IDictionary<char, VirtualKey> specialKeysMap;
-    private static KeyTranslator singletonInstance;
-    private static object classLock = new object();
+namespace MS.Internal.Mita.Foundation {
+    internal class KeyTranslator {
+        static KeyTranslator singletonInstance;
+        static readonly object classLock = new object();
+        readonly KeyMap keyMap;
+        readonly NonPrintableMap nonPrintableMap;
+        readonly IDictionary<char, VirtualKey> specialKeysMap;
 
-    protected KeyTranslator()
-    {
-      this.nonPrintableMap = new NonPrintableMap();
-      this.nonPrintableMap.Add(new NonPrintableMapItem("ALT", VirtualKey.VK_MENU));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("APPS", VirtualKey.VK_APPS));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("BACKSPACE", VirtualKey.VK_BACK));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("BKSP", VirtualKey.VK_BACK));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("BS", VirtualKey.VK_BACK));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("CAPSLOCK", VirtualKey.VK_CAPITAL));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("CONTEXTMENU", VirtualKey.VK_APPS));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("CONTROL", VirtualKey.VK_CONTROL));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("DEL", VirtualKey.VK_DELETE));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("DELETE", VirtualKey.VK_DELETE));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("DOWN", VirtualKey.VK_DOWN));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("END", VirtualKey.VK_END));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("ENTER", VirtualKey.VK_RETURN));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("ESC", VirtualKey.VK_ESCAPE));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F1", VirtualKey.VK_F1));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F2", VirtualKey.VK_F2));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F3", VirtualKey.VK_F3));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F4", VirtualKey.VK_F4));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F5", VirtualKey.VK_F5));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F6", VirtualKey.VK_F6));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F7", VirtualKey.VK_F7));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F8", VirtualKey.VK_F8));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F9", VirtualKey.VK_F9));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F10", VirtualKey.VK_F10));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F11", VirtualKey.VK_F11));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("F12", VirtualKey.VK_F12));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("HOME", VirtualKey.VK_HOME));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("INS", VirtualKey.VK_INSERT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("INSERT", VirtualKey.VK_INSERT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("LEFT", VirtualKey.VK_LEFT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("MENU", VirtualKey.VK_MENU));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMLOCK", VirtualKey.VK_NUMLOCK));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("PGDN", VirtualKey.VK_NEXT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("PGUP", VirtualKey.VK_PRIOR));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("PRTSC", VirtualKey.VK_PRINT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("RETURN", VirtualKey.VK_RETURN));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("RIGHT", VirtualKey.VK_RIGHT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("SHIFT", VirtualKey.VK_SHIFT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("SPACE", VirtualKey.VK_SPACE));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("SCROLLLOCK", VirtualKey.VK_SCROLL));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("TAB", VirtualKey.VK_TAB));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("UP", VirtualKey.VK_UP));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("WIN", VirtualKey.VK_LWIN));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("WINDOWS", VirtualKey.VK_LWIN));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("ADD", VirtualKey.VK_ADD));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("SUBTRACT", VirtualKey.VK_SUBTRACT));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("MULTIPLY", VirtualKey.VK_MULTIPLY));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("DIVIDE", VirtualKey.VK_DIVIDE));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("DECIMAL", VirtualKey.VK_DECIMAL));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD0", VirtualKey.VK_NUMPAD0));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD1", VirtualKey.VK_NUMPAD1));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD2", VirtualKey.VK_NUMPAD2));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD3", VirtualKey.VK_NUMPAD3));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD4", VirtualKey.VK_NUMPAD4));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD5", VirtualKey.VK_NUMPAD5));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD6", VirtualKey.VK_NUMPAD6));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD7", VirtualKey.VK_NUMPAD7));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD8", VirtualKey.VK_NUMPAD8));
-      this.nonPrintableMap.Add(new NonPrintableMapItem("NUMPAD9", VirtualKey.VK_NUMPAD9));
-      this.keyMap = new KeyMap();
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_BACK, new KeyScanCodes((ushort) 14, (ushort) 142)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_TAB, new KeyScanCodes((ushort) 15, (ushort) 143)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RETURN, new KeyScanCodes((ushort) 28, (ushort) 156)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_SHIFT, new KeyScanCodes((ushort) 42, (ushort) 170)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_CONTROL, new KeyScanCodes((ushort) 29, (ushort) 157)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_MENU, new KeyScanCodes((ushort) 56, (ushort) 184)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_CAPITAL, new KeyScanCodes((ushort) 58, (ushort) 186)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_ESCAPE, new KeyScanCodes((ushort) 1, (ushort) 129)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_SPACE, new KeyScanCodes((ushort) 57, (ushort) 185)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_PRIOR, new KeyScanCodes((ushort) 57417, (ushort) 57545)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NEXT, new KeyScanCodes((ushort) 57425, (ushort) 57553)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_END, new KeyScanCodes((ushort) 57423, (ushort) 57551)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_HOME, new KeyScanCodes((ushort) 57415, (ushort) 57543)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_LEFT, new KeyScanCodes((ushort) 57419, (ushort) 57547)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_UP, new KeyScanCodes((ushort) 57416, (ushort) 57544)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RIGHT, new KeyScanCodes((ushort) 57421, (ushort) 57549)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_DOWN, new KeyScanCodes((ushort) 57424, (ushort) 57552)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_PRINT, new KeyScanCodes((ushort) 57399, (ushort) 57527)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_INSERT, new KeyScanCodes((ushort) 57426, (ushort) 57554)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_DELETE, new KeyScanCodes((ushort) 57427, (ushort) 57555)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D0, new KeyScanCodes((ushort) 11, (ushort) 139)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D1, new KeyScanCodes((ushort) 2, (ushort) 130)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D2, new KeyScanCodes((ushort) 3, (ushort) 131)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D3, new KeyScanCodes((ushort) 4, (ushort) 132)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D4, new KeyScanCodes((ushort) 5, (ushort) 133)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D5, new KeyScanCodes((ushort) 6, (ushort) 134)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D6, new KeyScanCodes((ushort) 7, (ushort) 135)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D7, new KeyScanCodes((ushort) 8, (ushort) 136)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D8, new KeyScanCodes((ushort) 9, (ushort) 137)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D9, new KeyScanCodes((ushort) 10, (ushort) 138)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_A, new KeyScanCodes((ushort) 30, (ushort) 158)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_B, new KeyScanCodes((ushort) 48, (ushort) 176)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_C, new KeyScanCodes((ushort) 46, (ushort) 174)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_D, new KeyScanCodes((ushort) 32, (ushort) 160)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_E, new KeyScanCodes((ushort) 18, (ushort) 146)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F, new KeyScanCodes((ushort) 33, (ushort) 161)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_G, new KeyScanCodes((ushort) 34, (ushort) 162)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_H, new KeyScanCodes((ushort) 35, (ushort) 163)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_I, new KeyScanCodes((ushort) 23, (ushort) 151)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_J, new KeyScanCodes((ushort) 36, (ushort) 164)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_K, new KeyScanCodes((ushort) 37, (ushort) 165)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_L, new KeyScanCodes((ushort) 38, (ushort) 166)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_M, new KeyScanCodes((ushort) 50, (ushort) 178)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_N, new KeyScanCodes((ushort) 49, (ushort) 177)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_O, new KeyScanCodes((ushort) 24, (ushort) 152)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_P, new KeyScanCodes((ushort) 25, (ushort) 153)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_Q, new KeyScanCodes((ushort) 16, (ushort) 144)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_R, new KeyScanCodes((ushort) 19, (ushort) 147)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_S, new KeyScanCodes((ushort) 31, (ushort) 159)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_T, new KeyScanCodes((ushort) 20, (ushort) 148)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_U, new KeyScanCodes((ushort) 22, (ushort) 150)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_V, new KeyScanCodes((ushort) 47, (ushort) 175)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_W, new KeyScanCodes((ushort) 17, (ushort) 145)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_X, new KeyScanCodes((ushort) 45, (ushort) 173)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_Y, new KeyScanCodes((ushort) 21, (ushort) 149)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_Z, new KeyScanCodes((ushort) 44, (ushort) 172)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_LWIN, new KeyScanCodes((ushort) 57435, (ushort) 57563)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RWIN, new KeyScanCodes((ushort) 57436, (ushort) 57564)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_APPS, new KeyScanCodes((ushort) 57437, (ushort) 57565)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_SLEEP, new KeyScanCodes((ushort) 57439, (ushort) 57567)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD0, new KeyScanCodes((ushort) 82, (ushort) 210)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD1, new KeyScanCodes((ushort) 79, (ushort) 207)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD2, new KeyScanCodes((ushort) 80, (ushort) 208)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD3, new KeyScanCodes((ushort) 81, (ushort) 209)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD4, new KeyScanCodes((ushort) 75, (ushort) 203)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD5, new KeyScanCodes((ushort) 76, (ushort) 204)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD6, new KeyScanCodes((ushort) 77, (ushort) 205)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD7, new KeyScanCodes((ushort) 71, (ushort) 199)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD8, new KeyScanCodes((ushort) 72, (ushort) 200)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMPAD9, new KeyScanCodes((ushort) 73, (ushort) 201)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_MULTIPLY, new KeyScanCodes((ushort) 55, (ushort) 183)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_ADD, new KeyScanCodes((ushort) 78, (ushort) 206)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_SUBTRACT, new KeyScanCodes((ushort) 74, (ushort) 202)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_DECIMAL, new KeyScanCodes((ushort) 83, (ushort) 211)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_DIVIDE, new KeyScanCodes((ushort) 57397, (ushort) 57525)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F1, new KeyScanCodes((ushort) 59, (ushort) 187)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F2, new KeyScanCodes((ushort) 60, (ushort) 188)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F3, new KeyScanCodes((ushort) 61, (ushort) 189)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F4, new KeyScanCodes((ushort) 62, (ushort) 190)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F5, new KeyScanCodes((ushort) 63, (ushort) 191)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F6, new KeyScanCodes((ushort) 64, (ushort) 192)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F7, new KeyScanCodes((ushort) 65, (ushort) 193)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F8, new KeyScanCodes((ushort) 66, (ushort) 194)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F9, new KeyScanCodes((ushort) 67, (ushort) 195)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F10, new KeyScanCodes((ushort) 68, (ushort) 196)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F11, new KeyScanCodes((ushort) 87, (ushort) 215)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_F12, new KeyScanCodes((ushort) 88, (ushort) 216)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_NUMLOCK, new KeyScanCodes((ushort) 69, (ushort) 197)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_SCROLL, new KeyScanCodes((ushort) 70, (ushort) 198)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_LSHIFT, new KeyScanCodes((ushort) 42, (ushort) 170)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RSHIFT, new KeyScanCodes((ushort) 54, (ushort) 182)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_LCONTROL, new KeyScanCodes((ushort) 29, (ushort) 157)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RCONTROL, new KeyScanCodes((ushort) 57373, (ushort) 57501)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_LMENU, new KeyScanCodes((ushort) 56, (ushort) 184)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_RMENU, new KeyScanCodes((ushort) 57400, (ushort) 57528)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_1, new KeyScanCodes((ushort) 39, (ushort) 167)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_PLUS, new KeyScanCodes((ushort) 13, (ushort) 141)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_COMMA, new KeyScanCodes((ushort) 51, (ushort) 179)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_MINUS, new KeyScanCodes((ushort) 12, (ushort) 140)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_PERIOD, new KeyScanCodes((ushort) 52, (ushort) 180)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_2, new KeyScanCodes((ushort) 53, (ushort) 181)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_3, new KeyScanCodes((ushort) 41, (ushort) 137)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_4, new KeyScanCodes((ushort) 26, (ushort) 154)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_5, new KeyScanCodes((ushort) 43, (ushort) 171)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_6, new KeyScanCodes((ushort) 27, (ushort) 155)));
-      this.keyMap.Add(new KeyMapItem(VirtualKey.VK_OEM_7, new KeyScanCodes((ushort) 40, (ushort) 168)));
-      this.specialKeysMap = (IDictionary<char, VirtualKey>) new Dictionary<char, VirtualKey>()
-      {
-        [';'] = VirtualKey.VK_OEM_1,
-        ['='] = VirtualKey.VK_OEM_PLUS,
-        [','] = VirtualKey.VK_OEM_COMMA,
-        ['-'] = VirtualKey.VK_OEM_MINUS,
-        ['.'] = VirtualKey.VK_OEM_PERIOD,
-        ['/'] = VirtualKey.VK_OEM_2,
-        ['`'] = VirtualKey.VK_OEM_3,
-        ['['] = VirtualKey.VK_OEM_4,
-        ['\\'] = VirtualKey.VK_OEM_5,
-        [']'] = VirtualKey.VK_OEM_6,
-        ['\''] = VirtualKey.VK_OEM_7,
-        [' '] = VirtualKey.VK_SPACE
-      };
-    }
-
-    public static KeyTranslator Instance
-    {
-      get
-      {
-        if (KeyTranslator.singletonInstance == null)
-        {
-          lock (KeyTranslator.classLock)
-          {
-            if (KeyTranslator.singletonInstance == null)
-              KeyTranslator.singletonInstance = new KeyTranslator();
-          }
+        protected KeyTranslator() {
+            this.nonPrintableMap = new NonPrintableMap();
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "ALT", virtualKey: VirtualKey.VK_MENU));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "APPS", virtualKey: VirtualKey.VK_APPS));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "BACKSPACE", virtualKey: VirtualKey.VK_BACK));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "BKSP", virtualKey: VirtualKey.VK_BACK));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "BS", virtualKey: VirtualKey.VK_BACK));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "CAPSLOCK", virtualKey: VirtualKey.VK_CAPITAL));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "CONTEXTMENU", virtualKey: VirtualKey.VK_APPS));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "CONTROL", virtualKey: VirtualKey.VK_CONTROL));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "DEL", virtualKey: VirtualKey.VK_DELETE));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "DELETE", virtualKey: VirtualKey.VK_DELETE));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "DOWN", virtualKey: VirtualKey.VK_DOWN));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "END", virtualKey: VirtualKey.VK_END));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "ENTER", virtualKey: VirtualKey.VK_RETURN));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "ESC", virtualKey: VirtualKey.VK_ESCAPE));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F1", virtualKey: VirtualKey.VK_F1));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F2", virtualKey: VirtualKey.VK_F2));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F3", virtualKey: VirtualKey.VK_F3));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F4", virtualKey: VirtualKey.VK_F4));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F5", virtualKey: VirtualKey.VK_F5));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F6", virtualKey: VirtualKey.VK_F6));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F7", virtualKey: VirtualKey.VK_F7));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F8", virtualKey: VirtualKey.VK_F8));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F9", virtualKey: VirtualKey.VK_F9));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F10", virtualKey: VirtualKey.VK_F10));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F11", virtualKey: VirtualKey.VK_F11));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "F12", virtualKey: VirtualKey.VK_F12));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "HOME", virtualKey: VirtualKey.VK_HOME));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "INS", virtualKey: VirtualKey.VK_INSERT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "INSERT", virtualKey: VirtualKey.VK_INSERT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "LEFT", virtualKey: VirtualKey.VK_LEFT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "MENU", virtualKey: VirtualKey.VK_MENU));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMLOCK", virtualKey: VirtualKey.VK_NUMLOCK));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "PGDN", virtualKey: VirtualKey.VK_NEXT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "PGUP", virtualKey: VirtualKey.VK_PRIOR));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "PRTSC", virtualKey: VirtualKey.VK_PRINT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "RETURN", virtualKey: VirtualKey.VK_RETURN));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "RIGHT", virtualKey: VirtualKey.VK_RIGHT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "SHIFT", virtualKey: VirtualKey.VK_SHIFT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "SPACE", virtualKey: VirtualKey.VK_SPACE));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "SCROLLLOCK", virtualKey: VirtualKey.VK_SCROLL));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "TAB", virtualKey: VirtualKey.VK_TAB));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "UP", virtualKey: VirtualKey.VK_UP));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "WIN", virtualKey: VirtualKey.VK_LWIN));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "WINDOWS", virtualKey: VirtualKey.VK_LWIN));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "ADD", virtualKey: VirtualKey.VK_ADD));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "SUBTRACT", virtualKey: VirtualKey.VK_SUBTRACT));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "MULTIPLY", virtualKey: VirtualKey.VK_MULTIPLY));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "DIVIDE", virtualKey: VirtualKey.VK_DIVIDE));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "DECIMAL", virtualKey: VirtualKey.VK_DECIMAL));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD0", virtualKey: VirtualKey.VK_NUMPAD0));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD1", virtualKey: VirtualKey.VK_NUMPAD1));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD2", virtualKey: VirtualKey.VK_NUMPAD2));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD3", virtualKey: VirtualKey.VK_NUMPAD3));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD4", virtualKey: VirtualKey.VK_NUMPAD4));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD5", virtualKey: VirtualKey.VK_NUMPAD5));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD6", virtualKey: VirtualKey.VK_NUMPAD6));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD7", virtualKey: VirtualKey.VK_NUMPAD7));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD8", virtualKey: VirtualKey.VK_NUMPAD8));
+            this.nonPrintableMap.Add(item: new NonPrintableMapItem(name: "NUMPAD9", virtualKey: VirtualKey.VK_NUMPAD9));
+            this.keyMap = new KeyMap();
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_BACK, scanCodes: new KeyScanCodes(makeCode: 14, breakCode: 142)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_TAB, scanCodes: new KeyScanCodes(makeCode: 15, breakCode: 143)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RETURN, scanCodes: new KeyScanCodes(makeCode: 28, breakCode: 156)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_SHIFT, scanCodes: new KeyScanCodes(makeCode: 42, breakCode: 170)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_CONTROL, scanCodes: new KeyScanCodes(makeCode: 29, breakCode: 157)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_MENU, scanCodes: new KeyScanCodes(makeCode: 56, breakCode: 184)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_CAPITAL, scanCodes: new KeyScanCodes(makeCode: 58, breakCode: 186)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_ESCAPE, scanCodes: new KeyScanCodes(makeCode: 1, breakCode: 129)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_SPACE, scanCodes: new KeyScanCodes(makeCode: 57, breakCode: 185)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_PRIOR, scanCodes: new KeyScanCodes(makeCode: 57417, breakCode: 57545)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NEXT, scanCodes: new KeyScanCodes(makeCode: 57425, breakCode: 57553)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_END, scanCodes: new KeyScanCodes(makeCode: 57423, breakCode: 57551)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_HOME, scanCodes: new KeyScanCodes(makeCode: 57415, breakCode: 57543)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_LEFT, scanCodes: new KeyScanCodes(makeCode: 57419, breakCode: 57547)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_UP, scanCodes: new KeyScanCodes(makeCode: 57416, breakCode: 57544)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RIGHT, scanCodes: new KeyScanCodes(makeCode: 57421, breakCode: 57549)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_DOWN, scanCodes: new KeyScanCodes(makeCode: 57424, breakCode: 57552)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_PRINT, scanCodes: new KeyScanCodes(makeCode: 57399, breakCode: 57527)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_INSERT, scanCodes: new KeyScanCodes(makeCode: 57426, breakCode: 57554)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_DELETE, scanCodes: new KeyScanCodes(makeCode: 57427, breakCode: 57555)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D0, scanCodes: new KeyScanCodes(makeCode: 11, breakCode: 139)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D1, scanCodes: new KeyScanCodes(makeCode: 2, breakCode: 130)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D2, scanCodes: new KeyScanCodes(makeCode: 3, breakCode: 131)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D3, scanCodes: new KeyScanCodes(makeCode: 4, breakCode: 132)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D4, scanCodes: new KeyScanCodes(makeCode: 5, breakCode: 133)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D5, scanCodes: new KeyScanCodes(makeCode: 6, breakCode: 134)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D6, scanCodes: new KeyScanCodes(makeCode: 7, breakCode: 135)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D7, scanCodes: new KeyScanCodes(makeCode: 8, breakCode: 136)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D8, scanCodes: new KeyScanCodes(makeCode: 9, breakCode: 137)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D9, scanCodes: new KeyScanCodes(makeCode: 10, breakCode: 138)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_A, scanCodes: new KeyScanCodes(makeCode: 30, breakCode: 158)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_B, scanCodes: new KeyScanCodes(makeCode: 48, breakCode: 176)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_C, scanCodes: new KeyScanCodes(makeCode: 46, breakCode: 174)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_D, scanCodes: new KeyScanCodes(makeCode: 32, breakCode: 160)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_E, scanCodes: new KeyScanCodes(makeCode: 18, breakCode: 146)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F, scanCodes: new KeyScanCodes(makeCode: 33, breakCode: 161)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_G, scanCodes: new KeyScanCodes(makeCode: 34, breakCode: 162)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_H, scanCodes: new KeyScanCodes(makeCode: 35, breakCode: 163)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_I, scanCodes: new KeyScanCodes(makeCode: 23, breakCode: 151)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_J, scanCodes: new KeyScanCodes(makeCode: 36, breakCode: 164)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_K, scanCodes: new KeyScanCodes(makeCode: 37, breakCode: 165)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_L, scanCodes: new KeyScanCodes(makeCode: 38, breakCode: 166)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_M, scanCodes: new KeyScanCodes(makeCode: 50, breakCode: 178)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_N, scanCodes: new KeyScanCodes(makeCode: 49, breakCode: 177)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_O, scanCodes: new KeyScanCodes(makeCode: 24, breakCode: 152)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_P, scanCodes: new KeyScanCodes(makeCode: 25, breakCode: 153)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_Q, scanCodes: new KeyScanCodes(makeCode: 16, breakCode: 144)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_R, scanCodes: new KeyScanCodes(makeCode: 19, breakCode: 147)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_S, scanCodes: new KeyScanCodes(makeCode: 31, breakCode: 159)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_T, scanCodes: new KeyScanCodes(makeCode: 20, breakCode: 148)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_U, scanCodes: new KeyScanCodes(makeCode: 22, breakCode: 150)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_V, scanCodes: new KeyScanCodes(makeCode: 47, breakCode: 175)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_W, scanCodes: new KeyScanCodes(makeCode: 17, breakCode: 145)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_X, scanCodes: new KeyScanCodes(makeCode: 45, breakCode: 173)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_Y, scanCodes: new KeyScanCodes(makeCode: 21, breakCode: 149)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_Z, scanCodes: new KeyScanCodes(makeCode: 44, breakCode: 172)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_LWIN, scanCodes: new KeyScanCodes(makeCode: 57435, breakCode: 57563)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RWIN, scanCodes: new KeyScanCodes(makeCode: 57436, breakCode: 57564)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_APPS, scanCodes: new KeyScanCodes(makeCode: 57437, breakCode: 57565)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_SLEEP, scanCodes: new KeyScanCodes(makeCode: 57439, breakCode: 57567)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD0, scanCodes: new KeyScanCodes(makeCode: 82, breakCode: 210)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD1, scanCodes: new KeyScanCodes(makeCode: 79, breakCode: 207)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD2, scanCodes: new KeyScanCodes(makeCode: 80, breakCode: 208)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD3, scanCodes: new KeyScanCodes(makeCode: 81, breakCode: 209)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD4, scanCodes: new KeyScanCodes(makeCode: 75, breakCode: 203)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD5, scanCodes: new KeyScanCodes(makeCode: 76, breakCode: 204)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD6, scanCodes: new KeyScanCodes(makeCode: 77, breakCode: 205)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD7, scanCodes: new KeyScanCodes(makeCode: 71, breakCode: 199)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD8, scanCodes: new KeyScanCodes(makeCode: 72, breakCode: 200)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMPAD9, scanCodes: new KeyScanCodes(makeCode: 73, breakCode: 201)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_MULTIPLY, scanCodes: new KeyScanCodes(makeCode: 55, breakCode: 183)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_ADD, scanCodes: new KeyScanCodes(makeCode: 78, breakCode: 206)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_SUBTRACT, scanCodes: new KeyScanCodes(makeCode: 74, breakCode: 202)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_DECIMAL, scanCodes: new KeyScanCodes(makeCode: 83, breakCode: 211)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_DIVIDE, scanCodes: new KeyScanCodes(makeCode: 57397, breakCode: 57525)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F1, scanCodes: new KeyScanCodes(makeCode: 59, breakCode: 187)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F2, scanCodes: new KeyScanCodes(makeCode: 60, breakCode: 188)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F3, scanCodes: new KeyScanCodes(makeCode: 61, breakCode: 189)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F4, scanCodes: new KeyScanCodes(makeCode: 62, breakCode: 190)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F5, scanCodes: new KeyScanCodes(makeCode: 63, breakCode: 191)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F6, scanCodes: new KeyScanCodes(makeCode: 64, breakCode: 192)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F7, scanCodes: new KeyScanCodes(makeCode: 65, breakCode: 193)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F8, scanCodes: new KeyScanCodes(makeCode: 66, breakCode: 194)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F9, scanCodes: new KeyScanCodes(makeCode: 67, breakCode: 195)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F10, scanCodes: new KeyScanCodes(makeCode: 68, breakCode: 196)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F11, scanCodes: new KeyScanCodes(makeCode: 87, breakCode: 215)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_F12, scanCodes: new KeyScanCodes(makeCode: 88, breakCode: 216)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_NUMLOCK, scanCodes: new KeyScanCodes(makeCode: 69, breakCode: 197)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_SCROLL, scanCodes: new KeyScanCodes(makeCode: 70, breakCode: 198)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_LSHIFT, scanCodes: new KeyScanCodes(makeCode: 42, breakCode: 170)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RSHIFT, scanCodes: new KeyScanCodes(makeCode: 54, breakCode: 182)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_LCONTROL, scanCodes: new KeyScanCodes(makeCode: 29, breakCode: 157)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RCONTROL, scanCodes: new KeyScanCodes(makeCode: 57373, breakCode: 57501)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_LMENU, scanCodes: new KeyScanCodes(makeCode: 56, breakCode: 184)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_RMENU, scanCodes: new KeyScanCodes(makeCode: 57400, breakCode: 57528)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_1, scanCodes: new KeyScanCodes(makeCode: 39, breakCode: 167)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_PLUS, scanCodes: new KeyScanCodes(makeCode: 13, breakCode: 141)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_COMMA, scanCodes: new KeyScanCodes(makeCode: 51, breakCode: 179)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_MINUS, scanCodes: new KeyScanCodes(makeCode: 12, breakCode: 140)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_PERIOD, scanCodes: new KeyScanCodes(makeCode: 52, breakCode: 180)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_2, scanCodes: new KeyScanCodes(makeCode: 53, breakCode: 181)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_3, scanCodes: new KeyScanCodes(makeCode: 41, breakCode: 137)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_4, scanCodes: new KeyScanCodes(makeCode: 26, breakCode: 154)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_5, scanCodes: new KeyScanCodes(makeCode: 43, breakCode: 171)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_6, scanCodes: new KeyScanCodes(makeCode: 27, breakCode: 155)));
+            this.keyMap.Add(item: new KeyMapItem(virtualKey: VirtualKey.VK_OEM_7, scanCodes: new KeyScanCodes(makeCode: 40, breakCode: 168)));
+            this.specialKeysMap = new Dictionary<char, VirtualKey> {
+                [key: ';'] = VirtualKey.VK_OEM_1,
+                [key: '='] = VirtualKey.VK_OEM_PLUS,
+                [key: ','] = VirtualKey.VK_OEM_COMMA,
+                [key: '-'] = VirtualKey.VK_OEM_MINUS,
+                [key: '.'] = VirtualKey.VK_OEM_PERIOD,
+                [key: '/'] = VirtualKey.VK_OEM_2,
+                [key: '`'] = VirtualKey.VK_OEM_3,
+                [key: '['] = VirtualKey.VK_OEM_4,
+                [key: '\\'] = VirtualKey.VK_OEM_5,
+                [key: ']'] = VirtualKey.VK_OEM_6,
+                [key: '\''] = VirtualKey.VK_OEM_7,
+                [key: ' '] = VirtualKey.VK_SPACE
+            };
         }
-        return KeyTranslator.singletonInstance;
-      }
+
+        public static KeyTranslator Instance {
+            get {
+                if (singletonInstance == null)
+                    lock (classLock) {
+                        if (singletonInstance == null)
+                            singletonInstance = new KeyTranslator();
+                    }
+
+                return singletonInstance;
+            }
+        }
+
+        public ushort GetMakeScanCode(VirtualKey virtualKey) {
+            return this.keyMap[key: virtualKey].ScanCodes.MakeCode;
+        }
+
+        public ushort GetMakeScanCode(string name) {
+            return GetMakeScanCode(virtualKey: GetVirtualKey(keyName: name));
+        }
+
+        public VirtualKey GetVirtualKey(string keyName) {
+            return this.nonPrintableMap[key: keyName.ToUpperInvariant()].VirtualKey;
+        }
+
+        public VirtualKey GetVirtualAlphaNumericKey(char alphaNumKey) {
+            var virtualKey = VirtualKey.VK_NONE;
+            var regex = new Regex(pattern: "[a-z]", options: RegexOptions.CultureInvariant);
+            if (char.IsDigit(c: alphaNumKey))
+                virtualKey = (VirtualKey) (48 + (Convert.ToByte(value: alphaNumKey) - Convert.ToByte(value: '0')));
+            else if (regex.IsMatch(input: alphaNumKey.ToString()))
+                virtualKey = (VirtualKey) (65 + (Convert.ToByte(value: char.ToUpperInvariant(c: alphaNumKey)) - Convert.ToByte(value: 'A')));
+            else if (this.specialKeysMap.ContainsKey(key: alphaNumKey))
+                virtualKey = this.specialKeysMap[key: alphaNumKey];
+            return virtualKey;
+        }
+
+        public VirtualKey GetVirtualKeyFromNumpadKey(char numpadKey) {
+            if (!char.IsDigit(c: numpadKey))
+                throw new ArgumentOutOfRangeException(paramName: "Not a number key");
+            return (VirtualKey) (96 + (Convert.ToByte(value: numpadKey) - Convert.ToByte(value: '0')));
+        }
+
+        public bool IsNonPrintableName(string name) {
+            return this.nonPrintableMap.Contains(key: name.ToUpperInvariant());
+        }
     }
-
-    public ushort GetMakeScanCode(VirtualKey virtualKey) => this.keyMap[virtualKey].ScanCodes.MakeCode;
-
-    public ushort GetMakeScanCode(string name) => this.GetMakeScanCode(this.GetVirtualKey(name));
-
-    public VirtualKey GetVirtualKey(string keyName) => this.nonPrintableMap[keyName.ToUpperInvariant()].VirtualKey;
-
-    public VirtualKey GetVirtualAlphaNumericKey(char alphaNumKey)
-    {
-      VirtualKey virtualKey = VirtualKey.VK_NONE;
-      Regex regex = new Regex("[a-z]", RegexOptions.CultureInvariant);
-      if (char.IsDigit(alphaNumKey))
-        virtualKey = (VirtualKey) (48 + ((int) Convert.ToByte(alphaNumKey) - (int) Convert.ToByte('0')));
-      else if (regex.IsMatch(alphaNumKey.ToString()))
-        virtualKey = (VirtualKey) (65 + ((int) Convert.ToByte(char.ToUpperInvariant(alphaNumKey)) - (int) Convert.ToByte('A')));
-      else if (this.specialKeysMap.ContainsKey(alphaNumKey))
-        virtualKey = this.specialKeysMap[alphaNumKey];
-      return virtualKey;
-    }
-
-    public VirtualKey GetVirtualKeyFromNumpadKey(char numpadKey)
-    {
-      if (!char.IsDigit(numpadKey))
-        throw new ArgumentOutOfRangeException("Not a number key");
-      return (VirtualKey) (96 + ((int) Convert.ToByte(numpadKey) - (int) Convert.ToByte('0')));
-    }
-
-    public bool IsNonPrintableName(string name) => this.nonPrintableMap.Contains(name.ToUpperInvariant());
-  }
 }

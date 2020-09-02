@@ -7,26 +7,24 @@
 using System;
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class StringValue : Value
-  {
-    private string _stringValue;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class StringValue : Value {
+        readonly string _stringValue;
 
-    public StringValue(string lexeme)
-    {
-      this._stringValue = lexeme.Substring(1, lexeme.Length - 2);
-      this._stringValue = this._stringValue.Replace("''", "'");
+        public StringValue(string lexeme) {
+            this._stringValue = lexeme.Substring(startIndex: 1, length: lexeme.Length - 2);
+            this._stringValue = this._stringValue.Replace(oldValue: "''", newValue: "'");
+        }
+
+        public override bool Validate(Type requiredType, StringBuilder errors) {
+            if (requiredType.Equals(o: typeof(object)) || requiredType.Equals(o: typeof(string)))
+                return true;
+            errors.AppendLine(value: StringResource.Get(id: "ParameterTypeMismatch_2", (object) requiredType.FullName, (object) typeof(string).FullName));
+            return false;
+        }
+
+        public override object GetValueObject(Type requiredType) {
+            return this._stringValue;
+        }
     }
-
-    public override bool Validate(Type requiredType, StringBuilder errors)
-    {
-      if (requiredType.Equals(typeof (object)) || requiredType.Equals(typeof (string)))
-        return true;
-      errors.AppendLine(StringResource.Get("ParameterTypeMismatch_2", (object) requiredType.FullName, (object) typeof (string).FullName));
-      return false;
-    }
-
-    public override object GetValueObject(Type requiredType) => (object) this._stringValue;
-  }
 }

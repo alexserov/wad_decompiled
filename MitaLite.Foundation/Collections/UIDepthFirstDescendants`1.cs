@@ -6,31 +6,25 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIDepthFirstDescendants<T> : UICollection<T> where T : UIObject
-  {
-    public UIDepthFirstDescendants(UIObject root, IFactory<T> factory)
-      : base((UINavigator) new DepthFirstDescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIDepthFirstDescendants<T> : UICollection<T> where T : UIObject {
+        public UIDepthFirstDescendants(UIObject root, IFactory<T> factory)
+            : base(navigator: new DepthFirstDescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIDepthFirstDescendants(AutomationElement root, IFactory<T> factory)
-      : base((UINavigator) new DepthFirstDescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIDepthFirstDescendants(AutomationElement root, IFactory<T> factory)
+            : base(navigator: new DepthFirstDescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIDepthFirstDescendants(UIObject root, UICondition treeCondition, IFactory<T> factory)
-      : base((UINavigator) new DepthFirstDescendantsNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIDepthFirstDescendants(UIObject root, UICondition treeCondition, IFactory<T> factory)
+            : base(navigator: new DepthFirstDescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIDepthFirstDescendants(
-      AutomationElement root,
-      UICondition treeCondition,
-      IFactory<T> factory)
-      : base((UINavigator) new DepthFirstDescendantsNavigator(root, treeCondition), factory)
-    {
+        internal UIDepthFirstDescendants(
+            AutomationElement root,
+            UICondition treeCondition,
+            IFactory<T> factory)
+            : base(navigator: new DepthFirstDescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

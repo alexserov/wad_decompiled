@@ -5,47 +5,37 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class ValueImplementation : PatternImplementation<ValuePattern>, IValue
-  {
-    public ValueImplementation(UIObject uiObject)
-      : base(uiObject, ValuePattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class ValueImplementation : PatternImplementation<ValuePattern>, IValue {
+        public ValueImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: ValuePattern.Pattern) {
+        }
 
-    public void SetValue(string value)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) value, nameof (value));
-      int num1 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      int num2 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("MakeVisible"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (SetValue), new object[1]
-      {
-        (object) value
-      })) == ActionResult.Unhandled)
-        this.Pattern.SetValue(value);
-      int num3 = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("UIScrollComplete"));
-    }
+        public void SetValue(string value) {
+            Validate.ArgumentNotNull(parameter: value, parameterName: nameof(value));
+            var num1 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var num2 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "MakeVisible"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(SetValue), value)) == ActionResult.Unhandled)
+                Pattern.SetValue(value: value);
+            var num3 = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "UIScrollComplete"));
+        }
 
-    public string Value
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Value)), out overridden) == ActionResult.Handled ? (string) overridden : this.Pattern.Current.Value;
-      }
-    }
+        public string Value {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Value)), overridden: out overridden) == ActionResult.Handled ? (string) overridden : Pattern.Current.Value;
+            }
+        }
 
-    public bool IsReadOnly
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (IsReadOnly)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.IsReadOnly;
-      }
+        public bool IsReadOnly {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsReadOnly)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.IsReadOnly;
+            }
+        }
     }
-  }
 }

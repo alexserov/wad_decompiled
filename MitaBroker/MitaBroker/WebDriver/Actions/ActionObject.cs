@@ -6,32 +6,37 @@
 
 using System.Collections.Generic;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal sealed class ActionObject
-  {
-    private Dictionary<string, object> dictionary;
+namespace MitaBroker.WebDriver.Actions {
+    internal sealed class ActionObject {
+        readonly Dictionary<string, object> dictionary;
 
-    public string Id { get; private set; }
+        public ActionObject(string id, int type, int subtype) {
+            Id = id;
+            Type = type;
+            Subtype = subtype;
+            this.dictionary = new Dictionary<string, object>();
+        }
 
-    public int Type { get; private set; }
+        public string Id { get; }
 
-    public int Subtype { get; set; }
+        public int Type { get; }
 
-    public ActionObject(string id, int type, int subtype)
-    {
-      this.Id = id;
-      this.Type = type;
-      this.Subtype = subtype;
-      this.dictionary = new Dictionary<string, object>();
+        public int Subtype { get; set; }
+
+        public ActionObject Copy() {
+            return (ActionObject) MemberwiseClone();
+        }
+
+        public object Get(string key) {
+            return this.dictionary[key: key];
+        }
+
+        public void Set(string key, object value) {
+            this.dictionary[key: key] = value;
+        }
+
+        public bool Contains(string key) {
+            return this.dictionary.ContainsKey(key: key);
+        }
     }
-
-    public ActionObject Copy() => (ActionObject) this.MemberwiseClone();
-
-    public object Get(string key) => this.dictionary[key];
-
-    public void Set(string key, object value) => this.dictionary[key] = value;
-
-    public bool Contains(string key) => this.dictionary.ContainsKey(key);
-  }
 }

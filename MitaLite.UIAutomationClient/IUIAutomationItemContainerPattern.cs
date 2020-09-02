@@ -7,18 +7,16 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("C690FDB2-27A8-423C-812D-429773C9084E")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationItemContainerPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IUIAutomationElement FindItemByProperty(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement pStartAfter,
-      [In] int propertyId,
-      [MarshalAs(UnmanagedType.Struct), In] Variant value);
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "C690FDB2-27A8-423C-812D-429773C9084E"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationItemContainerPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IUIAutomationElement FindItemByProperty(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement pStartAfter,
+            [In] int propertyId,
+            [MarshalAs(unmanagedType: UnmanagedType.Struct), In]
+            Variant value);
+    }
 }

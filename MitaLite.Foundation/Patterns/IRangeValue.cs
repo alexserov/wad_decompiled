@@ -4,22 +4,20 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IRangeValue
-  {
-    double Minimum { get; }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IRangeValue {
+        double Minimum { get; }
 
-    double Maximum { get; }
+        double Maximum { get; }
 
-    double LargeChange { get; }
+        double LargeChange { get; }
 
-    double SmallChange { get; }
+        double SmallChange { get; }
 
-    void SetValue(double value);
+        double Value { get; }
 
-    double Value { get; }
+        bool IsReadOnly { get; }
 
-    bool IsReadOnly { get; }
-  }
+        void SetValue(double value);
+    }
 }

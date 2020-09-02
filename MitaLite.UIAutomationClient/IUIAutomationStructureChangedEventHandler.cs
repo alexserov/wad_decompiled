@@ -7,18 +7,15 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [TypeLibType(TypeLibTypeFlags.FHidden)]
-  [Guid("E81D1B4E-11C5-42F8-9754-E7036C79F054")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationStructureChangedEventHandler
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void HandleStructureChangedEvent(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationElement sender,
-      [In] StructureChangeType changeType,
-      [MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT), In] int[] runtimeId);
-  }
+namespace UIAutomationClient {
+    [TypeLibType(flags: TypeLibTypeFlags.FHidden), Guid(guid: "E81D1B4E-11C5-42F8-9754-E7036C79F054"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationStructureChangedEventHandler {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void HandleStructureChangedEvent(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationElement sender,
+            [In] StructureChangeType changeType,
+            [MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT), In]
+            int[] runtimeId);
+    }
 }

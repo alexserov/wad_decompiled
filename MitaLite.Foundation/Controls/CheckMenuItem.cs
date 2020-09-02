@@ -4,46 +4,53 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class CheckMenuItem : UIObject, IToggle
-  {
-    private IToggle _togglePattern;
-    private static IFactory<CheckMenuItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class CheckMenuItem : UIObject, IToggle {
+        static IFactory<CheckMenuItem> _factory;
+        IToggle _togglePattern;
 
-    public CheckMenuItem(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public CheckMenuItem(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal CheckMenuItem(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal CheckMenuItem(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._togglePattern = (IToggle) new ToggleImplementation((UIObject) this);
+        public static IFactory<CheckMenuItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new CheckMenuItemFactory();
+                return _factory;
+            }
+        }
 
-    public UIEventWaiter GetToggledWaiter() => this._togglePattern.GetToggledWaiter();
+        public UIEventWaiter GetToggledWaiter() {
+            return this._togglePattern.GetToggledWaiter();
+        }
 
-    public virtual void Toggle() => this._togglePattern.Toggle();
+        public virtual void Toggle() {
+            this._togglePattern.Toggle();
+        }
 
-    public virtual ToggleState ToggleState => this._togglePattern.ToggleState;
+        public virtual ToggleState ToggleState {
+            get { return this._togglePattern.ToggleState; }
+        }
 
-    public static IFactory<CheckMenuItem> Factory
-    {
-      get
-      {
-        if (CheckMenuItem._factory == null)
-          CheckMenuItem._factory = (IFactory<CheckMenuItem>) new CheckMenuItem.CheckMenuItemFactory();
-        return CheckMenuItem._factory;
-      }
+        void Initialize() {
+            this._togglePattern = new ToggleImplementation(uiObject: this);
+        }
+
+        class CheckMenuItemFactory : IFactory<CheckMenuItem> {
+            public CheckMenuItem Create(UIObject element) {
+                return new CheckMenuItem(uiObject: element);
+            }
+        }
     }
-
-    private class CheckMenuItemFactory : IFactory<CheckMenuItem>
-    {
-      public CheckMenuItem Create(UIObject element) => new CheckMenuItem(element);
-    }
-  }
 }

@@ -4,48 +4,57 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Collections;
 using MS.Internal.Mita.Foundation.Patterns;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class SelectionSlider : UIObject, IContainer<SelectionSliderItem>, ISelection<SelectionSliderItem>
-  {
-    private ISelection<SelectionSliderItem> _selectionPattern;
-    private static IFactory<SelectionSlider> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class SelectionSlider : UIObject, IContainer<SelectionSliderItem>, ISelection<SelectionSliderItem> {
+        static IFactory<SelectionSlider> _factory;
+        ISelection<SelectionSliderItem> _selectionPattern;
 
-    public SelectionSlider(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public SelectionSlider(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal SelectionSlider(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal SelectionSlider(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._selectionPattern = (ISelection<SelectionSliderItem>) new SelectionImplementation<SelectionSliderItem>((UIObject) this, SelectionSliderItem.Factory);
+        public static IFactory<SelectionSlider> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new SelectionSliderFactory();
+                return _factory;
+            }
+        }
 
-    public UICollection<SelectionSliderItem> Items => (UICollection<SelectionSliderItem>) new UIChildren<SelectionSliderItem>((UIObject) this, UICondition.ControlTree, SelectionSliderItem.Factory);
+        public UICollection<SelectionSliderItem> Items {
+            get { return new UIChildren<SelectionSliderItem>(root: this, treeCondition: UICondition.ControlTree, factory: SelectionSliderItem.Factory); }
+        }
 
-    public UICollection<SelectionSliderItem> Selection => this._selectionPattern.Selection;
+        public UICollection<SelectionSliderItem> Selection {
+            get { return this._selectionPattern.Selection; }
+        }
 
-    public virtual bool CanSelectMultiple => this._selectionPattern.CanSelectMultiple;
+        public virtual bool CanSelectMultiple {
+            get { return this._selectionPattern.CanSelectMultiple; }
+        }
 
-    public virtual bool IsSelectionRequired => this._selectionPattern.IsSelectionRequired;
+        public virtual bool IsSelectionRequired {
+            get { return this._selectionPattern.IsSelectionRequired; }
+        }
 
-    public static IFactory<SelectionSlider> Factory
-    {
-      get
-      {
-        if (SelectionSlider._factory == null)
-          SelectionSlider._factory = (IFactory<SelectionSlider>) new SelectionSlider.SelectionSliderFactory();
-        return SelectionSlider._factory;
-      }
+        void Initialize() {
+            this._selectionPattern = new SelectionImplementation<SelectionSliderItem>(uiObject: this, itemFactory: SelectionSliderItem.Factory);
+        }
+
+        class SelectionSliderFactory : IFactory<SelectionSlider> {
+            public SelectionSlider Create(UIObject element) {
+                return new SelectionSlider(uiObject: element);
+            }
+        }
     }
-
-    private class SelectionSliderFactory : IFactory<SelectionSlider>
-    {
-      public SelectionSlider Create(UIObject element) => new SelectionSlider(element);
-    }
-  }
 }

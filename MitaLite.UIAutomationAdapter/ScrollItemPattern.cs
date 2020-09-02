@@ -6,23 +6,26 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ScrollItemPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = ScrollItemPatternIdentifiers.Pattern;
-    private readonly IUIAutomationScrollItemPattern _scrollItemPattern;
+namespace System.Windows.Automation {
+    public class ScrollItemPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = ScrollItemPatternIdentifiers.Pattern;
+        readonly IUIAutomationScrollItemPattern _scrollItemPattern;
 
-    private ScrollItemPattern(
-      AutomationElement element,
-      IUIAutomationScrollItemPattern scrollItemPattern)
-      : base(element)
-      => this._scrollItemPattern = scrollItemPattern;
+        ScrollItemPattern(
+            AutomationElement element,
+            IUIAutomationScrollItemPattern scrollItemPattern)
+            : base(el: element) {
+            this._scrollItemPattern = scrollItemPattern;
+        }
 
-    internal static ScrollItemPattern Wrap(
-      AutomationElement element,
-      IUIAutomationScrollItemPattern scrollItemPattern) => new ScrollItemPattern(element, scrollItemPattern);
+        internal static ScrollItemPattern Wrap(
+            AutomationElement element,
+            IUIAutomationScrollItemPattern scrollItemPattern) {
+            return new ScrollItemPattern(element: element, scrollItemPattern: scrollItemPattern);
+        }
 
-    public void ScrollIntoView() => this._scrollItemPattern.ScrollIntoView();
-  }
+        public void ScrollIntoView() {
+            this._scrollItemPattern.ScrollIntoView();
+        }
+    }
 }

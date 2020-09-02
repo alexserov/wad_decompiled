@@ -4,199 +4,223 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
 using System.Collections.Generic;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class MultiPointGesture
-  {
-    private static Stack<IMultiPointGestureInput> _gestureInputStack = new Stack<IMultiPointGestureInput>();
-    public static readonly uint DefaultHoldDuration = 500;
-    public static readonly uint DefaultTapDelta = 500;
-    public static readonly uint DefaultTapDistance = 10;
-    public static readonly float DefaultTwoPointPanAcceleration = 0.1f;
-    public static readonly uint DefaultTwoPointPanDistance = 10;
-    public static readonly uint DefaultPinchStretchDistance = 150;
-    public static readonly float DefaultPinchStretchDirection = 90f;
-    public static readonly uint DefaultPinchStretchDuration = 1000;
-    public static readonly uint DefaultRotateDistance = 100;
-    public static readonly uint DefaultRotateDuration = 1000;
+namespace MS.Internal.Mita.Foundation {
+    public static class MultiPointGesture {
+        static readonly Stack<IMultiPointGestureInput> _gestureInputStack = new Stack<IMultiPointGestureInput>();
+        public static readonly uint DefaultHoldDuration = 500;
+        public static readonly uint DefaultTapDelta = 500;
+        public static readonly uint DefaultTapDistance = 10;
+        public static readonly float DefaultTwoPointPanAcceleration = 0.1f;
+        public static readonly uint DefaultTwoPointPanDistance = 10;
+        public static readonly uint DefaultPinchStretchDistance = 150;
+        public static readonly float DefaultPinchStretchDirection = 90f;
+        public static readonly uint DefaultPinchStretchDuration = 1000;
+        public static readonly uint DefaultRotateDistance = 100;
+        public static readonly uint DefaultRotateDuration = 1000;
 
-    public static void PressAndTap(uint tapCount, uint tapDuration, uint tapDelta, uint distance) => MultiPointGesture.Current.PressAndTap(tapCount, tapDuration, tapDelta, distance);
+        public static IMultiPointGestureInput Current {
+            get {
+                if (_gestureInputStack.Count == 0)
+                    lock (_gestureInputStack) {
+                        if (_gestureInputStack.Count == 0)
+                            _gestureInputStack.Push(item: MultiTouch.Instance);
+                    }
 
-    public static void TwoPointPressAndHold(
-      uint tapCount,
-      uint holdDuration,
-      uint tapDelta,
-      uint distance) => MultiPointGesture.Current.TwoPointPressAndHold(tapCount, holdDuration, tapDelta, distance);
-
-    public static void TwoPointPan(
-      PointI endPoint,
-      uint holdDuration,
-      float acceleration,
-      uint distance) => MultiPointGesture.Current.TwoPointPan(endPoint, holdDuration, acceleration, distance);
-
-    public static void Pinch(float direction, uint duration, uint startDistance, uint endDistance) => MultiPointGesture.Current.Pinch(direction, duration, startDistance, endDistance);
-
-    public static void Pinch(
-      float direction,
-      uint duration,
-      uint startDistance,
-      uint endDistance,
-      bool pivot) => MultiPointGesture.Current.Pinch(direction, duration, startDistance, endDistance, pivot);
-
-    public static void Stretch(
-      float direction,
-      uint duration,
-      uint startDistance,
-      uint endDistance) => MultiPointGesture.Current.Stretch(direction, duration, startDistance, endDistance);
-
-    public static void Stretch(
-      float direction,
-      uint duration,
-      uint startDistance,
-      uint endDistance,
-      bool pivot) => MultiPointGesture.Current.Stretch(direction, duration, startDistance, endDistance, pivot);
-
-    public static void Rotate(float angle, uint duration, bool centerOnPoint, uint distance) => MultiPointGesture.Current.Rotate(angle, duration, centerOnPoint, distance);
-
-    public static void InjectMultiPointGesture(MultiTouchInjectionData[] injectionData) => MultiPointGesture.Current.InjectMultiPointGesture(injectionData);
-
-    public static void PressAndTap(UIObject uiObject)
-    {
-      MultiPointGesture.Current.Move(uiObject.GetClickablePoint());
-      MultiPointGesture.PressAndTap(1U, MultiPointGesture.DefaultHoldDuration, MultiPointGesture.DefaultTapDelta, MultiPointGesture.DefaultTapDistance);
-    }
-
-    public static void TwoPointPressAndHold(UIObject uiObject) => MultiPointGesture.TwoPointPressAndHold(uiObject, 1U);
-
-    public static void TwoPointPressAndHold(UIObject uiObject, uint count)
-    {
-      MultiPointGesture.Current.Move(uiObject.GetClickablePoint());
-      MultiPointGesture.TwoPointPressAndHold(count, InputManager.DefaultPressDuration, InputManager.DefaultTapDelta, MultiPointGesture.DefaultTapDistance);
-    }
-
-    public static void TwoPointPan(UIObject targetObject, UIObject destinationObject) => MultiPointGesture.TwoPointPan(targetObject, destinationObject, MultiPointGesture.DefaultTwoPointPanAcceleration);
-
-    public static void TwoPointPan(
-      UIObject targetObject,
-      UIObject destinationObject,
-      float acceleration)
-    {
-      PointI clickablePoint1 = targetObject.GetClickablePoint();
-      PointI clickablePoint2 = destinationObject.GetClickablePoint();
-      MultiPointGesture.Current.Move(clickablePoint1);
-      int defaultPressDuration = (int) InputManager.DefaultPressDuration;
-      double num = (double) acceleration;
-      int pointPanDistance = (int) MultiPointGesture.DefaultTwoPointPanDistance;
-      MultiPointGesture.TwoPointPan(clickablePoint2, (uint) defaultPressDuration, (float) num, (uint) pointPanDistance);
-    }
-
-    public static void TwoPointPan(
-      UIObject uiObject,
-      float acceleration,
-      uint distance,
-      float direction)
-    {
-      PointI clickablePoint = uiObject.GetClickablePoint();
-      double num1 = (double) direction * Math.PI / 180.0;
-      PointI endPoint = new PointI(clickablePoint.X + (int) Math.Round((double) distance * Math.Cos(num1)), clickablePoint.Y - (int) Math.Round((double) distance * Math.Sin(num1)));
-      MultiPointGesture.Current.Move(clickablePoint);
-      int defaultPressDuration = (int) InputManager.DefaultPressDuration;
-      double num2 = (double) acceleration;
-      int num3 = (int) distance;
-      MultiPointGesture.TwoPointPan(endPoint, (uint) defaultPressDuration, (float) num2, (uint) num3);
-    }
-
-    public static void Pinch(UIObject uiObject) => MultiPointGesture.Pinch(uiObject, MultiPointGesture.DefaultPinchStretchDistance);
-
-    public static void Pinch(UIObject uiObject, uint distance) => MultiPointGesture.Pinch(uiObject, distance, MultiPointGesture.DefaultPinchStretchDirection);
-
-    public static void Pinch(UIObject uiObject, uint distance, float direction)
-    {
-      MultiPointGesture.Current.Move(MultiPointGesture.OffsetPinchPoints(uiObject, distance, direction));
-      MultiPointGesture.Pinch(direction, MultiPointGesture.DefaultPinchStretchDuration, distance, 0U);
-    }
-
-    public static void Pinch(UIObject uiObject, uint distance, float direction, bool pivot)
-    {
-      PointI point = uiObject.GetClickablePoint();
-      if (!pivot)
-        point = MultiPointGesture.OffsetPinchPoints(uiObject, distance, direction);
-      MultiPointGesture.Current.Move(point);
-      MultiPointGesture.Pinch(direction, MultiPointGesture.DefaultPinchStretchDuration, distance, 0U, pivot);
-    }
-
-    public static void Stretch(UIObject uiObject) => MultiPointGesture.Stretch(uiObject, MultiPointGesture.DefaultPinchStretchDistance);
-
-    public static void Stretch(UIObject uiObject, uint distance) => MultiPointGesture.Stretch(uiObject, distance, MultiPointGesture.DefaultPinchStretchDirection);
-
-    public static void Stretch(UIObject uiObject, uint distance, float direction)
-    {
-      MultiPointGesture.Current.Move(uiObject.GetClickablePoint());
-      MultiPointGesture.Stretch(direction, MultiPointGesture.DefaultPinchStretchDuration, 0U, distance);
-    }
-
-    public static void Stretch(UIObject uiObject, uint distance, float direction, bool pivot)
-    {
-      MultiPointGesture.Current.Move(uiObject.GetClickablePoint());
-      MultiPointGesture.Stretch(direction, MultiPointGesture.DefaultPinchStretchDuration, 0U, distance, pivot);
-    }
-
-    public static void Rotate(UIObject uiObject, float angle) => MultiPointGesture.Rotate(uiObject, angle, false);
-
-    public static void Rotate(UIObject uiObject, uint distance, float angle) => MultiPointGesture.Rotate(uiObject, distance, angle, false);
-
-    public static void Rotate(UIObject uiObject, float angle, bool centerOnPoint) => MultiPointGesture.Rotate(uiObject, MultiPointGesture.DefaultRotateDistance, angle, centerOnPoint);
-
-    public static void Rotate(UIObject uiObject, uint distance, float angle, bool centerOnPoint)
-    {
-      PointI point = uiObject.GetClickablePoint();
-      if (!centerOnPoint)
-        point = MultiPointGesture.OffsetPinchPoints(uiObject, distance, 0.0f);
-      MultiPointGesture.Current.Move(point);
-      MultiPointGesture.Rotate(angle, MultiPointGesture.DefaultRotateDuration, centerOnPoint, distance);
-    }
-
-    public static IDisposable Activate(IMultiPointGestureInput pointer) => (IDisposable) new InputControllerMartyr<IMultiPointGestureInput>(MultiPointGesture._gestureInputStack, pointer);
-
-    public static IMultiPointGestureInput Current
-    {
-      get
-      {
-        if (MultiPointGesture._gestureInputStack.Count == 0)
-        {
-          lock (MultiPointGesture._gestureInputStack)
-          {
-            if (MultiPointGesture._gestureInputStack.Count == 0)
-              MultiPointGesture._gestureInputStack.Push((IMultiPointGestureInput) MultiTouch.Instance);
-          }
+                return _gestureInputStack.Peek();
+            }
         }
-        return MultiPointGesture._gestureInputStack.Peek();
-      }
-    }
 
-    internal static PointI OffsetPinchPoints(
-      UIObject uiObject,
-      uint distance,
-      float direction) => MultiPointGesture.OffsetPinchPoints(uiObject.GetClickablePoint(), uiObject.BoundingRectangle, distance, direction);
+        public static void PressAndTap(uint tapCount, uint tapDuration, uint tapDelta, uint distance) {
+            Current.PressAndTap(tapCount: tapCount, tapDuration: tapDuration, tapDelta: tapDelta, distance: distance);
+        }
 
-    internal static PointI OffsetPinchPoints(
-      PointI targetPoint,
-      RectangleI boundingRectangle,
-      uint distance,
-      float direction)
-    {
-      double num1 = (double) distance / 2.0;
-      double num2 = (double) direction * Math.PI / 180.0;
-      int offsetX = (int) Math.Round(num1 * Math.Cos(num2));
-      int offsetY = (int) Math.Round(num1 * Math.Sin(num2));
-      if (targetPoint.X + offsetX > boundingRectangle.Right || targetPoint.X + offsetX < boundingRectangle.Left || (targetPoint.Y + offsetY > boundingRectangle.Bottom || targetPoint.Y + offsetY < boundingRectangle.Top))
-        Log.Out("Target points are outside of target object");
-      targetPoint.Offset(offsetX, offsetY);
-      return targetPoint;
+        public static void TwoPointPressAndHold(
+            uint tapCount,
+            uint holdDuration,
+            uint tapDelta,
+            uint distance) {
+            Current.TwoPointPressAndHold(tapCount: tapCount, holdDuration: holdDuration, tapDelta: tapDelta, distance: distance);
+        }
+
+        public static void TwoPointPan(
+            PointI endPoint,
+            uint holdDuration,
+            float acceleration,
+            uint distance) {
+            Current.TwoPointPan(endPoint: endPoint, holdDuration: holdDuration, acceleration: acceleration, distance: distance);
+        }
+
+        public static void Pinch(float direction, uint duration, uint startDistance, uint endDistance) {
+            Current.Pinch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance);
+        }
+
+        public static void Pinch(
+            float direction,
+            uint duration,
+            uint startDistance,
+            uint endDistance,
+            bool pivot) {
+            Current.Pinch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance, pivot: pivot);
+        }
+
+        public static void Stretch(
+            float direction,
+            uint duration,
+            uint startDistance,
+            uint endDistance) {
+            Current.Stretch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance);
+        }
+
+        public static void Stretch(
+            float direction,
+            uint duration,
+            uint startDistance,
+            uint endDistance,
+            bool pivot) {
+            Current.Stretch(direction: direction, duration: duration, startDistance: startDistance, endDistance: endDistance, pivot: pivot);
+        }
+
+        public static void Rotate(float angle, uint duration, bool centerOnPoint, uint distance) {
+            Current.Rotate(angle: angle, duration: duration, centerOnPoint: centerOnPoint, distance: distance);
+        }
+
+        public static void InjectMultiPointGesture(MultiTouchInjectionData[] injectionData) {
+            Current.InjectMultiPointGesture(injectionData: injectionData);
+        }
+
+        public static void PressAndTap(UIObject uiObject) {
+            Current.Move(point: uiObject.GetClickablePoint());
+            PressAndTap(tapCount: 1U, tapDuration: DefaultHoldDuration, tapDelta: DefaultTapDelta, distance: DefaultTapDistance);
+        }
+
+        public static void TwoPointPressAndHold(UIObject uiObject) {
+            TwoPointPressAndHold(uiObject: uiObject, count: 1U);
+        }
+
+        public static void TwoPointPressAndHold(UIObject uiObject, uint count) {
+            Current.Move(point: uiObject.GetClickablePoint());
+            TwoPointPressAndHold(tapCount: count, holdDuration: InputManager.DefaultPressDuration, tapDelta: InputManager.DefaultTapDelta, distance: DefaultTapDistance);
+        }
+
+        public static void TwoPointPan(UIObject targetObject, UIObject destinationObject) {
+            TwoPointPan(targetObject: targetObject, destinationObject: destinationObject, acceleration: DefaultTwoPointPanAcceleration);
+        }
+
+        public static void TwoPointPan(
+            UIObject targetObject,
+            UIObject destinationObject,
+            float acceleration) {
+            var clickablePoint1 = targetObject.GetClickablePoint();
+            var clickablePoint2 = destinationObject.GetClickablePoint();
+            Current.Move(point: clickablePoint1);
+            var defaultPressDuration = (int) InputManager.DefaultPressDuration;
+            double num = acceleration;
+            var pointPanDistance = (int) DefaultTwoPointPanDistance;
+            TwoPointPan(endPoint: clickablePoint2, holdDuration: (uint) defaultPressDuration, acceleration: (float) num, distance: (uint) pointPanDistance);
+        }
+
+        public static void TwoPointPan(
+            UIObject uiObject,
+            float acceleration,
+            uint distance,
+            float direction) {
+            var clickablePoint = uiObject.GetClickablePoint();
+            var num1 = direction * Math.PI / 180.0;
+            var endPoint = new PointI(x: clickablePoint.X + (int) Math.Round(a: distance * Math.Cos(d: num1)), y: clickablePoint.Y - (int) Math.Round(a: distance * Math.Sin(a: num1)));
+            Current.Move(point: clickablePoint);
+            var defaultPressDuration = (int) InputManager.DefaultPressDuration;
+            double num2 = acceleration;
+            var num3 = (int) distance;
+            TwoPointPan(endPoint: endPoint, holdDuration: (uint) defaultPressDuration, acceleration: (float) num2, distance: (uint) num3);
+        }
+
+        public static void Pinch(UIObject uiObject) {
+            Pinch(uiObject: uiObject, distance: DefaultPinchStretchDistance);
+        }
+
+        public static void Pinch(UIObject uiObject, uint distance) {
+            Pinch(uiObject: uiObject, distance: distance, direction: DefaultPinchStretchDirection);
+        }
+
+        public static void Pinch(UIObject uiObject, uint distance, float direction) {
+            Current.Move(point: OffsetPinchPoints(uiObject: uiObject, distance: distance, direction: direction));
+            Pinch(direction: direction, duration: DefaultPinchStretchDuration, startDistance: distance, endDistance: 0U);
+        }
+
+        public static void Pinch(UIObject uiObject, uint distance, float direction, bool pivot) {
+            var point = uiObject.GetClickablePoint();
+            if (!pivot)
+                point = OffsetPinchPoints(uiObject: uiObject, distance: distance, direction: direction);
+            Current.Move(point: point);
+            Pinch(direction: direction, duration: DefaultPinchStretchDuration, startDistance: distance, endDistance: 0U, pivot: pivot);
+        }
+
+        public static void Stretch(UIObject uiObject) {
+            Stretch(uiObject: uiObject, distance: DefaultPinchStretchDistance);
+        }
+
+        public static void Stretch(UIObject uiObject, uint distance) {
+            Stretch(uiObject: uiObject, distance: distance, direction: DefaultPinchStretchDirection);
+        }
+
+        public static void Stretch(UIObject uiObject, uint distance, float direction) {
+            Current.Move(point: uiObject.GetClickablePoint());
+            Stretch(direction: direction, duration: DefaultPinchStretchDuration, startDistance: 0U, endDistance: distance);
+        }
+
+        public static void Stretch(UIObject uiObject, uint distance, float direction, bool pivot) {
+            Current.Move(point: uiObject.GetClickablePoint());
+            Stretch(direction: direction, duration: DefaultPinchStretchDuration, startDistance: 0U, endDistance: distance, pivot: pivot);
+        }
+
+        public static void Rotate(UIObject uiObject, float angle) {
+            Rotate(uiObject: uiObject, angle: angle, centerOnPoint: false);
+        }
+
+        public static void Rotate(UIObject uiObject, uint distance, float angle) {
+            Rotate(uiObject: uiObject, distance: distance, angle: angle, centerOnPoint: false);
+        }
+
+        public static void Rotate(UIObject uiObject, float angle, bool centerOnPoint) {
+            Rotate(uiObject: uiObject, distance: DefaultRotateDistance, angle: angle, centerOnPoint: centerOnPoint);
+        }
+
+        public static void Rotate(UIObject uiObject, uint distance, float angle, bool centerOnPoint) {
+            var point = uiObject.GetClickablePoint();
+            if (!centerOnPoint)
+                point = OffsetPinchPoints(uiObject: uiObject, distance: distance, direction: 0.0f);
+            Current.Move(point: point);
+            Rotate(angle: angle, duration: DefaultRotateDuration, centerOnPoint: centerOnPoint, distance: distance);
+        }
+
+        public static IDisposable Activate(IMultiPointGestureInput pointer) {
+            return new InputControllerMartyr<IMultiPointGestureInput>(inputStack: _gestureInputStack, inputController: pointer);
+        }
+
+        internal static PointI OffsetPinchPoints(
+            UIObject uiObject,
+            uint distance,
+            float direction) {
+            return OffsetPinchPoints(targetPoint: uiObject.GetClickablePoint(), boundingRectangle: uiObject.BoundingRectangle, distance: distance, direction: direction);
+        }
+
+        internal static PointI OffsetPinchPoints(
+            PointI targetPoint,
+            RectangleI boundingRectangle,
+            uint distance,
+            float direction) {
+            var num1 = distance / 2.0;
+            var num2 = direction * Math.PI / 180.0;
+            var offsetX = (int) Math.Round(a: num1 * Math.Cos(d: num2));
+            var offsetY = (int) Math.Round(a: num1 * Math.Sin(a: num2));
+            if (targetPoint.X + offsetX > boundingRectangle.Right || targetPoint.X + offsetX < boundingRectangle.Left || targetPoint.Y + offsetY > boundingRectangle.Bottom || targetPoint.Y + offsetY < boundingRectangle.Top)
+                Log.Out(msg: "Target points are outside of target object");
+            targetPoint.Offset(offsetX: offsetX, offsetY: offsetY);
+            return targetPoint;
+        }
     }
-  }
 }

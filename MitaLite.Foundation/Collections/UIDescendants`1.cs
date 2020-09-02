@@ -6,28 +6,22 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  public class UIDescendants<I> : UICollection<I> where I : UIObject
-  {
-    public UIDescendants(UIObject root, IFactory<I> factory)
-      : base((UINavigator) new DescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Collections {
+    public class UIDescendants<I> : UICollection<I> where I : UIObject {
+        public UIDescendants(UIObject root, IFactory<I> factory)
+            : base(navigator: new DescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    internal UIDescendants(AutomationElement root, IFactory<I> factory)
-      : base((UINavigator) new DescendantsNavigator(root, Context.Current.TreeCondition), factory)
-    {
-    }
+        internal UIDescendants(AutomationElement root, IFactory<I> factory)
+            : base(navigator: new DescendantsNavigator(root: root, treeCondition: Context.Current.TreeCondition), factory: factory) {
+        }
 
-    public UIDescendants(UIObject root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new DescendantsNavigator(root, treeCondition), factory)
-    {
-    }
+        public UIDescendants(UIObject root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new DescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
 
-    internal UIDescendants(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
-      : base((UINavigator) new DescendantsNavigator(root, treeCondition), factory)
-    {
+        internal UIDescendants(AutomationElement root, UICondition treeCondition, IFactory<I> factory)
+            : base(navigator: new DescendantsNavigator(root: root, treeCondition: treeCondition), factory: factory) {
+        }
     }
-  }
 }

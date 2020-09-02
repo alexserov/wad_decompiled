@@ -7,26 +7,35 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("A94CD8B1-0844-4CD6-9D2D-640537AB39E9")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationValuePattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void SetValue([MarshalAs(UnmanagedType.BStr), In] string val);
+namespace UIAutomationClient {
+    [Guid(guid: "A94CD8B1-0844-4CD6-9D2D-640537AB39E9"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationValuePattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void SetValue([MarshalAs(unmanagedType: UnmanagedType.BStr), In]
+                      string val);
 
-    [DispId(1610678273)]
-    string CurrentValue { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
+        [DispId(dispId: 1610678273)]
+        string CurrentValue {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
 
-    [DispId(1610678274)]
-    int CurrentIsReadOnly { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+        [DispId(dispId: 1610678274)]
+        int CurrentIsReadOnly {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [DispId(1610678275)]
-    string CachedValue { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
+        [DispId(dispId: 1610678275)]
+        string CachedValue {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
 
-    [DispId(1610678276)]
-    int CachedIsReadOnly { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-  }
+        [DispId(dispId: 1610678276)]
+        int CachedIsReadOnly {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+    }
 }

@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ItemsView : ItemsView<ItemsView, ItemsViewItem>
-  {
-    private static IFactory<ItemsView> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ItemsView : ItemsView<ItemsView, ItemsViewItem> {
+        static IFactory<ItemsView> _factory;
 
-    public ItemsView(UIObject uiObject)
-      : base(uiObject, ItemsViewItem.Factory)
-    {
-    }
+        public ItemsView(UIObject uiObject)
+            : base(uiObject: uiObject, itemFactory: ItemsViewItem.Factory) {
+        }
 
-    internal ItemsView(AutomationElement element)
-      : base(element, ItemsViewItem.Factory)
-    {
-    }
+        internal ItemsView(AutomationElement element)
+            : base(element: element, itemFactory: ItemsViewItem.Factory) {
+        }
 
-    public static IFactory<ItemsView> Factory
-    {
-      get
-      {
-        if (ItemsView._factory == null)
-          ItemsView._factory = (IFactory<ItemsView>) new ItemsView.ItemsViewFactory();
-        return ItemsView._factory;
-      }
-    }
+        public static IFactory<ItemsView> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ItemsViewFactory();
+                return _factory;
+            }
+        }
 
-    private class ItemsViewFactory : IFactory<ItemsView>
-    {
-      public ItemsView Create(UIObject element) => new ItemsView(element);
+        class ItemsViewFactory : IFactory<ItemsView> {
+            public ItemsView Create(UIObject element) {
+                return new ItemsView(uiObject: element);
+            }
+        }
     }
-  }
 }

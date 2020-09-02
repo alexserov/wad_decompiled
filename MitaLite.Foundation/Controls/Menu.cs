@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class Menu : UIObject
-  {
-    private static IFactory<Menu> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class Menu : UIObject {
+        static IFactory<Menu> _factory;
 
-    public Menu(UIObject uiObject)
-      : base(uiObject)
-    {
-    }
+        public Menu(UIObject uiObject)
+            : base(uiObject: uiObject) {
+        }
 
-    internal Menu(AutomationElement element)
-      : base(element)
-    {
-    }
+        internal Menu(AutomationElement element)
+            : base(element: element) {
+        }
 
-    public static IFactory<Menu> Factory
-    {
-      get
-      {
-        if (Menu._factory == null)
-          Menu._factory = (IFactory<Menu>) new Menu.MenuFactory();
-        return Menu._factory;
-      }
-    }
+        public static IFactory<Menu> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new MenuFactory();
+                return _factory;
+            }
+        }
 
-    private class MenuFactory : IFactory<Menu>
-    {
-      public Menu Create(UIObject element) => new Menu(element);
+        class MenuFactory : IFactory<Menu> {
+            public Menu Create(UIObject element) {
+                return new Menu(uiObject: element);
+            }
+        }
     }
-  }
 }

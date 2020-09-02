@@ -4,53 +4,68 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Patterns;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Patterns;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class RangeValueSpinner : UIObject, IRangeValue
-  {
-    private IRangeValue _rangeValuePattern;
-    private static IFactory<RangeValueSpinner> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class RangeValueSpinner : UIObject, IRangeValue {
+        static IFactory<RangeValueSpinner> _factory;
+        IRangeValue _rangeValuePattern;
 
-    public RangeValueSpinner(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public RangeValueSpinner(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal RangeValueSpinner(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal RangeValueSpinner(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._rangeValuePattern = (IRangeValue) new RangeValueImplementation((UIObject) this);
+        public static IFactory<RangeValueSpinner> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new RangeValueSpinnerFactory();
+                return _factory;
+            }
+        }
 
-    public virtual void SetValue(double value) => this._rangeValuePattern.SetValue(value);
+        public virtual void SetValue(double value) {
+            this._rangeValuePattern.SetValue(value: value);
+        }
 
-    public virtual double Value => this._rangeValuePattern.Value;
+        public virtual double Value {
+            get { return this._rangeValuePattern.Value; }
+        }
 
-    public virtual bool IsReadOnly => this._rangeValuePattern.IsReadOnly;
+        public virtual bool IsReadOnly {
+            get { return this._rangeValuePattern.IsReadOnly; }
+        }
 
-    public virtual double Minimum => this._rangeValuePattern.Minimum;
+        public virtual double Minimum {
+            get { return this._rangeValuePattern.Minimum; }
+        }
 
-    public virtual double Maximum => this._rangeValuePattern.Maximum;
+        public virtual double Maximum {
+            get { return this._rangeValuePattern.Maximum; }
+        }
 
-    public virtual double LargeChange => this._rangeValuePattern.LargeChange;
+        public virtual double LargeChange {
+            get { return this._rangeValuePattern.LargeChange; }
+        }
 
-    public virtual double SmallChange => this._rangeValuePattern.SmallChange;
+        public virtual double SmallChange {
+            get { return this._rangeValuePattern.SmallChange; }
+        }
 
-    public static IFactory<RangeValueSpinner> Factory
-    {
-      get
-      {
-        if (RangeValueSpinner._factory == null)
-          RangeValueSpinner._factory = (IFactory<RangeValueSpinner>) new RangeValueSpinner.RangeValueSpinnerFactory();
-        return RangeValueSpinner._factory;
-      }
+        void Initialize() {
+            this._rangeValuePattern = new RangeValueImplementation(uiObject: this);
+        }
+
+        class RangeValueSpinnerFactory : IFactory<RangeValueSpinner> {
+            public RangeValueSpinner Create(UIObject element) {
+                return new RangeValueSpinner(uiObject: element);
+            }
+        }
     }
-
-    private class RangeValueSpinnerFactory : IFactory<RangeValueSpinner>
-    {
-      public RangeValueSpinner Create(UIObject element) => new RangeValueSpinner(element);
-    }
-  }
 }

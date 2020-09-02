@@ -6,12 +6,10 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class ValuePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<ValuePattern, IUIAutomationValuePattern>(10002, "ValuePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationValuePattern, ValuePattern>(ValuePattern.Wrap));
-    public static readonly AutomationProperty IsReadOnlyProperty = new AutomationProperty(30046, "ValuePatternIdentifiers.IsReadOnlyProperty");
-    public static readonly AutomationProperty ValueProperty = new AutomationProperty(30045, "ValuePatternIdentifiers.ValueProperty");
-  }
+namespace System.Windows.Automation {
+    public static class ValuePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<ValuePattern, IUIAutomationValuePattern>(id: 10002, programmaticName: "ValuePatternIdentifiers.Pattern", wrap: ValuePattern.Wrap);
+        public static readonly AutomationProperty IsReadOnlyProperty = new AutomationProperty(id: 30046, programmaticName: "ValuePatternIdentifiers.IsReadOnlyProperty");
+        public static readonly AutomationProperty ValueProperty = new AutomationProperty(id: 30045, programmaticName: "ValuePatternIdentifiers.ValueProperty");
+    }
 }

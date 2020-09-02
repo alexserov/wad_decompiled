@@ -4,24 +4,26 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-namespace System.Windows.Automation
-{
-  public class ElementNotEnabledException : Exception
-  {
-    public ElementNotEnabledException()
-      : base("ElementNotAvailable")
-      => this.HResult = -2147220992;
+namespace System.Windows.Automation {
+    public class ElementNotEnabledException : Exception {
+        public ElementNotEnabledException()
+            : base(message: "ElementNotAvailable") {
+            HResult = -2147220992;
+        }
 
-    public ElementNotEnabledException(Exception innerException)
-      : base("ElementNotAvailable", innerException)
-      => this.HResult = -2147220992;
+        public ElementNotEnabledException(Exception innerException)
+            : base(message: "ElementNotAvailable", innerException: innerException) {
+            HResult = -2147220992;
+        }
 
-    public ElementNotEnabledException(string message)
-      : base(message)
-      => this.HResult = -2147220992;
+        public ElementNotEnabledException(string message)
+            : base(message: message) {
+            HResult = -2147220992;
+        }
 
-    public ElementNotEnabledException(string message, Exception innerException)
-      : base(message, innerException)
-      => this.HResult = -2147220992;
-  }
+        public ElementNotEnabledException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+            HResult = -2147220992;
+        }
+    }
 }

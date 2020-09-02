@@ -8,145 +8,129 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal class BreadthFirstTreeEnumerator<I> : IEnumerator<I>, IEnumerator, IDisposable
-  {
-    private ITreeNavigator<I> _navigator;
-    private Queue<I> _elementQueue;
-    private I _root;
-    private I _currentElement;
-    private TreeEnumerationState _enumerationState;
-    private bool _ignoreRoot;
-    private bool _disposed;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal class BreadthFirstTreeEnumerator<I> : IEnumerator<I>, IEnumerator, IDisposable {
+        I _currentElement;
+        bool _disposed;
+        Queue<I> _elementQueue;
+        TreeEnumerationState _enumerationState;
+        bool _ignoreRoot;
+        ITreeNavigator<I> _navigator;
 
-    public BreadthFirstTreeEnumerator(I root, ITreeNavigator<I> navigator) => this.Initialize(root, navigator, false);
+        public BreadthFirstTreeEnumerator(I root, ITreeNavigator<I> navigator) {
+            Initialize(root: root, navigator: navigator, ignoreRoot: false);
+        }
 
-    public BreadthFirstTreeEnumerator(BreadthFirstTreeEnumerator<I> previous)
-    {
-      Validate.ArgumentNotNull((object) previous, nameof (previous));
-      this.Initialize(previous._root, previous._navigator, previous._ignoreRoot);
-    }
+        public BreadthFirstTreeEnumerator(BreadthFirstTreeEnumerator<I> previous) {
+            Validate.ArgumentNotNull(parameter: previous, parameterName: nameof(previous));
+            Initialize(root: previous.Root, navigator: previous._navigator, ignoreRoot: previous._ignoreRoot);
+        }
 
-    public BreadthFirstTreeEnumerator(I root, ITreeNavigator<I> navigator, bool ignoreRoot) => this.Initialize(root, navigator, ignoreRoot);
+        public BreadthFirstTreeEnumerator(I root, ITreeNavigator<I> navigator, bool ignoreRoot) {
+            Initialize(root: root, navigator: navigator, ignoreRoot: ignoreRoot);
+        }
 
-    private void Initialize(I root, ITreeNavigator<I> navigator, bool ignoreRoot)
-    {
-      Validate.ArgumentNotNull((object) root, nameof (root));
-      Validate.ArgumentNotNull((object) navigator, nameof (navigator));
-      this._root = root;
-      this._navigator = navigator;
-      this._ignoreRoot = ignoreRoot;
-      this.Reset();
-      this._disposed = false;
-    }
+        public I Root { get; set; }
 
-    public virtual void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
+        public virtual void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
 
-    protected virtual void Dispose(bool disposing)
-    {
-      if (disposing)
-        this._elementQueue.Clear();
-      this._elementQueue = (Queue<I>) null;
-      this._disposed = true;
-    }
+        public bool MoveNext() {
+            var flag = true;
+            if (this._disposed)
+                throw new ObjectDisposedException(objectName: nameof(BreadthFirstTreeEnumerator<I>));
+            switch (this._enumerationState) {
+                case TreeEnumerationState.BeforeEnumeration:
+                    if (!this._ignoreRoot) {
+                        this._currentElement = Root;
+                        this._enumerationState = TreeEnumerationState.AtRoot;
+                    } else {
+                        this._currentElement = this._navigator.GetFirstChild(current: Root);
+                        this._enumerationState = TreeEnumerationState.InEnumeration;
+                    }
 
-    public bool MoveNext()
-    {
-      bool flag = true;
-      if (this._disposed)
-        throw new ObjectDisposedException(nameof (BreadthFirstTreeEnumerator<I>));
-      switch (this._enumerationState)
-      {
-        case TreeEnumerationState.BeforeEnumeration:
-          if (!this._ignoreRoot)
-          {
-            this._currentElement = this._root;
-            this._enumerationState = TreeEnumerationState.AtRoot;
-          }
-          else
-          {
-            this._currentElement = this._navigator.GetFirstChild(this._root);
-            this._enumerationState = TreeEnumerationState.InEnumeration;
-          }
-          if ((object) this._currentElement == null)
-          {
-            this._enumerationState = TreeEnumerationState.AfterEnumeration;
-            flag = false;
-            break;
-          }
-          I firstChild1 = this._navigator.GetFirstChild(this._currentElement);
-          if ((object) firstChild1 != null)
-          {
-            this._elementQueue.Enqueue(firstChild1);
-            break;
-          }
-          break;
-        case TreeEnumerationState.AtRoot:
-          this._currentElement = this._elementQueue.Dequeue();
-          I firstChild2 = this._navigator.GetFirstChild(this._currentElement);
-          if ((object) firstChild2 != null)
-            this._elementQueue.Enqueue(firstChild2);
-          this._enumerationState = TreeEnumerationState.InEnumeration;
-          break;
-        case TreeEnumerationState.InEnumeration:
-          this._currentElement = this._navigator.GetNextSibling(this._currentElement);
-          if ((object) this._currentElement == null)
-          {
-            if (this._elementQueue.Count == 0)
-            {
-              this._enumerationState = TreeEnumerationState.AfterEnumeration;
-              flag = false;
-              break;
+                    if (this._currentElement == null) {
+                        this._enumerationState = TreeEnumerationState.AfterEnumeration;
+                        flag = false;
+                        break;
+                    }
+
+                    var firstChild1 = this._navigator.GetFirstChild(current: this._currentElement);
+                    if (firstChild1 != null) {
+                        this._elementQueue.Enqueue(item: firstChild1);
+                    }
+
+                    break;
+                case TreeEnumerationState.AtRoot:
+                    this._currentElement = this._elementQueue.Dequeue();
+                    var firstChild2 = this._navigator.GetFirstChild(current: this._currentElement);
+                    if (firstChild2 != null)
+                        this._elementQueue.Enqueue(item: firstChild2);
+                    this._enumerationState = TreeEnumerationState.InEnumeration;
+                    break;
+                case TreeEnumerationState.InEnumeration:
+                    this._currentElement = this._navigator.GetNextSibling(current: this._currentElement);
+                    if (this._currentElement == null) {
+                        if (this._elementQueue.Count == 0) {
+                            this._enumerationState = TreeEnumerationState.AfterEnumeration;
+                            flag = false;
+                            break;
+                        }
+
+                        this._currentElement = this._elementQueue.Dequeue();
+                        var firstChild3 = this._navigator.GetFirstChild(current: this._currentElement);
+                        if (firstChild3 != null) this._elementQueue.Enqueue(item: firstChild3);
+                        break;
+                    }
+
+                    var firstChild4 = this._navigator.GetFirstChild(current: this._currentElement);
+                    if (firstChild4 != null) this._elementQueue.Enqueue(item: firstChild4);
+                    break;
+                case TreeEnumerationState.AfterEnumeration:
+                    flag = false;
+                    break;
             }
-            this._currentElement = this._elementQueue.Dequeue();
-            I firstChild3 = this._navigator.GetFirstChild(this._currentElement);
-            if ((object) firstChild3 != null)
-            {
-              this._elementQueue.Enqueue(firstChild3);
-              break;
+
+            return flag;
+        }
+
+        object IEnumerator.Current {
+            get { return Current; }
+        }
+
+        public I Current {
+            get {
+                if (this._disposed)
+                    throw new ObjectDisposedException(objectName: nameof(BreadthFirstTreeEnumerator<I>));
+                return this._currentElement;
             }
-            break;
-          }
-          I firstChild4 = this._navigator.GetFirstChild(this._currentElement);
-          if ((object) firstChild4 != null)
-          {
-            this._elementQueue.Enqueue(firstChild4);
-            break;
-          }
-          break;
-        case TreeEnumerationState.AfterEnumeration:
-          flag = false;
-          break;
-      }
-      return flag;
+        }
+
+        public void Reset() {
+            if (this._disposed)
+                throw new ObjectDisposedException(objectName: nameof(BreadthFirstTreeEnumerator<I>));
+            this._elementQueue = new Queue<I>();
+            this._currentElement = default;
+            this._enumerationState = TreeEnumerationState.BeforeEnumeration;
+        }
+
+        void Initialize(I root, ITreeNavigator<I> navigator, bool ignoreRoot) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Validate.ArgumentNotNull(parameter: navigator, parameterName: nameof(navigator));
+            Root = root;
+            this._navigator = navigator;
+            this._ignoreRoot = ignoreRoot;
+            Reset();
+            this._disposed = false;
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (disposing)
+                this._elementQueue.Clear();
+            this._elementQueue = null;
+            this._disposed = true;
+        }
     }
-
-    object IEnumerator.Current => (object) this.Current;
-
-    public I Current
-    {
-      get
-      {
-        if (this._disposed)
-          throw new ObjectDisposedException(nameof (BreadthFirstTreeEnumerator<I>));
-        return this._currentElement;
-      }
-    }
-
-    public void Reset()
-    {
-      if (this._disposed)
-        throw new ObjectDisposedException(nameof (BreadthFirstTreeEnumerator<I>));
-      this._elementQueue = new Queue<I>();
-      this._currentElement = default (I);
-      this._enumerationState = TreeEnumerationState.BeforeEnumeration;
-    }
-
-    public I Root => this._root;
-  }
 }

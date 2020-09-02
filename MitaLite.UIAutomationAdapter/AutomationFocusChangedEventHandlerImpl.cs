@@ -6,36 +6,38 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  internal class AutomationFocusChangedEventHandlerImpl : UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>, IUIAutomationFocusChangedEventHandler
-  {
-    private AutomationFocusChangedEventHandler _handlingDelegate;
+namespace System.Windows.Automation {
+    internal class AutomationFocusChangedEventHandlerImpl : UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>, IUIAutomationFocusChangedEventHandler {
+        readonly AutomationFocusChangedEventHandler _handlingDelegate;
 
-    private AutomationFocusChangedEventHandlerImpl(
-      AutomationFocusChangedEventHandler handlingDelegate) => this._handlingDelegate = handlingDelegate;
+        AutomationFocusChangedEventHandlerImpl(
+            AutomationFocusChangedEventHandler handlingDelegate) {
+            this._handlingDelegate = handlingDelegate;
+        }
 
-    protected override void Remove() => Boundary.NoExceptions((Action) (() => System.Windows.Automation.Automation.AutomationClass.RemoveFocusChangedEventHandler((IUIAutomationFocusChangedEventHandler) this)));
+        void IUIAutomationFocusChangedEventHandler.HandleFocusChangedEvent(
+            IUIAutomationElement sender) {
+            AutomationElement automationElement = null;
+            if (sender != null)
+                automationElement = new AutomationElement(autoElement: sender);
+            this._handlingDelegate(sender: automationElement, e: null);
+        }
 
-    void IUIAutomationFocusChangedEventHandler.HandleFocusChangedEvent(
-      IUIAutomationElement sender)
-    {
-      AutomationElement automationElement = (AutomationElement) null;
-      if (sender != null)
-        automationElement = new AutomationElement(sender);
-      this._handlingDelegate((object) automationElement, (AutomationFocusChangedEventArgs) null);
+        protected override void Remove() {
+            Boundary.NoExceptions(a: () => Automation.AutomationClass.RemoveFocusChangedEventHandler(handler: this));
+        }
+
+        internal static void Add(
+            AutomationFocusChangedEventHandler handlingDelegate) {
+            var e = new AutomationFocusChangedEventHandlerImpl(handlingDelegate: handlingDelegate);
+            var cacheRequest = AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest;
+            Boundary.UIAutomation(a: () => Automation.AutomationClass.AddFocusChangedEventHandler(cacheRequest: cacheRequest, handler: e));
+            Add(instance: e);
+        }
+
+        internal static void Remove(
+            AutomationFocusChangedEventHandler handlingDelegate) {
+            Remove(predicate: item => item._handlingDelegate == handlingDelegate);
+        }
     }
-
-    internal static void Add(
-      AutomationFocusChangedEventHandler handlingDelegate)
-    {
-      AutomationFocusChangedEventHandlerImpl e = new AutomationFocusChangedEventHandlerImpl(handlingDelegate);
-      IUIAutomationCacheRequest cacheRequest = AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest;
-      Boundary.UIAutomation((Action) (() => System.Windows.Automation.Automation.AutomationClass.AddFocusChangedEventHandler(cacheRequest, (IUIAutomationFocusChangedEventHandler) e)));
-      UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>.Add(e);
-    }
-
-    internal static void Remove(
-      AutomationFocusChangedEventHandler handlingDelegate) => UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>.Remove((Predicate<AutomationFocusChangedEventHandlerImpl>) (item => item._handlingDelegate == handlingDelegate));
-  }
 }

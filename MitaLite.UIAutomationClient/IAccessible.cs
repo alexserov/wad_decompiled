@@ -7,124 +7,117 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("618736E0-3C3D-11CF-810C-00AA00389B71")]
-  [TypeLibType(TypeLibTypeFlags.FHidden)]
-  [ComImport]
-  public interface IAccessible
-  {
-    [DispId(-5000)]
-    object accParent { [DispId(-5000), TypeLibFunc(TypeLibFuncFlags.FHidden), MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.IDispatch)] get; }
+namespace UIAutomationClient {
+    [Guid(guid: "618736E0-3C3D-11CF-810C-00AA00389B71"), TypeLibType(flags: TypeLibTypeFlags.FHidden), ComImport]
+    public interface IAccessible {
+        [DispId(dispId: -5000)]
+        object accParent {
+            [DispId(dispId: -5000), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.IDispatch)]
+            get;
+        }
 
-    [DispId(-5001)]
-    int accChildCount { [TypeLibFunc(TypeLibFuncFlags.FHidden), DispId(-5001), MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+        [DispId(dispId: -5001)]
+        int accChildCount {
+            [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5001), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5002)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.IDispatch)]
-    object get_accChild([MarshalAs(UnmanagedType.Struct), In] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5002), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.IDispatch)]
+        object get_accChild([MarshalAs(unmanagedType: UnmanagedType.Struct), In]
+                            Variant varChild);
 
-    [DispId(-5003)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accName([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [DispId(dispId: -5003), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accName([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                           Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5004)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accValue([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5004), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accValue([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                            Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5005)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accDescription([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5005), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accDescription([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                                  Variant varChild);
 
-    [DispId(-5006)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    Variant get_accRole([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [DispId(dispId: -5006), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        Variant get_accRole([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                            Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5007)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    Variant get_accState([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5007), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        Variant get_accState([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                             Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5008)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accHelp([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5008), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accHelp([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                           Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5009)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    int get_accHelpTopic([MarshalAs(UnmanagedType.BStr)] out string pszHelpFile, [MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5009), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int get_accHelpTopic([MarshalAs(unmanagedType: UnmanagedType.BStr)]
+                             out string pszHelpFile, [MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                             Variant varChild);
 
-    [DispId(-5010)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accKeyboardShortcut([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [DispId(dispId: -5010), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accKeyboardShortcut([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                                       Variant varChild);
 
-    [DispId(-5011)]
-    Variant accFocus { [TypeLibFunc(TypeLibFuncFlags.FHidden), DispId(-5011), MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Struct)] get; }
+        [DispId(dispId: -5011)]
+        Variant accFocus {
+            [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5011), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+            get;
+        }
 
-    [DispId(-5012)]
-    Variant accSelection { [TypeLibFunc(TypeLibFuncFlags.FHidden), DispId(-5012), MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Struct)] get; }
+        [DispId(dispId: -5012)]
+        Variant accSelection {
+            [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5012), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+            get;
+        }
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5013)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.BStr)]
-    string get_accDefaultAction([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5013), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        string get_accDefaultAction([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                                    Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5014)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void accSelect([In] int flagsSelect, [MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5014), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void accSelect([In] int flagsSelect, [MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                       Variant varChild);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5015)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void accLocation(
-      out int pxLeft,
-      out int pyTop,
-      out int pcxWidth,
-      out int pcyHeight,
-      [MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5015), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void accLocation(
+            out int pxLeft,
+            out int pyTop,
+            out int pcxWidth,
+            out int pcyHeight,
+            [MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+            Variant varChild);
 
-    [DispId(-5016)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    Variant accNavigate([In] int navDir, [MarshalAs(UnmanagedType.Struct), In, Optional] Variant varStart);
+        [DispId(dispId: -5016), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        Variant accNavigate([In] int navDir, [MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                            Variant varStart);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5017)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    Variant accHitTest([In] int xLeft, [In] int yTop);
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5017), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        Variant accHitTest([In] int xLeft, [In] int yTop);
 
-    [DispId(-5018)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void accDoDefaultAction([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild);
+        [DispId(dispId: -5018), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void accDoDefaultAction([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                                Variant varChild);
 
-    [DispId(-5003)]
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void set_accName([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild, [MarshalAs(UnmanagedType.BStr), In] string pszName);
+        [DispId(dispId: -5003), TypeLibFunc(flags: TypeLibFuncFlags.FHidden), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void set_accName([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                         Variant varChild, [MarshalAs(unmanagedType: UnmanagedType.BStr), In]
+                         string pszName);
 
-    [TypeLibFunc(TypeLibFuncFlags.FHidden)]
-    [DispId(-5004)]
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void set_accValue([MarshalAs(UnmanagedType.Struct), In, Optional] Variant varChild, [MarshalAs(UnmanagedType.BStr), In] string pszValue);
-  }
+        [TypeLibFunc(flags: TypeLibFuncFlags.FHidden), DispId(dispId: -5004), MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void set_accValue([MarshalAs(unmanagedType: UnmanagedType.Struct), In, Optional]
+                          Variant varChild, [MarshalAs(unmanagedType: UnmanagedType.BStr), In]
+                          string pszValue);
+    }
 }

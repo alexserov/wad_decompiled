@@ -4,28 +4,33 @@
 // MVID: 04F1F240-3A91-44F5-8C6F-E562756B4D74
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaBroker.dll
 
-using MitaBroker.WebDriver.Actions.Enums;
 using System;
+using MitaBroker.WebDriver.Actions.Enums;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal class PointerInputSource : InputSource
-  {
-    public PointerType PointerType { get; private set; }
+namespace MitaBroker.WebDriver.Actions {
+    internal class PointerInputSource : InputSource {
+        public PointerInputSource(string id, PointerType pointerType) {
+            Id = id;
+            Type = InputSourceType.Pointer;
+            PointerType = pointerType;
+        }
 
-    public PointerInputSource(string id, PointerType pointerType)
-    {
-      this.Id = id;
-      this.Type = InputSourceType.Pointer;
-      this.PointerType = pointerType;
+        public PointerType PointerType { get; }
+
+        public void PointerDown() {
+            throw new NotImplementedException(message: "PointerInputSource PointerDown is not implemented");
+        }
+
+        public void PointerUp() {
+            throw new NotImplementedException(message: "PointerInputSource PointerUp is not implemented");
+        }
+
+        public void PointerMove() {
+            throw new NotImplementedException(message: "PointerInputSource PointerMove is not implemented");
+        }
+
+        public void PointerCancel() {
+            throw new NotImplementedException(message: "PointerInputSource PointerCancel is not implemented");
+        }
     }
-
-    public void PointerDown() => throw new NotImplementedException("PointerInputSource PointerDown is not implemented");
-
-    public void PointerUp() => throw new NotImplementedException("PointerInputSource PointerUp is not implemented");
-
-    public void PointerMove() => throw new NotImplementedException("PointerInputSource PointerMove is not implemented");
-
-    public void PointerCancel() => throw new NotImplementedException("PointerInputSource PointerCancel is not implemented");
-  }
 }

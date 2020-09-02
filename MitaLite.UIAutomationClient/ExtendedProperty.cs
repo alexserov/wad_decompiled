@@ -6,14 +6,13 @@
 
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [StructLayout(LayoutKind.Sequential, Pack = 4)]
-  public struct ExtendedProperty
-  {
-    [MarshalAs(UnmanagedType.BStr)]
-    public string PropertyName;
-    [MarshalAs(UnmanagedType.BStr)]
-    public string PropertyValue;
-  }
+namespace UIAutomationClient {
+    [StructLayout(layoutKind: LayoutKind.Sequential, Pack = 4)]
+    public struct ExtendedProperty {
+        [MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        public string PropertyName;
+
+        [MarshalAs(unmanagedType: UnmanagedType.BStr)]
+        public string PropertyValue;
+    }
 }

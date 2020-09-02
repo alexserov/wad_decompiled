@@ -4,50 +4,40 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public abstract class Waiter : IDisposable
-  {
-    internal string _debug_identity = Log.CreateUniqueObjectId(nameof (Waiter));
-    private static TimeSpan _defaultTimeout = TimeSpan.FromSeconds(10.0);
-    private Exception _innerException;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public abstract class Waiter : IDisposable {
+        static TimeSpan _defaultTimeout = TimeSpan.FromSeconds(value: 10.0);
+        internal string _debug_identity = Log.CreateUniqueObjectId(baseName: nameof(Waiter));
 
-    public virtual void Wait() => this.Wait(Waiter.DefaultTimeout);
+        public static TimeSpan DefaultTimeout {
+            get { return _defaultTimeout; }
+            set { _defaultTimeout = value; }
+        }
 
-    public void Wait(int timeout) => this.Wait(TimeSpan.FromMilliseconds((double) timeout));
+        public virtual Exception InnerException { get; set; }
 
-    public void Wait(TimeSpan timeout)
-    {
-      this.InnerException = (Exception) null;
-      if (!this.TryWait(timeout))
-        throw new WaiterTimedOutException(StringResource.Get("WaiterTimedOut_1", (object) this.ToString()), this.InnerException);
+        public abstract void Dispose();
+
+        public virtual void Wait() => Wait(timeout: DefaultTimeout);
+
+        public void Wait(int timeout) => Wait(timeout: TimeSpan.FromMilliseconds(value: timeout));
+
+        public void Wait(TimeSpan timeout) {
+            InnerException = null;
+            if (!TryWait(timeout: timeout))
+                throw new WaiterTimedOutException(message: StringResource.Get(id: "WaiterTimedOut_1", (object) ToString()), innerException: InnerException);
+        }
+
+        public virtual bool TryWait() => TryWait(timeout: DefaultTimeout);
+
+        public bool TryWait(int timeout) => TryWait(timeout: TimeSpan.FromMilliseconds(value: timeout));
+
+        public abstract bool TryWait(TimeSpan timeout);
+
+        public virtual void Reset() {
+        }
     }
-
-    public virtual bool TryWait() => this.TryWait(Waiter.DefaultTimeout);
-
-    public bool TryWait(int timeout) => this.TryWait(TimeSpan.FromMilliseconds((double) timeout));
-
-    public abstract bool TryWait(TimeSpan timeout);
-
-    public virtual void Reset()
-    {
-    }
-
-    public static TimeSpan DefaultTimeout
-    {
-      get => Waiter._defaultTimeout;
-      set => Waiter._defaultTimeout = value;
-    }
-
-    public virtual Exception InnerException
-    {
-      get => this._innerException;
-      set => this._innerException = value;
-    }
-
-    public abstract void Dispose();
-  }
 }

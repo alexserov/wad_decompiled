@@ -6,35 +6,28 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class TreeItem : TreeItem<Tree, TreeItem>
-  {
-    private static IFactory<TreeItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class TreeItem : TreeItem<Tree, TreeItem> {
+        static IFactory<TreeItem> _factory;
 
-    public TreeItem(UIObject uiObject)
-      : base(uiObject, Tree.Factory, TreeItem.Factory)
-    {
-    }
+        public TreeItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: Tree.Factory, itemFactory: Factory) {
+        }
 
-    internal TreeItem(AutomationElement element)
-      : base(element, Tree.Factory, TreeItem.Factory)
-    {
-    }
+        internal TreeItem(AutomationElement element)
+            : base(element: element, containerFactory: Tree.Factory, itemFactory: Factory) {
+        }
 
-    public static IFactory<TreeItem> Factory
-    {
-      get
-      {
-        if (TreeItem._factory == null)
-          TreeItem._factory = (IFactory<TreeItem>) new TreeItem.TreeItemFactory();
-        return TreeItem._factory;
-      }
-    }
+        public static IFactory<TreeItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new TreeItemFactory();
+                return _factory;
+            }
+        }
 
-    private class TreeItemFactory : IFactory<TreeItem>
-    {
-      public TreeItem Create(UIObject element) => new TreeItem(element);
+        class TreeItemFactory : IFactory<TreeItem> {
+            public TreeItem Create(UIObject element) => new TreeItem(uiObject: element);
+        }
     }
-  }
 }

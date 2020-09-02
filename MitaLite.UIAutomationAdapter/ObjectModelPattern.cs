@@ -6,23 +6,26 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ObjectModelPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<ObjectModelPattern, IUIAutomationObjectModelPattern>(10022, "ObjectModelPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationObjectModelPattern, ObjectModelPattern>(ObjectModelPattern.Wrap));
-    private readonly IUIAutomationObjectModelPattern _objectModelPattern;
+namespace System.Windows.Automation {
+    public class ObjectModelPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<ObjectModelPattern, IUIAutomationObjectModelPattern>(id: 10022, programmaticName: "ObjectModelPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationObjectModelPattern _objectModelPattern;
 
-    private ObjectModelPattern(
-      AutomationElement element,
-      IUIAutomationObjectModelPattern objectModelPattern)
-      : base(element)
-      => this._objectModelPattern = objectModelPattern;
+        ObjectModelPattern(
+            AutomationElement element,
+            IUIAutomationObjectModelPattern objectModelPattern)
+            : base(el: element) {
+            this._objectModelPattern = objectModelPattern;
+        }
 
-    internal static ObjectModelPattern Wrap(
-      AutomationElement element,
-      IUIAutomationObjectModelPattern objectModelPattern) => new ObjectModelPattern(element, objectModelPattern);
+        internal static ObjectModelPattern Wrap(
+            AutomationElement element,
+            IUIAutomationObjectModelPattern objectModelPattern) {
+            return new ObjectModelPattern(element: element, objectModelPattern: objectModelPattern);
+        }
 
-    public object GetUnderlyingObjectModel() => this._objectModelPattern.GetUnderlyingObjectModel();
-  }
+        public object GetUnderlyingObjectModel() {
+            return this._objectModelPattern.GetUnderlyingObjectModel();
+        }
+    }
 }

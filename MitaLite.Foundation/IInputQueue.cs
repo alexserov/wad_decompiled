@@ -6,10 +6,8 @@
 
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal interface IInputQueue
-  {
-    void Process(IInputDevice inputDevice, IList<IInputAction> inputList);
-  }
+namespace MS.Internal.Mita.Foundation {
+    internal interface IInputQueue {
+        void Process(IInputDevice inputDevice, IList<IInputAction> inputList);
+    }
 }

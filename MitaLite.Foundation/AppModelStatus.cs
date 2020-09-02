@@ -6,23 +6,17 @@
 
 using Windows.ApplicationModel;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class AppModelStatus
-  {
-    public static bool IsInAppContainer = AppModelStatus.IsCurrentProcessInAppContainer();
+namespace MS.Internal.Mita.Foundation {
+    public static class AppModelStatus {
+        public static bool IsInAppContainer = IsCurrentProcessInAppContainer();
 
-    private static bool IsCurrentProcessInAppContainer()
-    {
-      try
-      {
-        var curr = Package.Current;
-        return true;
-      }
-      catch
-      {
-        return false;
-      }
+        static bool IsCurrentProcessInAppContainer() {
+            try {
+                var curr = Package.Current;
+                return true;
+            } catch {
+                return false;
+            }
+        }
     }
-  }
 }

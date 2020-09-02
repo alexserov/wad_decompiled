@@ -4,55 +4,53 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class StructureChangedEventSource : EventSource
-  {
-    private UIObject _root;
-    private Scope _scope;
-    private WeakReference _sinkReference;
-    private StructureChangedEventHandler _handlingDelegate;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class StructureChangedEventSource : EventSource {
+        StructureChangedEventHandler _handlingDelegate;
+        readonly UIObject _root;
+        readonly Scope _scope;
+        WeakReference _sinkReference;
 
-    public StructureChangedEventSource(UIObject root, Scope scope)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) root, nameof (root));
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) scope, nameof (scope));
-      this._root = Cache.PopulateDefaultCache(root);
-      this._scope = scope;
+        public StructureChangedEventSource(UIObject root, Scope scope) {
+            Validate.ArgumentNotNull(parameter: root, parameterName: nameof(root));
+            Validate.ArgumentNotNull(parameter: scope, parameterName: nameof(scope));
+            this._root = Cache.PopulateDefaultCache(uiObject: root);
+            this._scope = scope;
+        }
+
+        public override bool IsStarted {
+            get { return this._handlingDelegate != null; }
+        }
+
+        protected override void Dispose(bool disposing) {
+            base.Dispose(disposing: disposing);
+        }
+
+        public override void Start(IEventSink sink) {
+            Validate.ArgumentNotNull(parameter: sink, parameterName: nameof(sink));
+            Stop();
+            this._sinkReference = new WeakReference(target: sink);
+            this._handlingDelegate = Handler;
+            Automation.AddStructureChangedEventHandler(element: this._root.AutomationElement, scope: (TreeScope) this._scope, eventHandler: this._handlingDelegate);
+        }
+
+        public override void Stop() {
+            if (!IsStarted)
+                return;
+            Automation.RemoveStructureChangedEventHandler(element: this._root.AutomationElement, eventHandler: this._handlingDelegate);
+            this._handlingDelegate = null;
+            this._sinkReference = null;
+        }
+
+        void Handler(object sender, EventArgs e) {
+            Log.Out(msg: "{0} saw event {1}", (object) ToString(), e != null ? (object) e.ToString() : (object) "null");
+            if (this._sinkReference == null || !(this._sinkReference.Target is IEventSink target))
+                return;
+            target.SinkEvent(eventArgs: new WaiterEventArgs(sender: sender, eventArgs: e));
+        }
     }
-
-    protected override void Dispose(bool disposing) => base.Dispose(disposing);
-
-    public override void Start(IEventSink sink)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) sink, nameof (sink));
-      this.Stop();
-      this._sinkReference = new WeakReference((object) sink);
-      this._handlingDelegate = new StructureChangedEventHandler(this.Handler);
-      System.Windows.Automation.Automation.AddStructureChangedEventHandler(this._root.AutomationElement, (TreeScope) this._scope, this._handlingDelegate);
-    }
-
-    public override void Stop()
-    {
-      if (!this.IsStarted)
-        return;
-      System.Windows.Automation.Automation.RemoveStructureChangedEventHandler(this._root.AutomationElement, this._handlingDelegate);
-      this._handlingDelegate = (StructureChangedEventHandler) null;
-      this._sinkReference = (WeakReference) null;
-    }
-
-    public override bool IsStarted => this._handlingDelegate != null;
-
-    private void Handler(object sender, EventArgs e)
-    {
-      Log.Out("{0} saw event {1}", (object) this.ToString(), e != null ? (object) e.ToString() : (object) "null");
-      if (this._sinkReference == null || !(this._sinkReference.Target is IEventSink target))
-        return;
-      target.SinkEvent(new WaiterEventArgs(sender, e));
-    }
-  }
 }

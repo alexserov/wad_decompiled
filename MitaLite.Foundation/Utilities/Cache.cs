@@ -6,12 +6,14 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal static class Cache
-  {
-    internal static UIObject PopulateDefaultCache(UIObject uiObject) => Cache.BuildUpdatedCache(uiObject, new CacheRequest());
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal static class Cache {
+        internal static UIObject PopulateDefaultCache(UIObject uiObject) {
+            return BuildUpdatedCache(uiObject: uiObject, cacheRequest: new CacheRequest());
+        }
 
-    internal static UIObject BuildUpdatedCache(UIObject uiObject, CacheRequest cacheRequest) => new UIObject(uiObject.AutomationElement.GetUpdatedCache(cacheRequest));
-  }
+        internal static UIObject BuildUpdatedCache(UIObject uiObject, CacheRequest cacheRequest) {
+            return new UIObject(element: uiObject.AutomationElement.GetUpdatedCache(request: cacheRequest));
+        }
+    }
 }

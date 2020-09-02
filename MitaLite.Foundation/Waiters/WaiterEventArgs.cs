@@ -7,24 +7,18 @@
 using System;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Waiters
-{
-  public class WaiterEventArgs : EventArgs
-  {
-    private UIObject _sender;
-    private EventArgs _eventArgs;
+namespace MS.Internal.Mita.Foundation.Waiters {
+    public class WaiterEventArgs : EventArgs {
+        internal WaiterEventArgs(object sender, EventArgs eventArgs) {
+            EventArgs = eventArgs;
+            var element = sender as AutomationElement;
+            if (!(element != null))
+                return;
+            Sender = new UIObject(element: element);
+        }
 
-    internal WaiterEventArgs(object sender, EventArgs eventArgs)
-    {
-      this._eventArgs = eventArgs;
-      AutomationElement element = sender as AutomationElement;
-      if (!(element != (AutomationElement) null))
-        return;
-      this._sender = new UIObject(element);
+        public UIObject Sender { get; }
+
+        public EventArgs EventArgs { get; }
     }
-
-    public UIObject Sender => this._sender;
-
-    public EventArgs EventArgs => this._eventArgs;
-  }
 }

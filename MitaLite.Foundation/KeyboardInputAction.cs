@@ -4,14 +4,12 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class KeyboardInputAction : IInputAction
-  {
-    public RIMNativeMethods.KeyboardInput keyboardInput;
+namespace MS.Internal.Mita.Foundation {
+    internal class KeyboardInputAction : IInputAction {
+        public RIMNativeMethods.KeyboardInput keyboardInput;
 
-    public void Execute(IInputDevice inputDevice, int elapsedMs) => inputDevice.InjectKeyboardInput(this.keyboardInput);
+        public void Execute(IInputDevice inputDevice, int elapsedMs) => inputDevice.InjectKeyboardInput(keyboardInput: this.keyboardInput);
 
-    public InputActionType GetActionType() => InputActionType.KeyboardInputAction;
-  }
+        public InputActionType GetActionType() => InputActionType.KeyboardInputAction;
+    }
 }

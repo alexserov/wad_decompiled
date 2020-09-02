@@ -6,20 +6,16 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal static class Validate
-  {
-    public static void ArgumentNotNull(object parameter, string parameterName)
-    {
-      if (parameter == null)
-        throw new ArgumentNullException(parameterName, StringResource.Get("ParameterCannotBeNULL"));
-    }
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal static class Validate {
+        public static void ArgumentNotNull(object parameter, string parameterName) {
+            if (parameter == null)
+                throw new ArgumentNullException(paramName: parameterName, message: StringResource.Get(id: "ParameterCannotBeNULL"));
+        }
 
-    public static void StringNeitherNullNorEmpty(string parameter, string parameterName)
-    {
-      if (string.IsNullOrEmpty(parameter))
-        throw new ArgumentException(StringResource.Get("StringParameterCannotBeNULLOrEmpty"), parameterName);
+        public static void StringNeitherNullNorEmpty(string parameter, string parameterName) {
+            if (string.IsNullOrEmpty(value: parameter))
+                throw new ArgumentException(message: StringResource.Get(id: "StringParameterCannotBeNULLOrEmpty"), paramName: parameterName);
+        }
     }
-  }
 }

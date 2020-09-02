@@ -8,21 +8,20 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("85B94ECD-849D-42B6-B94D-D6DB23FDF5A4")]
-  [ComImport]
-  public interface IUIAutomationProxyFactory
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    IRawElementProviderSimple CreateProvider(
-      [In] IntPtr hwnd,
-      [In] int idObject,
-      [In] int idChild);
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "85B94ECD-849D-42B6-B94D-D6DB23FDF5A4"), ComImport]
+    public interface IUIAutomationProxyFactory {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        IRawElementProviderSimple CreateProvider(
+            [In] IntPtr hwnd,
+            [In] int idObject,
+            [In] int idChild);
 
-    [DispId(1610678273)]
-    string ProxyFactoryId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-  }
+        [DispId(dispId: 1610678273)]
+        string ProxyFactoryId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+    }
 }

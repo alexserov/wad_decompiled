@@ -9,190 +9,167 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 
-namespace MS.Internal.Mita.Localization
-{
-  public static class TaggedTextHelpers
-  {
-    private const string _rKeyPrefix = "°<ªKey>";
-    private const string _fixedPrefix = "°<ªFix>";
-    private const string _localizablePrefix = "°<ªLoc>";
-    private static readonly int _prefixLength = "°<ªKey>".Length;
-    private const char _hotkeyCharacter = '&';
-    private const string _tagStartElement = "info";
-    private const string _tagContextAttribute = "context";
-    private const string _tagNativeAttribute = "native";
-    private const string _tagProcessIDAttribute = "proc_id";
-    private const string _tagCultureAttribute = "cultureName";
-    private const string _tagProxyNameAttribute = "proxy";
+namespace MS.Internal.Mita.Localization {
+    public static class TaggedTextHelpers {
+        const string _rKeyPrefix = "°<ªKey>";
+        const string _fixedPrefix = "°<ªFix>";
+        const string _localizablePrefix = "°<ªLoc>";
+        const char _hotkeyCharacter = '&';
+        const string _tagStartElement = "info";
+        const string _tagContextAttribute = "context";
+        const string _tagNativeAttribute = "native";
+        const string _tagProcessIDAttribute = "proc_id";
+        const string _tagCultureAttribute = "cultureName";
+        const string _tagProxyNameAttribute = "proxy";
+        static readonly int _prefixLength = "°<ªKey>".Length;
 
-    public static string RemoveHotkeyModifier(string original)
-    {
-      Validate.ArgumentNotNull((object) original, nameof (original));
-      int num = original.Length - 1;
-      for (int index = 0; index < num; ++index)
-      {
-        if ('&' == original[index])
-        {
-          original = original.Remove(index, 1);
-          --num;
-        }
-      }
-      return original;
-    }
+        public static string RemoveHotkeyModifier(string original) {
+            Validate.ArgumentNotNull(parameter: original, parameterName: nameof(original));
+            var num = original.Length - 1;
+            for (var index = 0; index < num; ++index)
+                if ('&' == original[index: index]) {
+                    original = original.Remove(startIndex: index, count: 1);
+                    --num;
+                }
 
-    public static bool ExtractHotkey(string original, out char hotkey)
-    {
-      Validate.ArgumentNotNull((object) original, nameof (original));
-      bool flag = false;
-      hotkey = char.MinValue;
-      for (int index = 0; index < original.Length - 1; ++index)
-      {
-        if (original[index] == '&')
-        {
-          if (original[index + 1] == '&')
-          {
-            ++index;
-          }
-          else
-          {
-            hotkey = original[index + 1];
-            flag = true;
-            break;
-          }
+            return original;
         }
-      }
-      return flag;
-    }
 
-    public static string CreateTaggedText(
-      TaggedType textType,
-      string nativeText,
-      string context,
-      int processId,
-      CultureInfo culture,
-      string proxyName)
-    {
-      Validate.ArgumentNotNull((object) culture, nameof (culture));
-      bool flag = true;
-      string str;
-      switch (textType)
-      {
-        case TaggedType.Unknown:
-          str = nativeText;
-          flag = false;
-          break;
-        case TaggedType.LocalizableText:
-          str = "°<ªLoc>";
-          break;
-        case TaggedType.ResourceKey:
-          str = "°<ªKey>";
-          break;
-        case TaggedType.FixedText:
-          str = "°<ªFix>";
-          break;
-        default:
-          throw new ArgumentException(StringResource.Get("InvalidTaggedType", (object) textType));
-      }
-      if (flag)
-      {
-        StringWriter stringWriter = new StringWriter((IFormatProvider) CultureInfo.InvariantCulture);
-        XmlWriter xmlWriter = XmlWriter.Create((TextWriter) stringWriter);
-        try
-        {
-          xmlWriter.WriteStartElement("info");
-          xmlWriter.WriteStartAttribute(nameof (context), string.Empty);
-          xmlWriter.WriteString(context);
-          xmlWriter.WriteEndAttribute();
-          xmlWriter.WriteStartAttribute("native", string.Empty);
-          xmlWriter.WriteString(nativeText);
-          xmlWriter.WriteEndAttribute();
-          xmlWriter.WriteStartAttribute("proc_id", string.Empty);
-          xmlWriter.WriteString(processId.ToString((IFormatProvider) CultureInfo.InvariantCulture));
-          xmlWriter.WriteEndAttribute();
-          xmlWriter.WriteStartAttribute("cultureName", string.Empty);
-          xmlWriter.WriteString(culture.DisplayName);
-          xmlWriter.WriteEndAttribute();
-          xmlWriter.WriteStartAttribute("proxy", string.Empty);
-          xmlWriter.WriteString(proxyName);
-          xmlWriter.WriteEndAttribute();
-          xmlWriter.WriteEndElement();
-        }
-        finally
-        {
-          xmlWriter.Flush();
-          xmlWriter.Dispose();
-          str += stringWriter.ToString();
-        }
-      }
-      return str;
-    }
+        public static bool ExtractHotkey(string original, out char hotkey) {
+            Validate.ArgumentNotNull(parameter: original, parameterName: nameof(original));
+            var flag = false;
+            hotkey = char.MinValue;
+            for (var index = 0; index < original.Length - 1; ++index)
+                if (original[index: index] == '&') {
+                    if (original[index: index + 1] == '&') {
+                        ++index;
+                    } else {
+                        hotkey = original[index: index + 1];
+                        flag = true;
+                        break;
+                    }
+                }
 
-    public static bool ParseTaggedText(
-      string tagged,
-      out string native,
-      out string proxyName,
-      out string context,
-      out int processId,
-      ref CultureInfo culture,
-      out TaggedType textType)
-    {
-      Validate.ArgumentNotNull((object) tagged, nameof (tagged));
-      bool flag = true;
-      string str = string.Empty;
-      string s = string.Empty;
-      if (tagged.Length > TaggedTextHelpers._prefixLength)
-      {
-        str = tagged.Substring(0, TaggedTextHelpers._prefixLength);
-        s = tagged.Substring(TaggedTextHelpers._prefixLength);
-      }
-      proxyName = string.Empty;
-      context = string.Empty;
-      processId = 0;
-      native = string.Empty;
-      culture = (CultureInfo) null;
-      if (!(str == "°<ªKey>"))
-      {
-        if (!(str == "°<ªFix>"))
-        {
-          if (str == "°<ªLoc>")
-          {
-            textType = TaggedType.LocalizableText;
-          }
-          else
-          {
-            textType = TaggedType.Unknown;
-            native = tagged;
-            flag = false;
-          }
+            return flag;
         }
-        else
-          textType = TaggedType.FixedText;
-      }
-      else
-        textType = TaggedType.ResourceKey;
-      if (flag)
-      {
-        XmlReader xmlReader = XmlReader.Create((TextReader) new StringReader(s));
-        try
-        {
-          int content = (int) xmlReader.MoveToContent();
-          if (xmlReader.MoveToAttribute(nameof (context)))
-            context = xmlReader.Value;
-          if (xmlReader.MoveToAttribute("proc_id"))
-            processId = XmlConvert.ToInt32(xmlReader.Value);
-          if (xmlReader.MoveToAttribute("proxy"))
-            proxyName = xmlReader.Value;
-          if (xmlReader.MoveToAttribute("cultureName"))
-            culture = new CultureInfo(xmlReader.Value);
-          if (xmlReader.MoveToAttribute(nameof (native)))
-            native = xmlReader.Value;
+
+        public static string CreateTaggedText(
+            TaggedType textType,
+            string nativeText,
+            string context,
+            int processId,
+            CultureInfo culture,
+            string proxyName) {
+            Validate.ArgumentNotNull(parameter: culture, parameterName: nameof(culture));
+            var flag = true;
+            string str;
+            switch (textType) {
+                case TaggedType.Unknown:
+                    str = nativeText;
+                    flag = false;
+                    break;
+                case TaggedType.LocalizableText:
+                    str = "°<ªLoc>";
+                    break;
+                case TaggedType.ResourceKey:
+                    str = "°<ªKey>";
+                    break;
+                case TaggedType.FixedText:
+                    str = "°<ªFix>";
+                    break;
+                default:
+                    throw new ArgumentException(message: StringResource.Get(id: "InvalidTaggedType", (object) textType));
+            }
+
+            if (flag) {
+                var stringWriter = new StringWriter(formatProvider: CultureInfo.InvariantCulture);
+                var xmlWriter = XmlWriter.Create(output: stringWriter);
+                try {
+                    xmlWriter.WriteStartElement(localName: "info");
+                    xmlWriter.WriteStartAttribute(localName: nameof(context), ns: string.Empty);
+                    xmlWriter.WriteString(text: context);
+                    xmlWriter.WriteEndAttribute();
+                    xmlWriter.WriteStartAttribute(localName: "native", ns: string.Empty);
+                    xmlWriter.WriteString(text: nativeText);
+                    xmlWriter.WriteEndAttribute();
+                    xmlWriter.WriteStartAttribute(localName: "proc_id", ns: string.Empty);
+                    xmlWriter.WriteString(text: processId.ToString(provider: CultureInfo.InvariantCulture));
+                    xmlWriter.WriteEndAttribute();
+                    xmlWriter.WriteStartAttribute(localName: "cultureName", ns: string.Empty);
+                    xmlWriter.WriteString(text: culture.DisplayName);
+                    xmlWriter.WriteEndAttribute();
+                    xmlWriter.WriteStartAttribute(localName: "proxy", ns: string.Empty);
+                    xmlWriter.WriteString(text: proxyName);
+                    xmlWriter.WriteEndAttribute();
+                    xmlWriter.WriteEndElement();
+                } finally {
+                    xmlWriter.Flush();
+                    xmlWriter.Dispose();
+                    str += stringWriter.ToString();
+                }
+            }
+
+            return str;
         }
-        finally
-        {
-          xmlReader.Dispose();
+
+        public static bool ParseTaggedText(
+            string tagged,
+            out string native,
+            out string proxyName,
+            out string context,
+            out int processId,
+            ref CultureInfo culture,
+            out TaggedType textType) {
+            Validate.ArgumentNotNull(parameter: tagged, parameterName: nameof(tagged));
+            var flag = true;
+            var str = string.Empty;
+            var s = string.Empty;
+            if (tagged.Length > _prefixLength) {
+                str = tagged.Substring(startIndex: 0, length: _prefixLength);
+                s = tagged.Substring(startIndex: _prefixLength);
+            }
+
+            proxyName = string.Empty;
+            context = string.Empty;
+            processId = 0;
+            native = string.Empty;
+            culture = null;
+            if (!(str == "°<ªKey>")) {
+                if (!(str == "°<ªFix>")) {
+                    if (str == "°<ªLoc>") {
+                        textType = TaggedType.LocalizableText;
+                    } else {
+                        textType = TaggedType.Unknown;
+                        native = tagged;
+                        flag = false;
+                    }
+                } else {
+                    textType = TaggedType.FixedText;
+                }
+            } else {
+                textType = TaggedType.ResourceKey;
+            }
+
+            if (flag) {
+                var xmlReader = XmlReader.Create(input: new StringReader(s: s));
+                try {
+                    var content = (int) xmlReader.MoveToContent();
+                    if (xmlReader.MoveToAttribute(name: nameof(context)))
+                        context = xmlReader.Value;
+                    if (xmlReader.MoveToAttribute(name: "proc_id"))
+                        processId = XmlConvert.ToInt32(s: xmlReader.Value);
+                    if (xmlReader.MoveToAttribute(name: "proxy"))
+                        proxyName = xmlReader.Value;
+                    if (xmlReader.MoveToAttribute(name: "cultureName"))
+                        culture = new CultureInfo(name: xmlReader.Value);
+                    if (xmlReader.MoveToAttribute(name: nameof(native)))
+                        native = xmlReader.Value;
+                } finally {
+                    xmlReader.Dispose();
+                }
+            }
+
+            return true;
         }
-      }
-      return true;
     }
-  }
 }

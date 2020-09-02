@@ -6,107 +6,91 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public sealed class TreeWalker
-  {
-    public static readonly TreeWalker RawViewWalker = new TreeWalker(System.Windows.Automation.Automation.RawViewCondition);
-    public static readonly TreeWalker ControlViewWalker = new TreeWalker(System.Windows.Automation.Automation.ControlViewCondition);
-    public static readonly TreeWalker ContentViewWalker = new TreeWalker(System.Windows.Automation.Automation.ContentViewCondition);
-    private Condition _condition;
-    private IUIAutomationTreeWalker _treewalker;
+namespace System.Windows.Automation {
+    public sealed class TreeWalker {
+        public static readonly TreeWalker RawViewWalker = new TreeWalker(condition: Automation.RawViewCondition);
+        public static readonly TreeWalker ControlViewWalker = new TreeWalker(condition: Automation.ControlViewCondition);
+        public static readonly TreeWalker ContentViewWalker = new TreeWalker(condition: Automation.ContentViewCondition);
+        readonly IUIAutomationTreeWalker _treewalker;
 
-    public TreeWalker(Condition condition)
-    {
-      Validate.ArgumentNotNull((object) condition, nameof (condition));
-      this._condition = condition;
-      this._treewalker = System.Windows.Automation.Automation.AutomationClass.CreateTreeWalker(condition.IUIAutomationCondition);
+        public TreeWalker(Condition condition) {
+            Validate.ArgumentNotNull(parameter: condition, parameterName: nameof(condition));
+            Condition = condition;
+            this._treewalker = Automation.AutomationClass.CreateTreeWalker(pCondition: condition.IUIAutomationCondition);
+        }
+
+        public Condition Condition { get; }
+
+        public AutomationElement GetParent(AutomationElement element) {
+            var elementBuildCache = this._treewalker.GetParentElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetFirstChild(AutomationElement element) {
+            var elementBuildCache = this._treewalker.GetFirstChildElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetLastChild(AutomationElement element) {
+            var elementBuildCache = this._treewalker.GetLastChildElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetNextSibling(AutomationElement element) {
+            var elementBuildCache = this._treewalker.GetNextSiblingElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetPreviousSibling(AutomationElement element) {
+            var elementBuildCache = this._treewalker.GetPreviousSiblingElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement Normalize(AutomationElement element) {
+            var autoElement = this._treewalker.NormalizeElementBuildCache(element: element.IUIAutomationElement, cacheRequest: AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
+            return autoElement != null ? new AutomationElement(autoElement: autoElement) : null;
+        }
+
+        public AutomationElement GetParent(
+            AutomationElement element,
+            CacheRequest request) {
+            var elementBuildCache = this._treewalker.GetParentElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetFirstChild(
+            AutomationElement element,
+            CacheRequest request) {
+            var elementBuildCache = this._treewalker.GetFirstChildElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetLastChild(
+            AutomationElement element,
+            CacheRequest request) {
+            var elementBuildCache = this._treewalker.GetLastChildElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetNextSibling(
+            AutomationElement element,
+            CacheRequest request) {
+            var elementBuildCache = this._treewalker.GetNextSiblingElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement GetPreviousSibling(
+            AutomationElement element,
+            CacheRequest request) {
+            var elementBuildCache = this._treewalker.GetPreviousSiblingElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return elementBuildCache != null ? new AutomationElement(autoElement: elementBuildCache) : null;
+        }
+
+        public AutomationElement Normalize(
+            AutomationElement element,
+            CacheRequest request) {
+            var autoElement = this._treewalker.NormalizeElementBuildCache(element: element.IUIAutomationElement, cacheRequest: request.IUIAutomationCacheRequest);
+            return autoElement != null ? new AutomationElement(autoElement: autoElement) : null;
+        }
     }
-
-    public AutomationElement GetParent(AutomationElement element)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetParentElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetFirstChild(AutomationElement element)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetFirstChildElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetLastChild(AutomationElement element)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetLastChildElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetNextSibling(AutomationElement element)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetNextSiblingElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetPreviousSibling(AutomationElement element)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetPreviousSiblingElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement Normalize(AutomationElement element)
-    {
-      IUIAutomationElement autoElement = this._treewalker.NormalizeElementBuildCache(element.IUIAutomationElement, AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest);
-      return autoElement != null ? new AutomationElement(autoElement) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetParent(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetParentElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetFirstChild(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetFirstChildElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetLastChild(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetLastChildElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetNextSibling(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetNextSiblingElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement GetPreviousSibling(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement elementBuildCache = this._treewalker.GetPreviousSiblingElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return elementBuildCache != null ? new AutomationElement(elementBuildCache) : (AutomationElement) null;
-    }
-
-    public AutomationElement Normalize(
-      AutomationElement element,
-      CacheRequest request)
-    {
-      IUIAutomationElement autoElement = this._treewalker.NormalizeElementBuildCache(element.IUIAutomationElement, request.IUIAutomationCacheRequest);
-      return autoElement != null ? new AutomationElement(autoElement) : (AutomationElement) null;
-    }
-
-    public Condition Condition => this._condition;
-  }
 }

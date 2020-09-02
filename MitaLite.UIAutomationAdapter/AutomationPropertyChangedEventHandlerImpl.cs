@@ -4,53 +4,51 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-using System.Collections.Generic;
 using System.Linq;
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  internal class AutomationPropertyChangedEventHandlerImpl : UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>, IUIAutomationPropertyChangedEventHandler
-  {
-    private IUIAutomationElement _uiAutomationElement;
-    private AutomationPropertyChangedEventHandler _handlingDelegate;
+namespace System.Windows.Automation {
+    internal class AutomationPropertyChangedEventHandlerImpl : UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>, IUIAutomationPropertyChangedEventHandler {
+        readonly AutomationPropertyChangedEventHandler _handlingDelegate;
+        readonly IUIAutomationElement _uiAutomationElement;
 
-    private AutomationPropertyChangedEventHandlerImpl(
-      IUIAutomationElement uiAutomationElement,
-      AutomationPropertyChangedEventHandler handlingDelegate)
-    {
-      this._uiAutomationElement = uiAutomationElement;
-      this._handlingDelegate = handlingDelegate;
+        AutomationPropertyChangedEventHandlerImpl(
+            IUIAutomationElement uiAutomationElement,
+            AutomationPropertyChangedEventHandler handlingDelegate) {
+            this._uiAutomationElement = uiAutomationElement;
+            this._handlingDelegate = handlingDelegate;
+        }
+
+        void IUIAutomationPropertyChangedEventHandler.HandlePropertyChangedEvent(
+            IUIAutomationElement sender,
+            int propertyId,
+            Variant newValue) {
+            AutomationElement automationElement = null;
+            if (sender != null)
+                automationElement = new AutomationElement(autoElement: sender);
+            this._handlingDelegate(sender: automationElement, e: new AutomationPropertyChangedEventArgs(property: AutomationProperty.LookupById(id: propertyId), oldValue: null, newValue: newValue));
+        }
+
+        protected override void Remove() {
+            Boundary.NoExceptions(a: () => Automation.AutomationClass.RemovePropertyChangedEventHandler(element: this._uiAutomationElement, handler: this));
+        }
+
+        internal static void Add(
+            AutomationElement element,
+            TreeScope scope,
+            AutomationPropertyChangedEventHandler handlingDelegate,
+            AutomationProperty[] properties) {
+            var e = new AutomationPropertyChangedEventHandlerImpl(uiAutomationElement: element.IUIAutomationElement, handlingDelegate: handlingDelegate);
+            var cacheRequest = AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest;
+            var propertiesArray = properties.Select(selector: p => p.Id).ToArray();
+            Boundary.UIAutomation(a: () => Automation.AutomationClass.AddPropertyChangedEventHandler(element: e._uiAutomationElement, scope: UiaConvert.Convert(treeScope: scope), cacheRequest: cacheRequest, handler: e, propertyArray: propertiesArray));
+            Add(instance: e);
+        }
+
+        internal static void Remove(
+            AutomationElement element,
+            AutomationPropertyChangedEventHandler handlingDelegate) {
+            Remove(predicate: item => 1 == Automation.AutomationClass.CompareElements(el1: item._uiAutomationElement, el2: element.IUIAutomationElement) && item._handlingDelegate == handlingDelegate);
+        }
     }
-
-    protected override void Remove() => Boundary.NoExceptions((Action) (() => System.Windows.Automation.Automation.AutomationClass.RemovePropertyChangedEventHandler(this._uiAutomationElement, (IUIAutomationPropertyChangedEventHandler) this)));
-
-    void IUIAutomationPropertyChangedEventHandler.HandlePropertyChangedEvent(
-      IUIAutomationElement sender,
-      int propertyId,
-      Variant newValue)
-    {
-      AutomationElement automationElement = (AutomationElement) null;
-      if (sender != null)
-        automationElement = new AutomationElement(sender);
-      this._handlingDelegate((object) automationElement, new AutomationPropertyChangedEventArgs(AutomationProperty.LookupById(propertyId), (object) null, (object) newValue));
-    }
-
-    internal static void Add(
-      AutomationElement element,
-      TreeScope scope,
-      AutomationPropertyChangedEventHandler handlingDelegate,
-      AutomationProperty[] properties)
-    {
-      AutomationPropertyChangedEventHandlerImpl e = new AutomationPropertyChangedEventHandlerImpl(element.IUIAutomationElement, handlingDelegate);
-      IUIAutomationCacheRequest cacheRequest = AutomationElement.DefaultCacheRequest.IUIAutomationCacheRequest;
-      int[] propertiesArray = ((IEnumerable<AutomationProperty>) properties).Select<AutomationProperty, int>((Func<AutomationProperty, int>) (p => p.Id)).ToArray<int>();
-      Boundary.UIAutomation((Action) (() => System.Windows.Automation.Automation.AutomationClass.AddPropertyChangedEventHandler(e._uiAutomationElement, UiaConvert.Convert(scope), cacheRequest, (IUIAutomationPropertyChangedEventHandler) e, propertiesArray)));
-      UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>.Add(e);
-    }
-
-    internal static void Remove(
-      AutomationElement element,
-      AutomationPropertyChangedEventHandler handlingDelegate) => UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>.Remove((Predicate<AutomationPropertyChangedEventHandlerImpl>) (item => 1 == System.Windows.Automation.Automation.AutomationClass.CompareElements(item._uiAutomationElement, element.IUIAutomationElement) && item._handlingDelegate == handlingDelegate));
-  }
 }

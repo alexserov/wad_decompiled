@@ -7,14 +7,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("6BA3D7A6-04CF-4F11-8793-A8D1CDE9969F")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationVirtualizedItemPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void Realize();
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "6BA3D7A6-04CF-4F11-8793-A8D1CDE9969F"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationVirtualizedItemPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void Realize();
+    }
 }

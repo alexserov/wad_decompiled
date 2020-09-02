@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class SelectionSpinnerItem : ListItem<SelectionSpinner>
-  {
-    private static IFactory<SelectionSpinnerItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class SelectionSpinnerItem : ListItem<SelectionSpinner> {
+        static IFactory<SelectionSpinnerItem> _factory;
 
-    public SelectionSpinnerItem(UIObject uiObject)
-      : base(uiObject, SelectionSpinner.Factory)
-    {
-    }
+        public SelectionSpinnerItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: SelectionSpinner.Factory) {
+        }
 
-    internal SelectionSpinnerItem(AutomationElement element)
-      : base(element, SelectionSpinner.Factory)
-    {
-    }
+        internal SelectionSpinnerItem(AutomationElement element)
+            : base(element: element, containerFactory: SelectionSpinner.Factory) {
+        }
 
-    public static IFactory<SelectionSpinnerItem> Factory
-    {
-      get
-      {
-        if (SelectionSpinnerItem._factory == null)
-          SelectionSpinnerItem._factory = (IFactory<SelectionSpinnerItem>) new SelectionSpinnerItem.SelectionSpinnerItemFactory();
-        return SelectionSpinnerItem._factory;
-      }
-    }
+        public static IFactory<SelectionSpinnerItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new SelectionSpinnerItemFactory();
+                return _factory;
+            }
+        }
 
-    private class SelectionSpinnerItemFactory : IFactory<SelectionSpinnerItem>
-    {
-      public SelectionSpinnerItem Create(UIObject element) => new SelectionSpinnerItem(element);
+        class SelectionSpinnerItemFactory : IFactory<SelectionSpinnerItem> {
+            public SelectionSpinnerItem Create(UIObject element) {
+                return new SelectionSpinnerItem(uiObject: element);
+            }
+        }
     }
-  }
 }

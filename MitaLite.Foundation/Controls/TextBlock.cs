@@ -4,72 +4,89 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Patterns;
 using System.Collections.Generic;
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
+using MS.Internal.Mita.Foundation.Patterns;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class TextBlock : UIObject, IText
-  {
-    private static IFactory<TextBlock> _factory;
-    private IText _textPattern;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class TextBlock : UIObject, IText {
+        static IFactory<TextBlock> _factory;
+        IText _textPattern;
 
-    public TextBlock(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public TextBlock(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    public TextBlock(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        public TextBlock(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._textPattern = (IText) new TextImplementation((UIObject) this);
+        public string DocumentText {
+            get { return this._textPattern.DocumentRange.GetText(maxLength: -1); }
+        }
 
-    public string DocumentText => this._textPattern.DocumentRange.GetText(-1);
+        public List<TextPatternRange> TextRegionsByWord {
+            get { return GetTextPatternRanges(textUnit: TextUnit.Word); }
+        }
 
-    public List<TextPatternRange> TextRegionsByWord => this.GetTextPatternRanges(TextUnit.Word);
+        public List<TextPatternRange> TextRegionsByLine {
+            get { return GetTextPatternRanges(textUnit: TextUnit.Line); }
+        }
 
-    public List<TextPatternRange> TextRegionsByLine => this.GetTextPatternRanges(TextUnit.Line);
+        public static IFactory<TextBlock> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new TextBlockFactory();
+                return _factory;
+            }
+        }
 
-    protected List<TextPatternRange> GetTextPatternRanges(TextUnit textUnit)
-    {
-      List<TextPatternRange> textPatternRangeList = new List<TextPatternRange>();
-      TextPatternRange documentRange = this._textPattern.DocumentRange;
-      documentRange.ExpandToEnclosingUnit(TextUnit.Format);
-      do
-      {
-        textPatternRangeList.Add(documentRange);
-      }
-      while (documentRange.Move(textUnit, 1) != 0);
-      return textPatternRangeList;
+        public virtual bool SupportsTextSelection {
+            get { return this._textPattern.SupportsTextSelection; }
+        }
+
+        public virtual TextPatternRange DocumentRange {
+            get { return this._textPattern.DocumentRange; }
+        }
+
+        public virtual TextPatternRange GetSelection() {
+            return this._textPattern.GetSelection();
+        }
+
+        public virtual TextPatternRange RangeFromPoint(PointI screenLocation) {
+            return this._textPattern.RangeFromPoint(screenLocation: screenLocation);
+        }
+
+        public virtual TextPatternRange RangeFromChild(UIObject childElement) {
+            return this._textPattern.RangeFromChild(childElement: childElement);
+        }
+
+        public virtual TextPatternRange GetVisibleRange() {
+            return this._textPattern.GetVisibleRange();
+        }
+
+        void Initialize() {
+            this._textPattern = new TextImplementation(uiObject: this);
+        }
+
+        protected List<TextPatternRange> GetTextPatternRanges(TextUnit textUnit) {
+            var textPatternRangeList = new List<TextPatternRange>();
+            var documentRange = this._textPattern.DocumentRange;
+            documentRange.ExpandToEnclosingUnit(unit: TextUnit.Format);
+            do {
+                textPatternRangeList.Add(item: documentRange);
+            } while (documentRange.Move(unit: textUnit, count: 1) != 0);
+
+            return textPatternRangeList;
+        }
+
+        class TextBlockFactory : IFactory<TextBlock> {
+            public TextBlock Create(UIObject element) {
+                return new TextBlock(uiObject: element);
+            }
+        }
     }
-
-    public virtual bool SupportsTextSelection => this._textPattern.SupportsTextSelection;
-
-    public virtual TextPatternRange DocumentRange => this._textPattern.DocumentRange;
-
-    public virtual TextPatternRange GetSelection() => this._textPattern.GetSelection();
-
-    public virtual TextPatternRange RangeFromPoint(PointI screenLocation) => this._textPattern.RangeFromPoint(screenLocation);
-
-    public virtual TextPatternRange RangeFromChild(UIObject childElement) => this._textPattern.RangeFromChild(childElement);
-
-    public virtual TextPatternRange GetVisibleRange() => this._textPattern.GetVisibleRange();
-
-    public static IFactory<TextBlock> Factory
-    {
-      get
-      {
-        if (TextBlock._factory == null)
-          TextBlock._factory = (IFactory<TextBlock>) new TextBlock.TextBlockFactory();
-        return TextBlock._factory;
-      }
-    }
-
-    private class TextBlockFactory : IFactory<TextBlock>
-    {
-      public TextBlock Create(UIObject element) => new TextBlock(element);
-    }
-  }
 }

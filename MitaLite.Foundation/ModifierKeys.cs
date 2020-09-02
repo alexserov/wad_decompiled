@@ -6,22 +6,20 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  [Flags]
-  public enum ModifierKeys
-  {
-    None = 0,
-    ShiftFlag = 64, // 0x00000040
-    ControlFlag = 128, // 0x00000080
-    AltFlag = 256, // 0x00000100
-    LeftShiftFlag = 1,
-    RightShiftFlag = 2,
-    LeftControlFlag = 4,
-    RightControlFlag = 8,
-    LeftAltFlag = 16, // 0x00000010
-    RightAltFlag = 32, // 0x00000020
-    LeftWindowsFlag = 1024, // 0x00000400
-    RightWindowsFlag = 2048, // 0x00000800
-  }
+namespace MS.Internal.Mita.Foundation {
+    [Flags]
+    public enum ModifierKeys {
+        None = 0,
+        ShiftFlag = 64, // 0x00000040
+        ControlFlag = 128, // 0x00000080
+        AltFlag = 256, // 0x00000100
+        LeftShiftFlag = 1,
+        RightShiftFlag = 2,
+        LeftControlFlag = 4,
+        RightControlFlag = 8,
+        LeftAltFlag = 16, // 0x00000010
+        RightAltFlag = 32, // 0x00000020
+        LeftWindowsFlag = 1024, // 0x00000400
+        RightWindowsFlag = 2048 // 0x00000800
+    }
 }

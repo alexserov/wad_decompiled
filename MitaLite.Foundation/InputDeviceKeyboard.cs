@@ -7,26 +7,22 @@
 using System.Collections.Generic;
 using Windows.UI.Input.Preview.Injection;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class InputDeviceKeyboard : InputDevice
-  {
-    public InputDeviceKeyboard()
-    {
-      this.injector = InputInjector.TryCreate();
-      if (this.injector == null)
-        throw new ActionException("Failed to initialize keyboard input injection");
-    }
+namespace MS.Internal.Mita.Foundation {
+    internal class InputDeviceKeyboard : InputDevice {
+        public InputDeviceKeyboard() {
+            this.injector = InputInjector.TryCreate();
+            if (this.injector == null)
+                throw new ActionException(message: "Failed to initialize keyboard input injection");
+        }
 
-    public override void InjectKeyboardInput(RIMNativeMethods.KeyboardInput keyboardInput)
-    {
-      InjectedInputKeyboardInfo inputKeyboardInfo = new InjectedInputKeyboardInfo();
-      inputKeyboardInfo.KeyOptions = (InjectedInputKeyOptions) (int) keyboardInput.flags;
-      inputKeyboardInfo.ScanCode = keyboardInput.scanCode;
-      inputKeyboardInfo.VirtualKey = keyboardInput.virtualKeyCode;
-      List<InjectedInputKeyboardInfo> inputKeyboardInfoList = new List<InjectedInputKeyboardInfo>();
-      inputKeyboardInfoList.Add(inputKeyboardInfo);
-      this.injector.InjectKeyboardInput((IEnumerable<InjectedInputKeyboardInfo>) inputKeyboardInfoList);
+        public override void InjectKeyboardInput(RIMNativeMethods.KeyboardInput keyboardInput) {
+            var inputKeyboardInfo = new InjectedInputKeyboardInfo();
+            inputKeyboardInfo.KeyOptions = (InjectedInputKeyOptions) (int) keyboardInput.flags;
+            inputKeyboardInfo.ScanCode = keyboardInput.scanCode;
+            inputKeyboardInfo.VirtualKey = keyboardInput.virtualKeyCode;
+            var inputKeyboardInfoList = new List<InjectedInputKeyboardInfo>();
+            inputKeyboardInfoList.Add(item: inputKeyboardInfo);
+            this.injector.InjectKeyboardInput(input: inputKeyboardInfoList);
+        }
     }
-  }
 }

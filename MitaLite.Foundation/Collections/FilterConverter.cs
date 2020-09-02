@@ -5,19 +5,19 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class FilterConverter : IFilter<AutomationElement>
-  {
-    private IFilter<UIObject> _uiObjectFilter;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class FilterConverter : IFilter<AutomationElement> {
+        readonly IFilter<UIObject> _uiObjectFilter;
 
-    public FilterConverter(IFilter<UIObject> uiObjectFilter)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) uiObjectFilter, nameof (uiObjectFilter));
-      this._uiObjectFilter = uiObjectFilter;
+        public FilterConverter(IFilter<UIObject> uiObjectFilter) {
+            Validate.ArgumentNotNull(parameter: uiObjectFilter, parameterName: nameof(uiObjectFilter));
+            this._uiObjectFilter = uiObjectFilter;
+        }
+
+        public bool Matches(AutomationElement item) {
+            return this._uiObjectFilter.Matches(item: new UIObject(element: item));
+        }
     }
-
-    public bool Matches(AutomationElement item) => this._uiObjectFilter.Matches(new UIObject(item));
-  }
 }

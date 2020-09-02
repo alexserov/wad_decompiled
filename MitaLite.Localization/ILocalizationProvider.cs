@@ -6,22 +6,20 @@
 
 using System.Globalization;
 
-namespace MS.Internal.Mita.Localization
-{
-  public interface ILocalizationProvider
-  {
-    IStringResourceData LoadExplicit(
-      string resourceKey,
-      string context,
-      int processId,
-      CultureInfo culture);
+namespace MS.Internal.Mita.Localization {
+    public interface ILocalizationProvider {
+        IStringResourceData LoadExplicit(
+            string resourceKey,
+            string context,
+            int processId,
+            CultureInfo culture);
 
-    IStringResourceData[] RetrieveSimilarStrings(
-      string nativeText,
-      string context,
-      int processId,
-      CultureInfo culture);
+        IStringResourceData[] RetrieveSimilarStrings(
+            string nativeText,
+            string context,
+            int processId,
+            CultureInfo culture);
 
-    bool FoundSimilarMatch(string nativeText, string context, long index);
-  }
+        bool FoundSimilarMatch(string nativeText, string context, long index);
+    }
 }

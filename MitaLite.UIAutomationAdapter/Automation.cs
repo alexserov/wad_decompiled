@@ -6,127 +6,136 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class Automation
-  {
-    public static readonly Condition RawViewCondition = new Condition(System.Windows.Automation.Automation.AutomationClass.RawViewCondition);
-    public static readonly Condition ControlViewCondition = new Condition(System.Windows.Automation.Automation.AutomationClass.ControlViewCondition);
-    public static readonly Condition ContentViewCondition = new Condition(System.Windows.Automation.Automation.AutomationClass.ContentViewCondition);
-    internal static IUIAutomation _automation;
+namespace System.Windows.Automation {
+    public static class Automation {
+        public static readonly Condition RawViewCondition = new Condition(condition: AutomationClass.RawViewCondition);
+        public static readonly Condition ControlViewCondition = new Condition(condition: AutomationClass.ControlViewCondition);
+        public static readonly Condition ContentViewCondition = new Condition(condition: AutomationClass.ContentViewCondition);
+        internal static IUIAutomation _automation;
 
-    public static bool Compare(AutomationElement el1, AutomationElement el2) => Convert.ToBoolean(Boundary.UIAutomation<int>((Func<int>) (() => System.Windows.Automation.Automation.AutomationClass.CompareElements(el1.IUIAutomationElement, el2.IUIAutomationElement))));
+        internal static IUIAutomation AutomationClass {
+            get {
+                if (_automation == null)
+                    _automation = new CUIAutomation8Class();
+                return _automation;
+            }
+        }
 
-    public static bool Compare(int[] runtimeId1, int[] runtimeId2) => Convert.ToBoolean(Boundary.UIAutomation<int>((Func<int>) (() => System.Windows.Automation.Automation.AutomationClass.CompareRuntimeIds(runtimeId1, runtimeId2))));
+        public static bool Compare(AutomationElement el1, AutomationElement el2) {
+            return Convert.ToBoolean(value: Boundary.UIAutomation(f: () => AutomationClass.CompareElements(el1: el1.IUIAutomationElement, el2: el2.IUIAutomationElement)));
+        }
 
-    public static string PropertyName(AutomationProperty property) => Boundary.UIAutomation<string>((Func<string>) (() => System.Windows.Automation.Automation.AutomationClass.GetPropertyProgrammaticName(property.Id)));
+        public static bool Compare(int[] runtimeId1, int[] runtimeId2) {
+            return Convert.ToBoolean(value: Boundary.UIAutomation(f: () => AutomationClass.CompareRuntimeIds(runtimeId1: runtimeId1, runtimeId2: runtimeId2)));
+        }
 
-    public static string PatternName(AutomationPattern pattern) => Boundary.UIAutomation<string>((Func<string>) (() => System.Windows.Automation.Automation.AutomationClass.GetPatternProgrammaticName(pattern.Id)));
+        public static string PropertyName(AutomationProperty property) {
+            return Boundary.UIAutomation(f: () => AutomationClass.GetPropertyProgrammaticName(property: property.Id));
+        }
 
-    public static void AddAutomationEventHandler(
-      AutomationEvent eventId,
-      AutomationElement element,
-      TreeScope scope,
-      AutomationEventHandler eventHandler) => AutomationEventHandlerImpl.Add(eventId, element, scope, eventHandler);
+        public static string PatternName(AutomationPattern pattern) {
+            return Boundary.UIAutomation(f: () => AutomationClass.GetPatternProgrammaticName(pattern: pattern.Id));
+        }
 
-    public static void RemoveAutomationEventHandler(
-      AutomationEvent eventId,
-      AutomationElement element,
-      AutomationEventHandler eventHandler) => AutomationEventHandlerImpl.Remove(eventId, element, eventHandler);
+        public static void AddAutomationEventHandler(
+            AutomationEvent eventId,
+            AutomationElement element,
+            TreeScope scope,
+            AutomationEventHandler eventHandler) {
+            AutomationEventHandlerImpl.Add(eventId: eventId, element: element, scope: scope, handlingDelegate: eventHandler);
+        }
 
-    public static void AddAutomationPropertyChangedEventHandler(
-      AutomationElement element,
-      TreeScope scope,
-      AutomationPropertyChangedEventHandler eventHandler,
-      params AutomationProperty[] properties) => AutomationPropertyChangedEventHandlerImpl.Add(element, scope, eventHandler, properties);
+        public static void RemoveAutomationEventHandler(
+            AutomationEvent eventId,
+            AutomationElement element,
+            AutomationEventHandler eventHandler) {
+            AutomationEventHandlerImpl.Remove(eventId: eventId, element: element, handlingDelegate: eventHandler);
+        }
 
-    public static void RemoveAutomationPropertyChangedEventHandler(
-      AutomationElement element,
-      AutomationPropertyChangedEventHandler eventHandler) => AutomationPropertyChangedEventHandlerImpl.Remove(element, eventHandler);
+        public static void AddAutomationPropertyChangedEventHandler(
+            AutomationElement element,
+            TreeScope scope,
+            AutomationPropertyChangedEventHandler eventHandler,
+            params AutomationProperty[] properties) {
+            AutomationPropertyChangedEventHandlerImpl.Add(element: element, scope: scope, handlingDelegate: eventHandler, properties: properties);
+        }
 
-    public static void AddStructureChangedEventHandler(
-      AutomationElement element,
-      TreeScope scope,
-      StructureChangedEventHandler eventHandler) => StructureChangedEventHandlerImpl.Add(element, scope, eventHandler);
+        public static void RemoveAutomationPropertyChangedEventHandler(
+            AutomationElement element,
+            AutomationPropertyChangedEventHandler eventHandler) {
+            AutomationPropertyChangedEventHandlerImpl.Remove(element: element, handlingDelegate: eventHandler);
+        }
 
-    public static void RemoveStructureChangedEventHandler(
-      AutomationElement element,
-      StructureChangedEventHandler eventHandler) => StructureChangedEventHandlerImpl.Remove(element, eventHandler);
+        public static void AddStructureChangedEventHandler(
+            AutomationElement element,
+            TreeScope scope,
+            StructureChangedEventHandler eventHandler) {
+            StructureChangedEventHandlerImpl.Add(element: element, scope: scope, handlingDelegate: eventHandler);
+        }
 
-    public static void AddAutomationFocusChangedEventHandler(
-      AutomationFocusChangedEventHandler eventHandler) => AutomationFocusChangedEventHandlerImpl.Add(eventHandler);
+        public static void RemoveStructureChangedEventHandler(
+            AutomationElement element,
+            StructureChangedEventHandler eventHandler) {
+            StructureChangedEventHandlerImpl.Remove(element: element, handlingDelegate: eventHandler);
+        }
 
-    public static void RemoveAutomationFocusChangedEventHandler(
-      AutomationFocusChangedEventHandler eventHandler) => AutomationFocusChangedEventHandlerImpl.Remove(eventHandler);
+        public static void AddAutomationFocusChangedEventHandler(
+            AutomationFocusChangedEventHandler eventHandler) {
+            AutomationFocusChangedEventHandlerImpl.Add(handlingDelegate: eventHandler);
+        }
 
-    public static void RemoveAllEventHandlers()
-    {
-      UIAutomationEventHandler<AutomationEventHandlerImpl>.RemoveAll();
-      UIAutomationEventHandler<StructureChangedEventHandlerImpl>.RemoveAll();
-      UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>.RemoveAll();
-      UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>.RemoveAll();
+        public static void RemoveAutomationFocusChangedEventHandler(
+            AutomationFocusChangedEventHandler eventHandler) {
+            AutomationFocusChangedEventHandlerImpl.Remove(handlingDelegate: eventHandler);
+        }
+
+        public static void RemoveAllEventHandlers() {
+            UIAutomationEventHandler<AutomationEventHandlerImpl>.RemoveAll();
+            UIAutomationEventHandler<StructureChangedEventHandlerImpl>.RemoveAll();
+            UIAutomationEventHandler<AutomationPropertyChangedEventHandlerImpl>.RemoveAll();
+            UIAutomationEventHandler<AutomationFocusChangedEventHandlerImpl>.RemoveAll();
+        }
+
+        public static bool TrySetConnectionTimeout(TimeSpan timeout) {
+            if (!(AutomationClass is IUIAutomation2 automationClass))
+                return false;
+            try {
+                automationClass.ConnectionTimeout = Convert.ToUInt32(value: timeout.TotalMilliseconds);
+                return true;
+            } catch (OverflowException ex) {
+                return false;
+            }
+        }
+
+        public static bool TryGetConnectionTimeout(out TimeSpan timeout) {
+            if (!(AutomationClass is IUIAutomation2 automationClass)) {
+                timeout = TimeSpan.Zero;
+                return false;
+            }
+
+            timeout = TimeSpan.FromMilliseconds(value: automationClass.ConnectionTimeout);
+            return true;
+        }
+
+        public static bool TrySetTransactionTimeout(TimeSpan timeout) {
+            if (!(AutomationClass is IUIAutomation2 automationClass))
+                return false;
+            try {
+                automationClass.TransactionTimeout = Convert.ToUInt32(value: timeout.TotalMilliseconds);
+                return true;
+            } catch (OverflowException ex) {
+                return false;
+            }
+        }
+
+        public static bool TryGetTransactionTimeout(out TimeSpan timeout) {
+            if (!(AutomationClass is IUIAutomation2 automationClass)) {
+                timeout = TimeSpan.Zero;
+                return false;
+            }
+
+            timeout = TimeSpan.FromMilliseconds(value: automationClass.TransactionTimeout);
+            return true;
+        }
     }
-
-    public static bool TrySetConnectionTimeout(TimeSpan timeout)
-    {
-      if (!(System.Windows.Automation.Automation.AutomationClass is IUIAutomation2 automationClass))
-        return false;
-      try
-      {
-        automationClass.ConnectionTimeout = Convert.ToUInt32(timeout.TotalMilliseconds);
-        return true;
-      }
-      catch (OverflowException ex)
-      {
-        return false;
-      }
-    }
-
-    public static bool TryGetConnectionTimeout(out TimeSpan timeout)
-    {
-      if (!(System.Windows.Automation.Automation.AutomationClass is IUIAutomation2 automationClass))
-      {
-        timeout = TimeSpan.Zero;
-        return false;
-      }
-      timeout = TimeSpan.FromMilliseconds((double) automationClass.ConnectionTimeout);
-      return true;
-    }
-
-    public static bool TrySetTransactionTimeout(TimeSpan timeout)
-    {
-      if (!(System.Windows.Automation.Automation.AutomationClass is IUIAutomation2 automationClass))
-        return false;
-      try
-      {
-        automationClass.TransactionTimeout = Convert.ToUInt32(timeout.TotalMilliseconds);
-        return true;
-      }
-      catch (OverflowException ex)
-      {
-        return false;
-      }
-    }
-
-    public static bool TryGetTransactionTimeout(out TimeSpan timeout)
-    {
-      if (!(System.Windows.Automation.Automation.AutomationClass is IUIAutomation2 automationClass))
-      {
-        timeout = TimeSpan.Zero;
-        return false;
-      }
-      timeout = TimeSpan.FromMilliseconds((double) automationClass.TransactionTimeout);
-      return true;
-    }
-
-    internal static IUIAutomation AutomationClass
-    {
-      get
-      {
-        if (System.Windows.Automation.Automation._automation == null)
-          System.Windows.Automation.Automation._automation = (IUIAutomation) new CUIAutomation8Class();
-        return System.Windows.Automation.Automation._automation;
-      }
-    }
-  }
 }

@@ -4,27 +4,21 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-namespace System.Windows.Automation
-{
-  public class NoClickablePointException : Exception
-  {
-    public NoClickablePointException()
-    {
-    }
+namespace System.Windows.Automation {
+    public class NoClickablePointException : Exception {
+        public NoClickablePointException() {
+        }
 
-    public NoClickablePointException(Exception innerException)
-      : base(nameof (NoClickablePointException), innerException)
-    {
-    }
+        public NoClickablePointException(Exception innerException)
+            : base(message: nameof(NoClickablePointException), innerException: innerException) {
+        }
 
-    public NoClickablePointException(string message)
-      : base(message)
-    {
-    }
+        public NoClickablePointException(string message)
+            : base(message: message) {
+        }
 
-    public NoClickablePointException(string message, Exception innerException)
-      : base(message, innerException)
-    {
+        public NoClickablePointException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
     }
-  }
 }

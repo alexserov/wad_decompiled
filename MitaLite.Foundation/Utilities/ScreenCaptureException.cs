@@ -7,32 +7,28 @@
 using System;
 using System.Globalization;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  public class ScreenCaptureException : MitaException
-  {
-    private int _nativeErrorCode;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    public class ScreenCaptureException : MitaException {
+        public ScreenCaptureException() {
+        }
 
-    public ScreenCaptureException()
-    {
+        public ScreenCaptureException(string message)
+            : base(message: message) {
+        }
+
+        public ScreenCaptureException(string message, Exception innerException)
+            : base(message: message, innerException: innerException) {
+        }
+
+        public ScreenCaptureException(string message, int windowsError)
+            : base(message: message) {
+            Win32Error = windowsError;
+        }
+
+        public override string Message {
+            get { return string.IsNullOrEmpty(value: base.Message) ? "Error: " + Win32Error.ToString(provider: CultureInfo.InvariantCulture) : base.Message + " : " + Win32Error.ToString(provider: CultureInfo.InvariantCulture); }
+        }
+
+        public int Win32Error { get; }
     }
-
-    public ScreenCaptureException(string message)
-      : base(message)
-    {
-    }
-
-    public ScreenCaptureException(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
-
-    public ScreenCaptureException(string message, int windowsError)
-      : base(message)
-      => this._nativeErrorCode = windowsError;
-
-    public override string Message => string.IsNullOrEmpty(base.Message) ? "Error: " + this._nativeErrorCode.ToString((IFormatProvider) CultureInfo.InvariantCulture) : base.Message + " : " + this._nativeErrorCode.ToString((IFormatProvider) CultureInfo.InvariantCulture);
-
-    public int Win32Error => this._nativeErrorCode;
-  }
 }

@@ -6,14 +6,10 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("3ad86ebd-f5ef-483d-bb18-b1042a475d64")]
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [ComImport]
-  public interface IObjectModelProvider
-  {
-    [return: MarshalAs(UnmanagedType.Interface)]
-    object GetUnderlyingObjectModel();
-  }
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "3ad86ebd-f5ef-483d-bb18-b1042a475d64"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), ComImport]
+    public interface IObjectModelProvider {
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        object GetUnderlyingObjectModel();
+    }
 }

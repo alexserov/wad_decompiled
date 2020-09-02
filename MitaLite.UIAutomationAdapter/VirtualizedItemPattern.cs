@@ -6,23 +6,26 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class VirtualizedItemPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<VirtualizedItemPattern, IUIAutomationVirtualizedItemPattern>(10020, "VirtualizedItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationVirtualizedItemPattern, VirtualizedItemPattern>(VirtualizedItemPattern.Wrap));
-    private readonly IUIAutomationVirtualizedItemPattern _virtualizedItemPattern;
+namespace System.Windows.Automation {
+    public class VirtualizedItemPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<VirtualizedItemPattern, IUIAutomationVirtualizedItemPattern>(id: 10020, programmaticName: "VirtualizedItemPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationVirtualizedItemPattern _virtualizedItemPattern;
 
-    private VirtualizedItemPattern(
-      AutomationElement element,
-      IUIAutomationVirtualizedItemPattern virtualizedItemPattern)
-      : base(element)
-      => this._virtualizedItemPattern = virtualizedItemPattern;
+        VirtualizedItemPattern(
+            AutomationElement element,
+            IUIAutomationVirtualizedItemPattern virtualizedItemPattern)
+            : base(el: element) {
+            this._virtualizedItemPattern = virtualizedItemPattern;
+        }
 
-    internal static VirtualizedItemPattern Wrap(
-      AutomationElement element,
-      IUIAutomationVirtualizedItemPattern virtualizedItemPattern) => new VirtualizedItemPattern(element, virtualizedItemPattern);
+        internal static VirtualizedItemPattern Wrap(
+            AutomationElement element,
+            IUIAutomationVirtualizedItemPattern virtualizedItemPattern) {
+            return new VirtualizedItemPattern(element: element, virtualizedItemPattern: virtualizedItemPattern);
+        }
 
-    public void Realize() => this._virtualizedItemPattern.Realize();
-  }
+        public void Realize() {
+            this._virtualizedItemPattern.Realize();
+        }
+    }
 }

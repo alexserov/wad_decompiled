@@ -6,87 +6,95 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class SingleTouch : ISinglePointGestureInput, IPointerInput, IDisposable
-  {
-    private static object _classLock = new object();
-    private static SingleTouch _singletonInstance;
-    private IInputManager _inputManager = (IInputManager) new InputManager(INPUT_DEVICE_TYPE.TOUCH, (IInputDeviceFactory) new InputDeviceFactory(), (ITimeManagerFactory) new TimeManagerFactory(), (IInputAlgorithms) new InputAlgorithms());
-    private PointI _location;
-    private readonly uint DefaultContactId;
-    private bool _disposed;
+namespace MS.Internal.Mita.Foundation {
+    internal class SingleTouch : ISinglePointGestureInput, IPointerInput, IDisposable {
+        static readonly object _classLock = new object();
+        static SingleTouch _singletonInstance;
+        readonly uint DefaultContactId;
+        bool _disposed;
+        IInputManager _inputManager = new InputManager(inputType: INPUT_DEVICE_TYPE.TOUCH, inputFactory: new InputDeviceFactory(), timeFactory: new TimeManagerFactory(), inputAlgorithms: new InputAlgorithms());
 
-    protected SingleTouch()
-    {
-    }
-
-    ~SingleTouch() => this.Dispose(false);
-
-    public static SingleTouch Instance
-    {
-      get
-      {
-        if (SingleTouch._singletonInstance == null)
-        {
-          lock (SingleTouch._classLock)
-          {
-            if (SingleTouch._singletonInstance == null)
-              SingleTouch._singletonInstance = new SingleTouch();
-          }
+        protected SingleTouch() {
         }
-        return SingleTouch._singletonInstance;
-      }
+
+        public static SingleTouch Instance {
+            get {
+                if (_singletonInstance == null)
+                    lock (_classLock) {
+                        if (_singletonInstance == null)
+                            _singletonInstance = new SingleTouch();
+                    }
+
+                return _singletonInstance;
+            }
+        }
+
+        public void Dispose() {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(obj: this);
+        }
+
+        public void Flick(PointI endPoint, uint holdDuration, float acceleration) {
+            this._inputManager.InjectPressAndDragWithAcceleration(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), holdDuration: holdDuration, acceleration: acceleration, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void Pan(PointI endPoint, uint holdDuration, float acceleration) {
+            this._inputManager.InjectPressAndDragWithAcceleration(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), holdDuration: holdDuration, acceleration: acceleration, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void PressAndDrag(PointI endPoint, uint dragDuration) {
+            this._inputManager.InjectPressAndDrag(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), dragDuration: dragDuration, holdDuration: InputManager.DefaultPressDuration, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void PressAndDrag(PointI endPoint, uint dragDuration, uint pressDuration) {
+            this._inputManager.InjectPressAndDrag(start: Location, end: Input.AdjustPointerMoveInput(originalPoint: endPoint), dragDuration: dragDuration, holdDuration: pressDuration, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void PressAndHold(uint holdDuration) {
+            this._inputManager.InjectPress(point: Location, holdDuration: holdDuration, tapCount: 1U, tapDelta: InputManager.DefaultTapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void Click(PointerButtons button, int count) {
+            this._inputManager.InjectPress(point: Location, holdDuration: InputManager.DefaultPressDuration, tapCount: (uint) count, tapDelta: InputManager.DefaultTapDelta, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration) {
+            PressAndDrag(endPoint: endPoint, dragDuration: dragDuration);
+        }
+
+        public void Move(PointI point) {
+            var location = Location;
+            Location = Input.AdjustPointerMoveInput(originalPoint: point);
+            this._inputManager.InjectDynamicMove(start: location, end: Location, maxDragDuration: SinglePointGesture.DefaultDragDuration, contactId: this.DefaultContactId, packetDelta: InputManager.DefaultPacketDelta);
+        }
+
+        public void Press(PointerButtons button) {
+            this._inputManager.InjectDynamicPress(touchPoint: Location, contactId: this.DefaultContactId);
+        }
+
+        public void Release(PointerButtons button) {
+            this._inputManager.InjectDynamicRelease(touchPoint: Location, contactId: this.DefaultContactId);
+        }
+
+        public void InjectPointers(PointerData[] pointerDataArray) {
+            throw new NotImplementedException(message: "SingleTouch move with PointerData argument is not implemented");
+        }
+
+        public PointI Location { get; set; }
+
+        ~SingleTouch() {
+            Dispose(disposing: false);
+        }
+
+        void Dispose(bool disposing) {
+            try {
+                if (this._disposed || !disposing)
+                    return;
+                this._inputManager.Dispose();
+                this._inputManager = null;
+            } finally {
+                this._disposed = true;
+            }
+        }
     }
-
-    public void Dispose()
-    {
-      this.Dispose(true);
-      GC.SuppressFinalize((object) this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-      try
-      {
-        if (this._disposed || !disposing)
-          return;
-        this._inputManager.Dispose();
-        this._inputManager = (IInputManager) null;
-      }
-      finally
-      {
-        this._disposed = true;
-      }
-    }
-
-    public void Flick(PointI endPoint, uint holdDuration, float acceleration) => this._inputManager.InjectPressAndDragWithAcceleration(this._location, Input.AdjustPointerMoveInput(endPoint), holdDuration, acceleration, InputManager.DefaultPacketDelta);
-
-    public void Pan(PointI endPoint, uint holdDuration, float acceleration) => this._inputManager.InjectPressAndDragWithAcceleration(this._location, Input.AdjustPointerMoveInput(endPoint), holdDuration, acceleration, InputManager.DefaultPacketDelta);
-
-    public void PressAndDrag(PointI endPoint, uint dragDuration) => this._inputManager.InjectPressAndDrag(this._location, Input.AdjustPointerMoveInput(endPoint), dragDuration, InputManager.DefaultPressDuration, InputManager.DefaultPacketDelta);
-
-    public void PressAndDrag(PointI endPoint, uint dragDuration, uint pressDuration) => this._inputManager.InjectPressAndDrag(this._location, Input.AdjustPointerMoveInput(endPoint), dragDuration, pressDuration, InputManager.DefaultPacketDelta);
-
-    public void PressAndHold(uint holdDuration) => this._inputManager.InjectPress(this._location, holdDuration, 1U, InputManager.DefaultTapDelta, InputManager.DefaultPacketDelta);
-
-    public void Click(PointerButtons button, int count) => this._inputManager.InjectPress(this._location, InputManager.DefaultPressDuration, (uint) count, InputManager.DefaultTapDelta, InputManager.DefaultPacketDelta);
-
-    public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration) => this.PressAndDrag(endPoint, dragDuration);
-
-    public void Move(PointI point)
-    {
-      PointI location = this._location;
-      this._location = Input.AdjustPointerMoveInput(point);
-      this._inputManager.InjectDynamicMove(location, this._location, SinglePointGesture.DefaultDragDuration, this.DefaultContactId, InputManager.DefaultPacketDelta);
-    }
-
-    public void Press(PointerButtons button) => this._inputManager.InjectDynamicPress(this._location, this.DefaultContactId);
-
-    public void Release(PointerButtons button) => this._inputManager.InjectDynamicRelease(this._location, this.DefaultContactId);
-
-    public void InjectPointers(PointerData[] pointerDataArray) => throw new NotImplementedException("SingleTouch move with PointerData argument is not implemented");
-
-    public PointI Location => this._location;
-  }
 }

@@ -7,16 +7,20 @@
 using System.Text;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class BooleanLiteralExpression : Expression
-  {
-    private bool _value;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class BooleanLiteralExpression : Expression {
+        readonly bool _value;
 
-    public BooleanLiteralExpression(bool value) => this._value = value;
+        public BooleanLiteralExpression(bool value) {
+            this._value = value;
+        }
 
-    public override GlobalizableCondition GetCondition() => !this._value ? (GlobalizableCondition) new GlobalizableOtherConditions(Condition.FalseCondition) : (GlobalizableCondition) new GlobalizableOtherConditions(Condition.TrueCondition);
+        public override GlobalizableCondition GetCondition() {
+            return !this._value ? new GlobalizableOtherConditions(condition: Condition.FalseCondition) : (GlobalizableCondition) new GlobalizableOtherConditions(condition: Condition.TrueCondition);
+        }
 
-    public override bool Validate(StringBuilder errors) => true;
-  }
+        public override bool Validate(StringBuilder errors) {
+            return true;
+        }
+    }
 }

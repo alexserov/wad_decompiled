@@ -6,21 +6,22 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class SynchronizedInputPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<SynchronizedInputPattern, IUIAutomationSynchronizedInputPattern>(10021, "SynchronizedInputPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationSynchronizedInputPattern, SynchronizedInputPattern>(SynchronizedInputPattern.Wrap));
-    private readonly IUIAutomationSynchronizedInputPattern _synchronizedInputPattern;
+namespace System.Windows.Automation {
+    public class SynchronizedInputPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<SynchronizedInputPattern, IUIAutomationSynchronizedInputPattern>(id: 10021, programmaticName: "SynchronizedInputPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationSynchronizedInputPattern _synchronizedInputPattern;
 
-    private SynchronizedInputPattern(
-      AutomationElement element,
-      IUIAutomationSynchronizedInputPattern synchronizedInputPattern)
-      : base(element)
-      => this._synchronizedInputPattern = synchronizedInputPattern;
+        SynchronizedInputPattern(
+            AutomationElement element,
+            IUIAutomationSynchronizedInputPattern synchronizedInputPattern)
+            : base(el: element) {
+            this._synchronizedInputPattern = synchronizedInputPattern;
+        }
 
-    internal static SynchronizedInputPattern Wrap(
-      AutomationElement element,
-      IUIAutomationSynchronizedInputPattern synchronizedInputPattern) => new SynchronizedInputPattern(element, synchronizedInputPattern);
-  }
+        internal static SynchronizedInputPattern Wrap(
+            AutomationElement element,
+            IUIAutomationSynchronizedInputPattern synchronizedInputPattern) {
+            return new SynchronizedInputPattern(element: element, synchronizedInputPattern: synchronizedInputPattern);
+        }
+    }
 }

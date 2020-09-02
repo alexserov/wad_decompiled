@@ -6,15 +6,13 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class SelectionItemPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<SelectionItemPattern, IUIAutomationSelectionItemPattern>(10010, "SelectionItemPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationSelectionItemPattern, SelectionItemPattern>(SelectionItemPattern.Wrap));
-    public static readonly AutomationEvent ElementAddedToSelectionEvent = new AutomationEvent(20010, "SelectionItemPatternIdentifiers.ElementAddedToSelectionEvent");
-    public static readonly AutomationEvent ElementRemovedFromSelectionEvent = new AutomationEvent(20011, "SelectionItemPatternIdentifiers.ElementRemovedFromSelectionEvent");
-    public static readonly AutomationEvent ElementSelectedEvent = new AutomationEvent(20012, "SelectionItemPatternIdentifiers.ElementSelectedEvent");
-    public static readonly AutomationProperty IsSelectedProperty = new AutomationProperty(30079, "SelectionItemPatternIdentifiers.IsSelectedProperty");
-    public static readonly AutomationProperty SelectionContainerProperty = new AutomationProperty(30080, "SelectionItemPatternIdentifiers.SelectionContainerProperty");
-  }
+namespace System.Windows.Automation {
+    public static class SelectionItemPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<SelectionItemPattern, IUIAutomationSelectionItemPattern>(id: 10010, programmaticName: "SelectionItemPatternIdentifiers.Pattern", wrap: SelectionItemPattern.Wrap);
+        public static readonly AutomationEvent ElementAddedToSelectionEvent = new AutomationEvent(id: 20010, programmaticName: "SelectionItemPatternIdentifiers.ElementAddedToSelectionEvent");
+        public static readonly AutomationEvent ElementRemovedFromSelectionEvent = new AutomationEvent(id: 20011, programmaticName: "SelectionItemPatternIdentifiers.ElementRemovedFromSelectionEvent");
+        public static readonly AutomationEvent ElementSelectedEvent = new AutomationEvent(id: 20012, programmaticName: "SelectionItemPatternIdentifiers.ElementSelectedEvent");
+        public static readonly AutomationProperty IsSelectedProperty = new AutomationProperty(id: 30079, programmaticName: "SelectionItemPatternIdentifiers.IsSelectedProperty");
+        public static readonly AutomationProperty SelectionContainerProperty = new AutomationProperty(id: 30080, programmaticName: "SelectionItemPatternIdentifiers.SelectionContainerProperty");
+    }
 }

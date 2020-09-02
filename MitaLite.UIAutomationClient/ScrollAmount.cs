@@ -4,14 +4,12 @@
 // MVID: 3836D12D-FB98-4220-906F-A977A4708DDF
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationClient.dll
 
-namespace UIAutomationClient
-{
-  public enum ScrollAmount
-  {
-    ScrollAmount_LargeDecrement,
-    ScrollAmount_SmallDecrement,
-    ScrollAmount_NoAmount,
-    ScrollAmount_LargeIncrement,
-    ScrollAmount_SmallIncrement,
-  }
+namespace UIAutomationClient {
+    public enum ScrollAmount {
+        ScrollAmount_LargeDecrement,
+        ScrollAmount_SmallDecrement,
+        ScrollAmount_NoAmount,
+        ScrollAmount_LargeIncrement,
+        ScrollAmount_SmallIncrement
+    }
 }

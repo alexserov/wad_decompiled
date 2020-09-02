@@ -7,28 +7,25 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IScroll
-  {
-    void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount);
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IScroll {
+        bool HorizontallyScrollable { get; }
 
-    void ScrollHorizontal(ScrollAmount amount);
+        bool VerticallyScrollable { get; }
 
-    void ScrollVertical(ScrollAmount amount);
+        double HorizontalScrollPercent { get; }
 
-    void SetScrollPercent(double horizontalPercent, double verticalPercent);
+        double VerticalScrollPercent { get; }
 
-    bool HorizontallyScrollable { get; }
+        double HorizontalViewSize { get; }
 
-    bool VerticallyScrollable { get; }
+        double VerticalViewSize { get; }
+        void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount);
 
-    double HorizontalScrollPercent { get; }
+        void ScrollHorizontal(ScrollAmount amount);
 
-    double VerticalScrollPercent { get; }
+        void ScrollVertical(ScrollAmount amount);
 
-    double HorizontalViewSize { get; }
-
-    double VerticalViewSize { get; }
-  }
+        void SetScrollPercent(double horizontalPercent, double verticalPercent);
+    }
 }

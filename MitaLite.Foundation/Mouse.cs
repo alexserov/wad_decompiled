@@ -7,140 +7,129 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class Mouse : IPointerInput, IMouseWheelInput
-  {
-    private static object _classLock = new object();
-    private static Mouse _singletonInstance;
-    private PointI _location;
-    private int[] _previousRuntimeId;
-    internal INativeMethods nativeMethods;
-    internal IInputQueue inputQueue;
-    private IInputDevice inputDevice;
-    private const int afterMoveActionWaitDuration = 0;
-    private const int afterClickActionWaitDuration = 100;
-    private const int afterWheelActionWaitDuration = 200;
+namespace MS.Internal.Mita.Foundation {
+    internal class Mouse : IPointerInput, IMouseWheelInput {
+        const int afterMoveActionWaitDuration = 0;
+        const int afterClickActionWaitDuration = 100;
+        const int afterWheelActionWaitDuration = 200;
+        static readonly object _classLock = new object();
+        static Mouse _singletonInstance;
+        PointI _location;
+        int[] _previousRuntimeId;
+        readonly IInputDevice inputDevice;
+        internal IInputQueue inputQueue;
+        internal INativeMethods nativeMethods;
 
-    protected Mouse()
-    {
-      this.nativeMethods = (INativeMethods) new NativeMethods();
-      this.inputQueue = (IInputQueue) new InputQueue();
-      this.inputDevice = new InputDeviceFactory().Get(INPUT_DEVICE_TYPE.MOUSE);
-    }
-
-    public static Mouse Instance
-    {
-      get
-      {
-        if (Mouse._singletonInstance == null)
-        {
-          lock (Mouse._classLock)
-          {
-            if (Mouse._singletonInstance == null)
-              Mouse._singletonInstance = new Mouse();
-          }
+        protected Mouse() {
+            this.nativeMethods = new NativeMethods();
+            this.inputQueue = new InputQueue();
+            this.inputDevice = new InputDeviceFactory().Get(type: INPUT_DEVICE_TYPE.MOUSE);
         }
-        return Mouse._singletonInstance;
-      }
+
+        public static Mouse Instance {
+            get {
+                if (_singletonInstance == null)
+                    lock (_classLock) {
+                        if (_singletonInstance == null)
+                            _singletonInstance = new Mouse();
+                    }
+
+                return _singletonInstance;
+            }
+        }
+
+        public virtual void RotateWheel(int delta) {
+            var inputActionList = new List<IInputAction>();
+            inputActionList.AddRange(collection: RotateWheel(delta: delta, modifierKeys: ModifierKeys.None));
+            inputActionList.Add(item: Input.CreateWait(duration: 200));
+            this.inputQueue.Process(inputDevice: null, inputList: inputActionList);
+        }
+
+        public virtual void Click(PointerButtons button, int count) {
+            if (0 >= count)
+                throw new ArgumentOutOfRangeException(paramName: nameof(count), actualValue: count, message: "count should be a positive value");
+            var location = Location;
+            var inputActionList = new List<IInputAction>();
+            inputActionList.AddRange(collection: Input.PreventAccidentalDoubleClick(x: location.X, y: location.Y, previousRuntimeId: ref this._previousRuntimeId));
+            for (var index = 0; index < count; ++index) {
+                if (index > 0)
+                    inputActionList.Add(item: Input.CreateWait(duration: (int) InputManager.DefaultTapDelta));
+                inputActionList.AddRange(collection: Down(button: button, modifierKeys: ModifierKeys.None));
+                inputActionList.Add(item: Input.CreateWait(duration: (int) InputManager.DefaultPressDuration));
+                inputActionList.AddRange(collection: Up(button: button, modifierKeys: ModifierKeys.None));
+            }
+
+            inputActionList.Add(item: Input.CreateWait(duration: 100));
+            this.inputQueue.Process(inputDevice: this.inputDevice, inputList: inputActionList);
+        }
+
+        public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration) {
+            var inputActionList = new List<IInputAction>();
+            inputActionList.AddRange(collection: Down(button: button, modifierKeys: ModifierKeys.None));
+            inputActionList.Add(item: Input.CreateWait(duration: (int) dragDuration));
+            inputActionList.Add(item: Input.CreateMouseMoveInput(absoluteX: endPoint.X, absoluteY: endPoint.Y));
+            inputActionList.AddRange(collection: Up(button: button, modifierKeys: ModifierKeys.None));
+            inputActionList.Add(item: Input.CreateWait(duration: 0));
+            this.inputQueue.Process(inputDevice: this.inputDevice, inputList: inputActionList);
+            this._location = endPoint;
+        }
+
+        public virtual void Move(PointI point) {
+            this.inputQueue.Process(inputDevice: this.inputDevice, inputList: new List<IInputAction> {
+                Input.CreateMouseMoveInput(absoluteX: point.X, absoluteY: point.Y),
+                Input.CreateWait(duration: 0)
+            });
+            this._location = point;
+        }
+
+        public virtual void Press(PointerButtons button) {
+            var inputList = Down(button: button, modifierKeys: ModifierKeys.None);
+            inputList.Add(item: Input.CreateWait(duration: 100));
+            this.inputQueue.Process(inputDevice: this.inputDevice, inputList: inputList);
+        }
+
+        public void InjectPointers(PointerData[] pointerDataArray) {
+            throw new NotImplementedException(message: "SingleTouch move with PointerData argument is not implemented");
+        }
+
+        public virtual void Release(PointerButtons button) {
+            var inputList = Up(button: button, modifierKeys: ModifierKeys.None);
+            inputList.Add(item: Input.CreateWait(duration: 100));
+            this.inputQueue.Process(inputDevice: this.inputDevice, inputList: inputList);
+        }
+
+        public virtual PointI Location {
+            get { return this._location; }
+        }
+
+        IList<IInputAction> Down(
+            PointerButtons button,
+            ModifierKeys modifierKeys) {
+            var inputActionList = new List<IInputAction>();
+            inputActionList.AddRange(collection: Input.CreateKeyModifierInputs(modifierKeys: modifierKeys, press: true, duration: Keyboard.SendKeysDelay));
+            inputActionList.Add(item: Input.CreateMouseDownInput(button: button, swapped: GetMouseButtonsSwapped()));
+            return inputActionList;
+        }
+
+        IList<IInputAction> Up(
+            PointerButtons button,
+            ModifierKeys modifierKeys) {
+            var inputActionList = new List<IInputAction>();
+            inputActionList.Add(item: Input.CreateMouseUpInput(button: button, swapped: GetMouseButtonsSwapped()));
+            inputActionList.AddRange(collection: Input.CreateKeyModifierInputs(modifierKeys: modifierKeys, press: false, duration: Keyboard.SendKeysDelay));
+            return inputActionList;
+        }
+
+        bool GetMouseButtonsSwapped() {
+            return this.nativeMethods.GetMouseButtonsSwapped();
+        }
+
+        IList<IInputAction> RotateWheel(int delta, ModifierKeys modifierKeys) {
+            var inputActionList = new List<IInputAction>();
+            inputActionList.AddRange(collection: Input.CreateKeyModifierInputs(modifierKeys: modifierKeys, press: true, duration: Keyboard.SendKeysDelay));
+            inputActionList.Add(item: Input.CreateMouseRotateWheelInput(delta: delta));
+            inputActionList.AddRange(collection: Input.CreateKeyModifierInputs(modifierKeys: modifierKeys, press: false, duration: Keyboard.SendKeysDelay));
+            return inputActionList;
+        }
     }
-
-    public virtual void Click(PointerButtons button, int count)
-    {
-      if (0 >= count)
-        throw new ArgumentOutOfRangeException(nameof (count), (object) count, "count should be a positive value");
-      PointI location = this.Location;
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.AddRange((IEnumerable<IInputAction>) Input.PreventAccidentalDoubleClick((double) location.X, (double) location.Y, ref this._previousRuntimeId));
-      for (int index = 0; index < count; ++index)
-      {
-        if (index > 0)
-          inputActionList.Add(Input.CreateWait((int) InputManager.DefaultTapDelta));
-        inputActionList.AddRange((IEnumerable<IInputAction>) this.Down(button, ModifierKeys.None));
-        inputActionList.Add(Input.CreateWait((int) InputManager.DefaultPressDuration));
-        inputActionList.AddRange((IEnumerable<IInputAction>) this.Up(button, ModifierKeys.None));
-      }
-      inputActionList.Add(Input.CreateWait(100));
-      this.inputQueue.Process(this.inputDevice, (IList<IInputAction>) inputActionList);
-    }
-
-    public void ClickDrag(PointI endPoint, PointerButtons button, uint dragDuration)
-    {
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.AddRange((IEnumerable<IInputAction>) this.Down(button, ModifierKeys.None));
-      inputActionList.Add(Input.CreateWait((int) dragDuration));
-      inputActionList.Add(Input.CreateMouseMoveInput((double) endPoint.X, (double) endPoint.Y));
-      inputActionList.AddRange((IEnumerable<IInputAction>) this.Up(button, ModifierKeys.None));
-      inputActionList.Add(Input.CreateWait(0));
-      this.inputQueue.Process(this.inputDevice, (IList<IInputAction>) inputActionList);
-      this._location = endPoint;
-    }
-
-    public virtual void Move(PointI point)
-    {
-      this.inputQueue.Process(this.inputDevice, (IList<IInputAction>) new List<IInputAction>()
-      {
-        Input.CreateMouseMoveInput((double) point.X, (double) point.Y),
-        Input.CreateWait(0)
-      });
-      this._location = point;
-    }
-
-    public virtual void Press(PointerButtons button)
-    {
-      IList<IInputAction> inputList = this.Down(button, ModifierKeys.None);
-      inputList.Add(Input.CreateWait(100));
-      this.inputQueue.Process(this.inputDevice, inputList);
-    }
-
-    public void InjectPointers(PointerData[] pointerDataArray) => throw new NotImplementedException("SingleTouch move with PointerData argument is not implemented");
-
-    public virtual void Release(PointerButtons button)
-    {
-      IList<IInputAction> inputList = this.Up(button, ModifierKeys.None);
-      inputList.Add(Input.CreateWait(100));
-      this.inputQueue.Process(this.inputDevice, inputList);
-    }
-
-    public virtual PointI Location => this._location;
-
-    public virtual void RotateWheel(int delta)
-    {
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.AddRange((IEnumerable<IInputAction>) this.RotateWheel(delta, ModifierKeys.None));
-      inputActionList.Add(Input.CreateWait(200));
-      this.inputQueue.Process((IInputDevice) null, (IList<IInputAction>) inputActionList);
-    }
-
-    private IList<IInputAction> Down(
-      PointerButtons button,
-      ModifierKeys modifierKeys)
-    {
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.AddRange((IEnumerable<IInputAction>) Input.CreateKeyModifierInputs(modifierKeys, true, Keyboard.SendKeysDelay));
-      inputActionList.Add(Input.CreateMouseDownInput(button, this.GetMouseButtonsSwapped()));
-      return (IList<IInputAction>) inputActionList;
-    }
-
-    private IList<IInputAction> Up(
-      PointerButtons button,
-      ModifierKeys modifierKeys)
-    {
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.Add(Input.CreateMouseUpInput(button, this.GetMouseButtonsSwapped()));
-      inputActionList.AddRange((IEnumerable<IInputAction>) Input.CreateKeyModifierInputs(modifierKeys, false, Keyboard.SendKeysDelay));
-      return (IList<IInputAction>) inputActionList;
-    }
-
-    private bool GetMouseButtonsSwapped() => this.nativeMethods.GetMouseButtonsSwapped();
-
-    private IList<IInputAction> RotateWheel(int delta, ModifierKeys modifierKeys)
-    {
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      inputActionList.AddRange((IEnumerable<IInputAction>) Input.CreateKeyModifierInputs(modifierKeys, true, Keyboard.SendKeysDelay));
-      inputActionList.Add(Input.CreateMouseRotateWheelInput(delta));
-      inputActionList.AddRange((IEnumerable<IInputAction>) Input.CreateKeyModifierInputs(modifierKeys, false, Keyboard.SendKeysDelay));
-      return (IList<IInputAction>) inputActionList;
-    }
-  }
 }

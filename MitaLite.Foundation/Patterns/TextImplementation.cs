@@ -7,75 +7,59 @@
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
 using System.Windows.Types;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class TextImplementation : PatternImplementation<TextPattern>, IText
-  {
-    public TextImplementation(UIObject uiObject)
-      : base(uiObject, TextPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class TextImplementation : PatternImplementation<TextPattern>, IText {
+        public TextImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: TextPattern.Pattern) {
+        }
 
-    public bool SupportsTextSelection
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (SupportsTextSelection)), out overridden) == ActionResult.Handled ? (bool) overridden : (uint) this.Pattern.SupportedTextSelection > 0U;
-      }
-    }
+        public bool SupportsTextSelection {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(SupportsTextSelection)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : (uint) Pattern.SupportedTextSelection > 0U;
+            }
+        }
 
-    public TextPatternRange DocumentRange
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (DocumentRange)), out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : this.Pattern.DocumentRange;
-      }
-    }
+        public TextPatternRange DocumentRange {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(DocumentRange)), overridden: out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : Pattern.DocumentRange;
+            }
+        }
 
-    public TextPatternRange GetSelection()
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      if (ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (GetSelection)), out overridden) == ActionResult.Handled)
-        return (TextPatternRange) overridden;
-      TextPatternRange[] selection = this.Pattern.GetSelection();
-      return selection != null && selection.Length != 0 ? selection[0] : (TextPatternRange) null;
-    }
+        public TextPatternRange GetSelection() {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(GetSelection)), overridden: out overridden) == ActionResult.Handled)
+                return (TextPatternRange) overridden;
+            var selection = Pattern.GetSelection();
+            return selection != null && selection.Length != 0 ? selection[0] : null;
+        }
 
-    public TextPatternRange RangeFromPoint(PointI screenLocation)
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (RangeFromPoint), new object[1]
-      {
-        (object) screenLocation
-      }), out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : this.Pattern.RangeFromPoint(new Point((double) screenLocation.X, (double) screenLocation.Y));
-    }
+        public TextPatternRange RangeFromPoint(PointI screenLocation) {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(RangeFromPoint), screenLocation), overridden: out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : Pattern.RangeFromPoint(screenLocation: new Point(x: screenLocation.X, y: screenLocation.Y));
+        }
 
-    public TextPatternRange RangeFromChild(UIObject childElement)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) childElement, nameof (childElement));
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      return ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (RangeFromChild), new object[1]
-      {
-        (object) childElement
-      }), out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : this.Pattern.RangeFromChild(childElement.AutomationElement);
-    }
+        public TextPatternRange RangeFromChild(UIObject childElement) {
+            Validate.ArgumentNotNull(parameter: childElement, parameterName: nameof(childElement));
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            return ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(RangeFromChild), childElement), overridden: out overridden) == ActionResult.Handled ? (TextPatternRange) overridden : Pattern.RangeFromChild(childElement: childElement.AutomationElement);
+        }
 
-    public TextPatternRange GetVisibleRange()
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      object overridden;
-      if (ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (GetVisibleRange)), out overridden) == ActionResult.Handled)
-        return (TextPatternRange) overridden;
-      TextPatternRange[] visibleRanges = this.Pattern.GetVisibleRanges();
-      return visibleRanges != null && visibleRanges.Length != 0 ? visibleRanges[0] : (TextPatternRange) null;
+        public TextPatternRange GetVisibleRange() {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            object overridden;
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(GetVisibleRange)), overridden: out overridden) == ActionResult.Handled)
+                return (TextPatternRange) overridden;
+            var visibleRanges = Pattern.GetVisibleRanges();
+            return visibleRanges != null && visibleRanges.Length != 0 ? visibleRanges[0] : null;
+        }
     }
-  }
 }

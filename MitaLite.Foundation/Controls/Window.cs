@@ -4,77 +4,107 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class Window : UIObject, ITransform, IWindow
-  {
-    private ITransform _transformPattern;
-    private IWindow _windowPattern;
-    private static IFactory<Window> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class Window : UIObject, ITransform, IWindow {
+        static IFactory<Window> _factory;
+        ITransform _transformPattern;
+        IWindow _windowPattern;
 
-    public Window(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public Window(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal Window(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal Window(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize()
-    {
-      this._transformPattern = (ITransform) new TransformImplementation((UIObject) this);
-      this._windowPattern = (IWindow) new WindowImplementation((UIObject) this);
+        public static IFactory<Window> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new WindowFactory();
+                return _factory;
+            }
+        }
+
+        public virtual void Rotate(double degrees) {
+            this._transformPattern.Rotate(degrees: degrees);
+        }
+
+        public virtual void Resize(double width, double height) {
+            this._transformPattern.Resize(width: width, height: height);
+        }
+
+        public virtual void Move(double x, double y) {
+            this._transformPattern.Move(x: x, y: y);
+        }
+
+        public virtual bool CanRotate {
+            get { return this._transformPattern.CanRotate; }
+        }
+
+        public virtual bool CanResize {
+            get { return this._transformPattern.CanResize; }
+        }
+
+        public virtual bool CanMove {
+            get { return this._transformPattern.CanMove; }
+        }
+
+        public virtual void SetWindowVisualState(WindowVisualState state) {
+            this._windowPattern.SetWindowVisualState(state: state);
+        }
+
+        public virtual void Close() {
+            this._windowPattern.Close();
+        }
+
+        public UIEventWaiter GetWindowClosedWaiter() {
+            return this._windowPattern.GetWindowClosedWaiter();
+        }
+
+        public virtual void WaitForInputIdle(int milliseconds) {
+            this._windowPattern.WaitForInputIdle(milliseconds: milliseconds);
+        }
+
+        public virtual bool CanMaximize {
+            get { return this._windowPattern.CanMaximize; }
+        }
+
+        public virtual bool CanMinimize {
+            get { return this._windowPattern.CanMinimize; }
+        }
+
+        public virtual bool IsModal {
+            get { return this._windowPattern.IsModal; }
+        }
+
+        public virtual WindowVisualState WindowVisualState {
+            get { return this._windowPattern.WindowVisualState; }
+        }
+
+        public virtual WindowInteractionState WindowInteractionState {
+            get { return this._windowPattern.WindowInteractionState; }
+        }
+
+        public virtual bool IsTopmost {
+            get { return this._windowPattern.IsTopmost; }
+        }
+
+        void Initialize() {
+            this._transformPattern = new TransformImplementation(uiObject: this);
+            this._windowPattern = new WindowImplementation(uiObject: this);
+        }
+
+        class WindowFactory : IFactory<Window> {
+            public Window Create(UIObject element) {
+                return new Window(uiObject: element);
+            }
+        }
     }
-
-    public virtual void Rotate(double degrees) => this._transformPattern.Rotate(degrees);
-
-    public virtual void Resize(double width, double height) => this._transformPattern.Resize(width, height);
-
-    public virtual void Move(double x, double y) => this._transformPattern.Move(x, y);
-
-    public virtual bool CanRotate => this._transformPattern.CanRotate;
-
-    public virtual bool CanResize => this._transformPattern.CanResize;
-
-    public virtual bool CanMove => this._transformPattern.CanMove;
-
-    public virtual void SetWindowVisualState(WindowVisualState state) => this._windowPattern.SetWindowVisualState(state);
-
-    public virtual void Close() => this._windowPattern.Close();
-
-    public UIEventWaiter GetWindowClosedWaiter() => this._windowPattern.GetWindowClosedWaiter();
-
-    public virtual void WaitForInputIdle(int milliseconds) => this._windowPattern.WaitForInputIdle(milliseconds);
-
-    public virtual bool CanMaximize => this._windowPattern.CanMaximize;
-
-    public virtual bool CanMinimize => this._windowPattern.CanMinimize;
-
-    public virtual bool IsModal => this._windowPattern.IsModal;
-
-    public virtual WindowVisualState WindowVisualState => this._windowPattern.WindowVisualState;
-
-    public virtual WindowInteractionState WindowInteractionState => this._windowPattern.WindowInteractionState;
-
-    public virtual bool IsTopmost => this._windowPattern.IsTopmost;
-
-    public static IFactory<Window> Factory
-    {
-      get
-      {
-        if (Window._factory == null)
-          Window._factory = (IFactory<Window>) new Window.WindowFactory();
-        return Window._factory;
-      }
-    }
-
-    private class WindowFactory : IFactory<Window>
-    {
-      public Window Create(UIObject element) => new Window(element);
-    }
-  }
 }

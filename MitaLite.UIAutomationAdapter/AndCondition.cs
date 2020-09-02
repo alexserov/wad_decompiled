@@ -7,49 +7,38 @@
 using UIAutomationAdapter.Utilities;
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class AndCondition : Condition
-  {
-    public AndCondition(params Condition[] conditions)
-      : base(System.Windows.Automation.Automation.AutomationClass.CreateAndConditionFromArray(Condition.GetIUIAutomationConditions(conditions)))
-    {
-    }
+namespace System.Windows.Automation {
+    public class AndCondition : Condition {
+        public AndCondition(params Condition[] conditions)
+            : base(condition: Automation.AutomationClass.CreateAndConditionFromArray(conditions: GetIUIAutomationConditions(conditions: conditions))) {
+        }
 
-    internal AndCondition(params IUIAutomationCondition[] iUIAConditions)
-      : base(System.Windows.Automation.Automation.AutomationClass.CreateAndConditionFromArray(iUIAConditions))
-    {
-    }
+        internal AndCondition(params IUIAutomationCondition[] iUIAConditions)
+            : base(condition: Automation.AutomationClass.CreateAndConditionFromArray(conditions: iUIAConditions)) {
+        }
 
-    public Condition[] GetConditions()
-    {
-      if (!(this.IUIAutomationCondition is IUIAutomationAndCondition automationCondition))
-        return (Condition[]) null;
-      IUIAutomationCondition[] typedArray = automationCondition.GetChildren().ToTypedArray<IUIAutomationCondition>();
-      Condition[] conditionArray = new Condition[typedArray.Length];
-      for (int index = 0; index < conditionArray.Length; ++index)
-      {
-        if (typedArray[index] is IUIAutomationPropertyCondition)
-        {
-          IUIAutomationPropertyCondition propertyCondition = typedArray[index] as IUIAutomationPropertyCondition;
-          conditionArray[index] = (Condition) new PropertyCondition(AutomationProperty.LookupById(propertyCondition.propertyId), (object) propertyCondition.PropertyValue);
+        public Condition[] GetConditions() {
+            if (!(IUIAutomationCondition is IUIAutomationAndCondition automationCondition))
+                return null;
+            var typedArray = automationCondition.GetChildren().ToTypedArray<IUIAutomationCondition>();
+            var conditionArray = new Condition[typedArray.Length];
+            for (var index = 0; index < conditionArray.Length; ++index)
+                if (typedArray[index] is IUIAutomationPropertyCondition) {
+                    var propertyCondition = typedArray[index] as IUIAutomationPropertyCondition;
+                    conditionArray[index] = new PropertyCondition(property: AutomationProperty.LookupById(id: propertyCondition.propertyId), value: propertyCondition.PropertyValue);
+                } else if (typedArray[index] is IUIAutomationAndCondition) {
+                    var automationAndCondition = typedArray[index] as IUIAutomationAndCondition;
+                    conditionArray[index] = new AndCondition(iUIAConditions: automationAndCondition.GetChildren().ToTypedArray<IUIAutomationCondition>());
+                } else if (typedArray[index] is IUIAutomationOrCondition) {
+                    var automationOrCondition = typedArray[index] as IUIAutomationOrCondition;
+                    conditionArray[index] = new OrCondition(iUIAConditions: automationOrCondition.GetChildren().ToTypedArray<IUIAutomationCondition>());
+                } else if (typedArray[index] is IUIAutomationNotCondition) {
+                    conditionArray[index] = new NotCondition(condition: new Condition(condition: typedArray[index]));
+                } else if (typedArray[index] != null) {
+                    conditionArray[index] = new Condition(condition: typedArray[index]);
+                }
+
+            return conditionArray;
         }
-        else if (typedArray[index] is IUIAutomationAndCondition)
-        {
-          IUIAutomationAndCondition automationAndCondition = typedArray[index] as IUIAutomationAndCondition;
-          conditionArray[index] = (Condition) new AndCondition(automationAndCondition.GetChildren().ToTypedArray<IUIAutomationCondition>());
-        }
-        else if (typedArray[index] is IUIAutomationOrCondition)
-        {
-          IUIAutomationOrCondition automationOrCondition = typedArray[index] as IUIAutomationOrCondition;
-          conditionArray[index] = (Condition) new OrCondition(automationOrCondition.GetChildren().ToTypedArray<IUIAutomationCondition>());
-        }
-        else if (typedArray[index] is IUIAutomationNotCondition)
-          conditionArray[index] = (Condition) new NotCondition(new Condition(typedArray[index]));
-        else if (typedArray[index] != null)
-          conditionArray[index] = new Condition(typedArray[index]);
-      }
-      return conditionArray;
     }
-  }
 }

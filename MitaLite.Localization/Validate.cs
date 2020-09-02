@@ -6,14 +6,11 @@
 
 using System;
 
-namespace MS.Internal.Mita.Localization
-{
-  internal static class Validate
-  {
-    internal static void ArgumentNotNull(object parameter, string parameterName)
-    {
-      if (parameter == null)
-        throw new ArgumentNullException(parameterName, StringResource.Get("ParameterCannotBeNULL"));
+namespace MS.Internal.Mita.Localization {
+    internal static class Validate {
+        internal static void ArgumentNotNull(object parameter, string parameterName) {
+            if (parameter == null)
+                throw new ArgumentNullException(paramName: parameterName, message: StringResource.Get(id: "ParameterCannotBeNULL"));
+        }
     }
-  }
 }

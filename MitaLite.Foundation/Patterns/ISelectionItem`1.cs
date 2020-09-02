@@ -6,24 +6,21 @@
 
 using MS.Internal.Mita.Foundation.Waiters;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface ISelectionItem<C> where C : UIObject
-  {
-    void Select();
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface ISelectionItem<C> where C : UIObject {
+        bool IsSelected { get; }
 
-    UIEventWaiter GetSelectedWaiter();
+        C SelectionContainer { get; }
+        void Select();
 
-    void AddToSelection();
+        UIEventWaiter GetSelectedWaiter();
 
-    UIEventWaiter GetAddedToSelectionWaiter();
+        void AddToSelection();
 
-    void RemoveFromSelection();
+        UIEventWaiter GetAddedToSelectionWaiter();
 
-    UIEventWaiter GetRemovedFromSelectionWaiter();
+        void RemoveFromSelection();
 
-    bool IsSelected { get; }
-
-    C SelectionContainer { get; }
-  }
+        UIEventWaiter GetRemovedFromSelectionWaiter();
+    }
 }

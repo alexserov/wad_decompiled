@@ -6,89 +6,87 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal interface IInputManager : IDisposable
-  {
-    void InjectDynamicPress(PointI touchPoint, uint contactId);
+namespace MS.Internal.Mita.Foundation {
+    internal interface IInputManager : IDisposable {
+        void InjectDynamicPress(PointI touchPoint, uint contactId);
 
-    void InjectDynamicMove(
-      PointI start,
-      PointI end,
-      uint maxDragDuration,
-      uint contactId,
-      uint packetDelta);
+        void InjectDynamicMove(
+            PointI start,
+            PointI end,
+            uint maxDragDuration,
+            uint contactId,
+            uint packetDelta);
 
-    void InjectDynamicRelease(PointI touchPoint, uint contactId);
+        void InjectDynamicRelease(PointI touchPoint, uint contactId);
 
-    void InjectDynamicPointers(PointerData[] pointerDataArray);
+        void InjectDynamicPointers(PointerData[] pointerDataArray);
 
-    void InjectPress(
-      PointI point,
-      uint holdDuration,
-      uint tapCount,
-      uint tapDelta,
-      uint packetDelta);
+        void InjectPress(
+            PointI point,
+            uint holdDuration,
+            uint tapCount,
+            uint tapDelta,
+            uint packetDelta);
 
-    void InjectPressAndDrag(
-      PointI start,
-      PointI end,
-      uint dragDuration,
-      uint holdDuration,
-      uint packetDelta);
+        void InjectPressAndDrag(
+            PointI start,
+            PointI end,
+            uint dragDuration,
+            uint holdDuration,
+            uint packetDelta);
 
-    void InjectPressAndDragWithAcceleration(
-      PointI start,
-      PointI end,
-      uint holdDuration,
-      float acceleration,
-      uint packetDelta);
+        void InjectPressAndDragWithAcceleration(
+            PointI start,
+            PointI end,
+            uint holdDuration,
+            float acceleration,
+            uint packetDelta);
 
-    void InjectMTPanWithAcceleration(
-      PointI startFingerOne,
-      PointI startFingerTwo,
-      float direction,
-      uint distance,
-      uint holdDuration,
-      float acceleration,
-      uint packetDelta);
+        void InjectMTPanWithAcceleration(
+            PointI startFingerOne,
+            PointI startFingerTwo,
+            float direction,
+            uint distance,
+            uint holdDuration,
+            float acceleration,
+            uint packetDelta);
 
-    void InjectMTZoom(
-      PointI startFingerOne,
-      PointI startFingerTwo,
-      float direction,
-      uint duration,
-      uint distance,
-      bool pivotZoom,
-      uint packetDelta);
+        void InjectMTZoom(
+            PointI startFingerOne,
+            PointI startFingerTwo,
+            float direction,
+            uint duration,
+            uint distance,
+            bool pivotZoom,
+            uint packetDelta);
 
-    void InjectMTRotate(
-      PointI startFingerOne,
-      PointI startFingerTwo,
-      float rotationAngle,
-      uint duration,
-      bool pivotRotate,
-      uint packetDelta);
+        void InjectMTRotate(
+            PointI startFingerOne,
+            PointI startFingerTwo,
+            float rotationAngle,
+            uint duration,
+            bool pivotRotate,
+            uint packetDelta);
 
-    void InjectMTTwoFingerPress(
-      PointI pointOne,
-      PointI pointTwo,
-      uint holdDuration,
-      uint tapCount,
-      uint tapDelta,
-      uint packetDelta);
+        void InjectMTTwoFingerPress(
+            PointI pointOne,
+            PointI pointTwo,
+            uint holdDuration,
+            uint tapCount,
+            uint tapDelta,
+            uint packetDelta);
 
-    void InjectMTPressAndTap(
-      PointI startFingerOne,
-      PointI startFingerTwo,
-      PointI endFingerOne,
-      uint deltaFingerTwoDown,
-      uint deltaFingerTwoUp,
-      uint deltaFingerOneUp,
-      uint packetDelta);
+        void InjectMTPressAndTap(
+            PointI startFingerOne,
+            PointI startFingerTwo,
+            PointI endFingerOne,
+            uint deltaFingerTwoDown,
+            uint deltaFingerTwoUp,
+            uint deltaFingerOneUp,
+            uint packetDelta);
 
-    void InjectMultiTouch(MultiTouchInjectionData[] injectionData, uint packetDelta);
+        void InjectMultiTouch(MultiTouchInjectionData[] injectionData, uint packetDelta);
 
-    bool DynamicPressActive(int ContactId);
-  }
+        bool DynamicPressActive(int ContactId);
+    }
 }

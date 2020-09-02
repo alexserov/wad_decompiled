@@ -4,16 +4,16 @@
 // MVID: 4AA78029-452E-4BBE-B7CF-82C2B0EE29B5
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.UIAutomationAdapter.dll
 
-namespace System.Windows.Automation
-{
-  public class AutomationEventArgs : EventArgs
-  {
-    private AutomationEvent _eventId;
+namespace System.Windows.Automation {
+    public class AutomationEventArgs : EventArgs {
+        public AutomationEventArgs(AutomationEvent eventId) {
+            EventId = eventId;
+        }
 
-    public AutomationEventArgs(AutomationEvent eventId) => this._eventId = eventId;
+        public AutomationEvent EventId { get; }
 
-    public AutomationEvent EventId => this._eventId;
-
-    public override string ToString() => string.Format("{0} {{ {1} = {2} }}", (object) this.GetType().Name, (object) "EventId", (object) this.EventId);
-  }
+        public override string ToString() {
+            return string.Format(format: "{0} {{ {1} = {2} }}", arg0: GetType().Name, arg1: "EventId", arg2: EventId);
+        }
+    }
 }

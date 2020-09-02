@@ -6,27 +6,24 @@
 
 using System;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class ItemContainerImplementation : PatternImplementation<ItemContainerPattern>, IItemContainer
-  {
-    public ItemContainerImplementation(UIObject uiObject)
-      : base(uiObject, ItemContainerPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class ItemContainerImplementation : PatternImplementation<ItemContainerPattern>, IItemContainer {
+        public ItemContainerImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: ItemContainerPattern.Pattern) {
+        }
 
-    public UIObject FindItemByProperty(
-      UIObject uiObject,
-      UIProperty uiProperty,
-      object value)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) uiProperty, nameof (uiProperty));
-      if (value != null && uiProperty == UIProperty.Get(AutomationElement.SearchVirtualItemsProperty))
-        throw new ArgumentException(StringResource.Get("FindItemByProperty_ArgumentException"));
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      AutomationElement element = uiObject == (UIObject) null ? this.Pattern.FindItemByProperty((AutomationElement) null, uiProperty.Property, value) : this.Pattern.FindItemByProperty(uiObject.AutomationElement, uiProperty.Property, value);
-      return !(element == (AutomationElement) null) ? new UIObject(element) : (UIObject) null;
+        public UIObject FindItemByProperty(
+            UIObject uiObject,
+            UIProperty uiProperty,
+            object value) {
+            Validate.ArgumentNotNull(parameter: uiProperty, parameterName: nameof(uiProperty));
+            if (value != null && uiProperty == UIProperty.Get(property: AutomationElement.SearchVirtualItemsProperty))
+                throw new ArgumentException(message: StringResource.Get(id: "FindItemByProperty_ArgumentException"));
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            var element = uiObject == (UIObject) null ? Pattern.FindItemByProperty(element: null, property: uiProperty.Property, value: value) : Pattern.FindItemByProperty(element: uiObject.AutomationElement, property: uiProperty.Property, value: value);
+            return !(element == null) ? new UIObject(element: element) : null;
+        }
     }
-  }
 }

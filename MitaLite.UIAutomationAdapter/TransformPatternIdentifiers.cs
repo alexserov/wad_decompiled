@@ -6,13 +6,11 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class TransformPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TransformPattern, IUIAutomationTransformPattern>(10016, "TransformPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTransformPattern, TransformPattern>(TransformPattern.Wrap));
-    public static readonly AutomationProperty CanMoveProperty = new AutomationProperty(30087, "TransformPatternIdentifiers.CanMoveProperty");
-    public static readonly AutomationProperty CanResizeProperty = new AutomationProperty(30088, "TransformPatternIdentifiers.CanResizeProperty");
-    public static readonly AutomationProperty CanRotateProperty = new AutomationProperty(30089, "TransformPatternIdentifiers.CanRotateProperty");
-  }
+namespace System.Windows.Automation {
+    public static class TransformPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<TransformPattern, IUIAutomationTransformPattern>(id: 10016, programmaticName: "TransformPatternIdentifiers.Pattern", wrap: TransformPattern.Wrap);
+        public static readonly AutomationProperty CanMoveProperty = new AutomationProperty(id: 30087, programmaticName: "TransformPatternIdentifiers.CanMoveProperty");
+        public static readonly AutomationProperty CanResizeProperty = new AutomationProperty(id: 30088, programmaticName: "TransformPatternIdentifiers.CanResizeProperty");
+        public static readonly AutomationProperty CanRotateProperty = new AutomationProperty(id: 30089, programmaticName: "TransformPatternIdentifiers.CanRotateProperty");
+    }
 }

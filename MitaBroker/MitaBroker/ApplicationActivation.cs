@@ -6,13 +6,13 @@
 
 using MS.Internal.Mita.Foundation;
 
-namespace MitaBroker
-{
-  internal static class ApplicationActivation
-  {
-    public static void ActivateApplication(
-      string applicationId,
-      string arguments,
-      out uint processId) => new UAPApp.ApplicationActivationManager().ActivateApplication(applicationId, arguments, UAPApp.ActivateOptions.None, out processId);
-  }
+namespace MitaBroker {
+    internal static class ApplicationActivation {
+        public static void ActivateApplication(
+            string applicationId,
+            string arguments,
+            out uint processId) {
+            new UAPApp.ApplicationActivationManager().ActivateApplication(appUserModelId: applicationId, arguments: arguments, options: UAPApp.ActivateOptions.None, processId: out processId);
+        }
+    }
 }

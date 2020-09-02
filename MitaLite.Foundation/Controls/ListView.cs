@@ -6,35 +6,30 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ListView : ListView<ListView, ListViewItem>
-  {
-    private static IFactory<ListView> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ListView : ListView<ListView, ListViewItem> {
+        static IFactory<ListView> _factory;
 
-    public ListView(UIObject uiObject)
-      : base(uiObject, ListViewItem.Factory)
-    {
-    }
+        public ListView(UIObject uiObject)
+            : base(uiObject: uiObject, itemFactory: ListViewItem.Factory) {
+        }
 
-    internal ListView(AutomationElement element)
-      : base(element, ListViewItem.Factory)
-    {
-    }
+        internal ListView(AutomationElement element)
+            : base(element: element, itemFactory: ListViewItem.Factory) {
+        }
 
-    public static IFactory<ListView> Factory
-    {
-      get
-      {
-        if (ListView._factory == null)
-          ListView._factory = (IFactory<ListView>) new ListView.ListViewFactory();
-        return ListView._factory;
-      }
-    }
+        public static IFactory<ListView> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ListViewFactory();
+                return _factory;
+            }
+        }
 
-    private class ListViewFactory : IFactory<ListView>
-    {
-      public ListView Create(UIObject element) => new ListView(element);
+        class ListViewFactory : IFactory<ListView> {
+            public ListView Create(UIObject element) {
+                return new ListView(uiObject: element);
+            }
+        }
     }
-  }
 }

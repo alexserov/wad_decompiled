@@ -6,16 +6,20 @@
 
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class NotExpression : Expression
-  {
-    private Expression _expression;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class NotExpression : Expression {
+        readonly Expression _expression;
 
-    public NotExpression(Expression expression) => this._expression = expression;
+        public NotExpression(Expression expression) {
+            this._expression = expression;
+        }
 
-    public override GlobalizableCondition GetCondition() => (GlobalizableCondition) new GlobalizableNotCondition(this._expression.GetCondition());
+        public override GlobalizableCondition GetCondition() {
+            return new GlobalizableNotCondition(condition: this._expression.GetCondition());
+        }
 
-    public override bool Validate(StringBuilder errors) => this._expression.Validate(errors);
-  }
+        public override bool Validate(StringBuilder errors) {
+            return this._expression.Validate(errors: errors);
+        }
+    }
 }

@@ -6,61 +6,82 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class WindowPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = WindowPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty CanMaximizeProperty = WindowPatternIdentifiers.CanMaximizeProperty;
-    public static readonly AutomationProperty CanMinimizeProperty = WindowPatternIdentifiers.CanMinimizeProperty;
-    public static readonly AutomationProperty IsModalProperty = WindowPatternIdentifiers.IsModalProperty;
-    public static readonly AutomationProperty IsTopmostProperty = WindowPatternIdentifiers.IsTopmostProperty;
-    public static readonly AutomationProperty WindowInteractionStateProperty = WindowPatternIdentifiers.WindowInteractionStateProperty;
-    public static readonly AutomationProperty WindowVisualStateProperty = WindowPatternIdentifiers.WindowVisualStateProperty;
-    public static readonly AutomationEvent WindowClosedEvent = WindowPatternIdentifiers.WindowClosedEvent;
-    public static readonly AutomationEvent WindowOpenedEvent = WindowPatternIdentifiers.WindowOpenedEvent;
-    private readonly IUIAutomationWindowPattern _windowPattern;
+namespace System.Windows.Automation {
+    public class WindowPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = WindowPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty CanMaximizeProperty = WindowPatternIdentifiers.CanMaximizeProperty;
+        public static readonly AutomationProperty CanMinimizeProperty = WindowPatternIdentifiers.CanMinimizeProperty;
+        public static readonly AutomationProperty IsModalProperty = WindowPatternIdentifiers.IsModalProperty;
+        public static readonly AutomationProperty IsTopmostProperty = WindowPatternIdentifiers.IsTopmostProperty;
+        public static readonly AutomationProperty WindowInteractionStateProperty = WindowPatternIdentifiers.WindowInteractionStateProperty;
+        public static readonly AutomationProperty WindowVisualStateProperty = WindowPatternIdentifiers.WindowVisualStateProperty;
+        public static readonly AutomationEvent WindowClosedEvent = WindowPatternIdentifiers.WindowClosedEvent;
+        public static readonly AutomationEvent WindowOpenedEvent = WindowPatternIdentifiers.WindowOpenedEvent;
+        readonly IUIAutomationWindowPattern _windowPattern;
 
-    private WindowPattern(AutomationElement element, IUIAutomationWindowPattern windowPattern)
-      : base(element)
-      => this._windowPattern = windowPattern;
+        WindowPattern(AutomationElement element, IUIAutomationWindowPattern windowPattern)
+            : base(el: element) {
+            this._windowPattern = windowPattern;
+        }
 
-    internal static WindowPattern Wrap(
-      AutomationElement element,
-      IUIAutomationWindowPattern windowPattern) => new WindowPattern(element, windowPattern);
+        public WindowPatternInformation Cached {
+            get { return new WindowPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void SetWindowVisualState(WindowVisualState state) => this._windowPattern.SetWindowVisualState(UiaConvert.Convert(state));
+        public WindowPatternInformation Current {
+            get { return new WindowPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public void Close() => this._windowPattern.Close();
+        internal static WindowPattern Wrap(
+            AutomationElement element,
+            IUIAutomationWindowPattern windowPattern) {
+            return new WindowPattern(element: element, windowPattern: windowPattern);
+        }
 
-    public bool WaitForInputIdle(int milliseconds) => this._windowPattern.WaitForInputIdle(milliseconds) != 0;
+        public void SetWindowVisualState(WindowVisualState state) {
+            this._windowPattern.SetWindowVisualState(state: UiaConvert.Convert(state: state));
+        }
 
-    public WindowPattern.WindowPatternInformation Cached => new WindowPattern.WindowPatternInformation(this._el, true);
+        public void Close() {
+            this._windowPattern.Close();
+        }
 
-    public WindowPattern.WindowPatternInformation Current => new WindowPattern.WindowPatternInformation(this._el, false);
+        public bool WaitForInputIdle(int milliseconds) {
+            return this._windowPattern.WaitForInputIdle(milliseconds: milliseconds) != 0;
+        }
 
-    public struct WindowPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct WindowPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal WindowPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal WindowPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public bool CanMaximize => (bool) this._el.GetPatternPropertyValue(WindowPattern.CanMaximizeProperty, this._useCache);
+            public bool CanMaximize {
+                get { return (bool) this._el.GetPatternPropertyValue(property: CanMaximizeProperty, useCache: this._useCache); }
+            }
 
-      public bool CanMinimize => (bool) this._el.GetPatternPropertyValue(WindowPattern.CanMinimizeProperty, this._useCache);
+            public bool CanMinimize {
+                get { return (bool) this._el.GetPatternPropertyValue(property: CanMinimizeProperty, useCache: this._useCache); }
+            }
 
-      public bool IsModal => (bool) this._el.GetPatternPropertyValue(WindowPattern.IsModalProperty, this._useCache);
+            public bool IsModal {
+                get { return (bool) this._el.GetPatternPropertyValue(property: IsModalProperty, useCache: this._useCache); }
+            }
 
-      public WindowVisualState WindowVisualState => (WindowVisualState) this._el.GetPatternPropertyValue(WindowPattern.WindowVisualStateProperty, this._useCache);
+            public WindowVisualState WindowVisualState {
+                get { return (WindowVisualState) this._el.GetPatternPropertyValue(property: WindowVisualStateProperty, useCache: this._useCache); }
+            }
 
-      public WindowInteractionState WindowInteractionState => (WindowInteractionState) this._el.GetPatternPropertyValue(WindowPattern.WindowInteractionStateProperty, this._useCache);
+            public WindowInteractionState WindowInteractionState {
+                get { return (WindowInteractionState) this._el.GetPatternPropertyValue(property: WindowInteractionStateProperty, useCache: this._useCache); }
+            }
 
-      public bool IsTopmost => (bool) this._el.GetPatternPropertyValue(WindowPattern.IsTopmostProperty, this._useCache);
+            public bool IsTopmost {
+                get { return (bool) this._el.GetPatternPropertyValue(property: IsTopmostProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

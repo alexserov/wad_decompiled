@@ -6,18 +6,16 @@
 
 using System;
 
-namespace MS.Internal.Mita.Foundation
-{
-  [Flags]
-  public enum PointerButtons
-  {
-    None = 0,
-    Primary = 1,
-    Secondary = 2,
-    PhysicalLeft = 4,
-    PhysicalRight = 8,
-    Middle = 16, // 0x00000010
-    XButton1 = 32, // 0x00000020
-    XButton2 = 64, // 0x00000040
-  }
+namespace MS.Internal.Mita.Foundation {
+    [Flags]
+    public enum PointerButtons {
+        None = 0,
+        Primary = 1,
+        Secondary = 2,
+        PhysicalLeft = 4,
+        PhysicalRight = 8,
+        Middle = 16, // 0x00000010
+        XButton1 = 32, // 0x00000020
+        XButton2 = 64 // 0x00000040
+    }
 }

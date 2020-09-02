@@ -7,35 +7,31 @@
 using System.Collections.Generic;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Utilities
-{
-  internal class TranslatedStrings
-  {
-    private Dictionary<string, IList<TranslationSource>> _translatedStrings;
+namespace MS.Internal.Mita.Foundation.Utilities {
+    internal class TranslatedStrings {
+        readonly Dictionary<string, IList<TranslationSource>> _translatedStrings;
 
-    public TranslatedStrings() => this._translatedStrings = new Dictionary<string, IList<TranslationSource>>();
+        public TranslatedStrings() {
+            this._translatedStrings = new Dictionary<string, IList<TranslationSource>>();
+        }
 
-    public void Add(string translatedString, ILocalizedStrings localizedStrings, long index)
-    {
-      IList<TranslationSource> translationSourceList;
-      if (this._translatedStrings.ContainsKey(translatedString))
-      {
-        translationSourceList = this._translatedStrings[translatedString];
-      }
-      else
-      {
-        translationSourceList = (IList<TranslationSource>) new List<TranslationSource>();
-        this._translatedStrings[translatedString] = translationSourceList;
-      }
-      translationSourceList.Add(new TranslationSource(localizedStrings, index));
+        public void Add(string translatedString, ILocalizedStrings localizedStrings, long index) {
+            IList<TranslationSource> translationSourceList;
+            if (this._translatedStrings.ContainsKey(key: translatedString)) {
+                translationSourceList = this._translatedStrings[key: translatedString];
+            } else {
+                translationSourceList = new List<TranslationSource>();
+                this._translatedStrings[key: translatedString] = translationSourceList;
+            }
+
+            translationSourceList.Add(item: new TranslationSource(localizedStrings: localizedStrings, translationIndex: index));
+        }
+
+        public void MatchFound(AutomationElement element, string translatedString) {
+            if (!this._translatedStrings.ContainsKey(key: translatedString))
+                return;
+            foreach (var translationSource in this._translatedStrings[key: translatedString])
+                translationSource.MatchFound(element: element);
+        }
     }
-
-    public void MatchFound(AutomationElement element, string translatedString)
-    {
-      if (!this._translatedStrings.ContainsKey(translatedString))
-        return;
-      foreach (TranslationSource translationSource in (IEnumerable<TranslationSource>) this._translatedStrings[translatedString])
-        translationSource.MatchFound(element);
-    }
-  }
 }

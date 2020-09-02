@@ -6,35 +6,28 @@
 
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class ItemsViewItem : ItemsViewItem<ItemsView>
-  {
-    private static IFactory<ItemsViewItem> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class ItemsViewItem : ItemsViewItem<ItemsView> {
+        static IFactory<ItemsViewItem> _factory;
 
-    public ItemsViewItem(UIObject uiObject)
-      : base(uiObject, ItemsView.Factory)
-    {
-    }
+        public ItemsViewItem(UIObject uiObject)
+            : base(uiObject: uiObject, containerFactory: ItemsView.Factory) {
+        }
 
-    internal ItemsViewItem(AutomationElement element)
-      : base(element, ItemsView.Factory)
-    {
-    }
+        internal ItemsViewItem(AutomationElement element)
+            : base(element: element, containerFactory: ItemsView.Factory) {
+        }
 
-    public static IFactory<ItemsViewItem> Factory
-    {
-      get
-      {
-        if (ItemsViewItem._factory == null)
-          ItemsViewItem._factory = (IFactory<ItemsViewItem>) new ItemsViewItem.ItemsViewItemFactory();
-        return ItemsViewItem._factory;
-      }
-    }
+        public static IFactory<ItemsViewItem> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ItemsViewItemFactory();
+                return _factory;
+            }
+        }
 
-    private class ItemsViewItemFactory : IFactory<ItemsViewItem>
-    {
-      public ItemsViewItem Create(UIObject element) => new ItemsViewItem(element);
+        class ItemsViewItemFactory : IFactory<ItemsViewItem> {
+            public ItemsViewItem Create(UIObject element) => new ItemsViewItem(uiObject: element);
+        }
     }
-  }
 }

@@ -6,11 +6,9 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class TogglePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<TogglePattern, IUIAutomationTogglePattern>(10015, "TogglePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationTogglePattern, TogglePattern>(TogglePattern.Wrap));
-    public static readonly AutomationProperty ToggleStateProperty = new AutomationProperty(30086, "TogglePatternIdentifiers.ToggleStateProperty");
-  }
+namespace System.Windows.Automation {
+    public static class TogglePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<TogglePattern, IUIAutomationTogglePattern>(id: 10015, programmaticName: "TogglePatternIdentifiers.Pattern", wrap: TogglePattern.Wrap);
+        public static readonly AutomationProperty ToggleStateProperty = new AutomationProperty(id: 30086, programmaticName: "TogglePatternIdentifiers.ToggleStateProperty");
+    }
 }

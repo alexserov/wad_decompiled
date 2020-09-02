@@ -7,21 +7,17 @@
 using System;
 using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class ScrollItemImplementation : PatternImplementation<ScrollItemPattern>, IScrollItem
-  {
-    public ScrollItemImplementation(UIObject uiObject)
-      : base(uiObject, ScrollItemPattern.Pattern)
-    {
-    }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class ScrollItemImplementation : PatternImplementation<ScrollItemPattern>, IScrollItem {
+        public ScrollItemImplementation(UIObject uiObject)
+            : base(uiObject: uiObject, patternIdentifier: ScrollItemPattern.Pattern) {
+        }
 
-    public void ScrollIntoView()
-    {
-      int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-      if (ActionHandler.Invoke(this.UIObject, new ActionEventArgs(nameof (ScrollIntoView), Array.Empty<object>())) != ActionResult.Unhandled)
-        return;
-      this.Pattern.ScrollIntoView();
+        public void ScrollIntoView() {
+            var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+            if (ActionHandler.Invoke(sender: UIObject, actionInfo: new ActionEventArgs(action: nameof(ScrollIntoView), args: Array.Empty<object>())) != ActionResult.Unhandled)
+                return;
+            Pattern.ScrollIntoView();
+        }
     }
-  }
 }

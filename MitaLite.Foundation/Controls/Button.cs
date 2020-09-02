@@ -4,44 +4,49 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public class Button : UIObject, IInvoke
-  {
-    private IInvoke _invokePattern;
-    private static IFactory<Button> _factory;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public class Button : UIObject, IInvoke {
+        static IFactory<Button> _factory;
+        IInvoke _invokePattern;
 
-    public Button(UIObject uiObject)
-      : base(uiObject)
-      => this.Initialize();
+        public Button(UIObject uiObject)
+            : base(uiObject: uiObject) {
+            Initialize();
+        }
 
-    internal Button(AutomationElement element)
-      : base(element)
-      => this.Initialize();
+        internal Button(AutomationElement element)
+            : base(element: element) {
+            Initialize();
+        }
 
-    private void Initialize() => this._invokePattern = (IInvoke) new InvokeImplementation((UIObject) this);
+        public static IFactory<Button> Factory {
+            get {
+                if (_factory == null)
+                    _factory = new ButtonFactory();
+                return _factory;
+            }
+        }
 
-    public virtual void Invoke() => this._invokePattern.Invoke();
+        public virtual void Invoke() {
+            this._invokePattern.Invoke();
+        }
 
-    public UIEventWaiter GetInvokedWaiter() => this._invokePattern.GetInvokedWaiter();
+        public UIEventWaiter GetInvokedWaiter() {
+            return this._invokePattern.GetInvokedWaiter();
+        }
 
-    public static IFactory<Button> Factory
-    {
-      get
-      {
-        if (Button._factory == null)
-          Button._factory = (IFactory<Button>) new Button.ButtonFactory();
-        return Button._factory;
-      }
+        void Initialize() {
+            this._invokePattern = new InvokeImplementation(uiObject: this);
+        }
+
+        class ButtonFactory : IFactory<Button> {
+            public Button Create(UIObject element) {
+                return new Button(uiObject: element);
+            }
+        }
     }
-
-    private class ButtonFactory : IFactory<Button>
-    {
-      public Button Create(UIObject element) => new Button(element);
-    }
-  }
 }

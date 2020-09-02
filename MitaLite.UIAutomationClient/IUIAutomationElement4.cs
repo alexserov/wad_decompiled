@@ -8,339 +8,588 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [Guid("3B6E233C-52FB-4063-A4C9-77C075C2A06B")]
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [ComImport]
-  public interface IUIAutomationElement4 : IUIAutomationElement3
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    new void SetFocus();
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)]
-    new int[] GetRuntimeId();
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElement FindFirst(
-      [In] TreeScope scope,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCondition condition);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElementArray FindAll(
-      [In] TreeScope scope,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCondition condition);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElement FindFirstBuildCache(
-      [In] TreeScope scope,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCondition condition,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElementArray FindAllBuildCache(
-      [In] TreeScope scope,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCondition condition,
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElement BuildUpdatedCache(
-      [MarshalAs(UnmanagedType.Interface), In] IUIAutomationCacheRequest cacheRequest);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    new Variant GetCurrentPropertyValue([In] int propertyId);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    new Variant GetCurrentPropertyValueEx([In] int propertyId, [In] int ignoreDefaultValue);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    new Variant GetCachedPropertyValue([In] int propertyId);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Struct)]
-    new Variant GetCachedPropertyValueEx([In] int propertyId, [In] int ignoreDefaultValue);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    new IntPtr GetCurrentPatternAs([In] int patternId, [In] ref Guid riid);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    new IntPtr GetCachedPatternAs([In] int patternId, [In] ref Guid riid);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.IUnknown)]
-    new object GetCurrentPattern([In] int patternId);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.IUnknown)]
-    new object GetCachedPattern([In] int patternId);
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElement GetCachedParent();
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    [return: MarshalAs(UnmanagedType.Interface)]
-    new IUIAutomationElementArray GetCachedChildren();
-
-    [DispId(1610678289)]
-    new int CurrentProcessId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678290)]
-    new int CurrentControlType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678291)]
-    new string CurrentLocalizedControlType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678292)]
-    new string CurrentName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678293)]
-    new string CurrentAcceleratorKey { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678294)]
-    new string CurrentAccessKey { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678295)]
-    new int CurrentHasKeyboardFocus { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678296)]
-    new int CurrentIsKeyboardFocusable { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678297)]
-    new int CurrentIsEnabled { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678298)]
-    new string CurrentAutomationId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678299)]
-    new string CurrentClassName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678300)]
-    new string CurrentHelpText { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678301)]
-    new int CurrentCulture { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678302)]
-    new int CurrentIsControlElement { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678303)]
-    new int CurrentIsContentElement { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678304)]
-    new int CurrentIsPassword { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678305)]
-    new IntPtr CurrentNativeWindowHandle { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678306)]
-    new string CurrentItemType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678307)]
-    new int CurrentIsOffscreen { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678308)]
-    new OrientationType CurrentOrientation { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678309)]
-    new string CurrentFrameworkId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678310)]
-    new int CurrentIsRequiredForForm { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678311)]
-    new string CurrentItemStatus { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678312)]
-    new tagRECT CurrentBoundingRectangle { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678313)]
-    new IUIAutomationElement CurrentLabeledBy { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678314)]
-    new string CurrentAriaRole { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678315)]
-    new string CurrentAriaProperties { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678316)]
-    new int CurrentIsDataValidForForm { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678317)]
-    new IUIAutomationElementArray CurrentControllerFor { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678318)]
-    new IUIAutomationElementArray CurrentDescribedBy { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678319)]
-    new IUIAutomationElementArray CurrentFlowsTo { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678320)]
-    new string CurrentProviderDescription { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678321)]
-    new int CachedProcessId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678322)]
-    new int CachedControlType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678323)]
-    new string CachedLocalizedControlType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678324)]
-    new string CachedName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678325)]
-    new string CachedAcceleratorKey { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678326)]
-    new string CachedAccessKey { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678327)]
-    new int CachedHasKeyboardFocus { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678328)]
-    new int CachedIsKeyboardFocusable { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678329)]
-    new int CachedIsEnabled { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678330)]
-    new string CachedAutomationId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678331)]
-    new string CachedClassName { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678332)]
-    new string CachedHelpText { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678333)]
-    new int CachedCulture { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678334)]
-    new int CachedIsControlElement { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678335)]
-    new int CachedIsContentElement { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678336)]
-    new int CachedIsPassword { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678337)]
-    new IntPtr CachedNativeWindowHandle { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678338)]
-    new string CachedItemType { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678339)]
-    new int CachedIsOffscreen { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678340)]
-    new OrientationType CachedOrientation { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678341)]
-    new string CachedFrameworkId { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678342)]
-    new int CachedIsRequiredForForm { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678343)]
-    new string CachedItemStatus { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678344)]
-    new tagRECT CachedBoundingRectangle { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678345)]
-    new IUIAutomationElement CachedLabeledBy { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678346)]
-    new string CachedAriaRole { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678347)]
-    new string CachedAriaProperties { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [DispId(1610678348)]
-    new int CachedIsDataValidForForm { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610678349)]
-    new IUIAutomationElementArray CachedControllerFor { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678350)]
-    new IUIAutomationElementArray CachedDescribedBy { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678351)]
-    new IUIAutomationElementArray CachedFlowsTo { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610678352)]
-    new string CachedProviderDescription { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.BStr)] get; }
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    new int GetClickablePoint(out tagPOINT clickable);
-
-    [DispId(1610743808)]
-    new int CurrentOptimizeForVisualContent { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610743809)]
-    new int CachedOptimizeForVisualContent { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610743810)]
-    new LiveSetting CurrentLiveSetting { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610743811)]
-    new LiveSetting CachedLiveSetting { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610743812)]
-    new IUIAutomationElementArray CurrentFlowsFrom { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610743813)]
-    new IUIAutomationElementArray CachedFlowsFrom { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    new void ShowContextMenu();
-
-    [DispId(1610809345)]
-    new int CurrentIsPeripheral { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610809346)]
-    new int CachedIsPeripheral { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874880)]
-    int CurrentPositionInSet { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874881)]
-    int CurrentSizeOfSet { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874882)]
-    int CurrentLevel { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874883)]
-    int[] CurrentAnnotationTypes { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)] get; }
-
-    [DispId(1610874884)]
-    IUIAutomationElementArray CurrentAnnotationObjects { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-
-    [DispId(1610874885)]
-    int CachedPositionInSet { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874886)]
-    int CachedSizeOfSet { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874887)]
-    int CachedLevel { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-
-    [DispId(1610874888)]
-    int[] CachedAnnotationTypes { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)] get; }
-
-    [DispId(1610874889)]
-    IUIAutomationElementArray CachedAnnotationObjects { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(UnmanagedType.Interface)] get; }
-  }
+namespace UIAutomationClient {
+    [Guid(guid: "3B6E233C-52FB-4063-A4C9-77C075C2A06B"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), ComImport]
+    public interface IUIAutomationElement4 : IUIAutomationElement3 {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        new void SetFocus();
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)]
+        new int[] GetRuntimeId();
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElement FindFirst(
+            [In] TreeScope scope,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCondition condition);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElementArray FindAll(
+            [In] TreeScope scope,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCondition condition);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElement FindFirstBuildCache(
+            [In] TreeScope scope,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCondition condition,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElementArray FindAllBuildCache(
+            [In] TreeScope scope,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCondition condition,
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElement BuildUpdatedCache(
+            [MarshalAs(unmanagedType: UnmanagedType.Interface), In]
+            IUIAutomationCacheRequest cacheRequest);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        new Variant GetCurrentPropertyValue([In] int propertyId);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        new Variant GetCurrentPropertyValueEx([In] int propertyId, [In] int ignoreDefaultValue);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        new Variant GetCachedPropertyValue([In] int propertyId);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Struct)]
+        new Variant GetCachedPropertyValueEx([In] int propertyId, [In] int ignoreDefaultValue);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        new IntPtr GetCurrentPatternAs([In] int patternId, [In] ref Guid riid);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        new IntPtr GetCachedPatternAs([In] int patternId, [In] ref Guid riid);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.IUnknown)]
+        new object GetCurrentPattern([In] int patternId);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.IUnknown)]
+        new object GetCachedPattern([In] int patternId);
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElement GetCachedParent();
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+        new IUIAutomationElementArray GetCachedChildren();
+
+        [DispId(dispId: 1610678289)]
+        new int CurrentProcessId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678290)]
+        new int CurrentControlType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678291)]
+        new string CurrentLocalizedControlType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678292)]
+        new string CurrentName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678293)]
+        new string CurrentAcceleratorKey {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678294)]
+        new string CurrentAccessKey {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678295)]
+        new int CurrentHasKeyboardFocus {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678296)]
+        new int CurrentIsKeyboardFocusable {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678297)]
+        new int CurrentIsEnabled {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678298)]
+        new string CurrentAutomationId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678299)]
+        new string CurrentClassName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678300)]
+        new string CurrentHelpText {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678301)]
+        new int CurrentCulture {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678302)]
+        new int CurrentIsControlElement {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678303)]
+        new int CurrentIsContentElement {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678304)]
+        new int CurrentIsPassword {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678305)]
+        new IntPtr CurrentNativeWindowHandle {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678306)]
+        new string CurrentItemType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678307)]
+        new int CurrentIsOffscreen {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678308)]
+        new OrientationType CurrentOrientation {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678309)]
+        new string CurrentFrameworkId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678310)]
+        new int CurrentIsRequiredForForm {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678311)]
+        new string CurrentItemStatus {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678312)]
+        new tagRECT CurrentBoundingRectangle {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678313)]
+        new IUIAutomationElement CurrentLabeledBy {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678314)]
+        new string CurrentAriaRole {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678315)]
+        new string CurrentAriaProperties {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678316)]
+        new int CurrentIsDataValidForForm {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678317)]
+        new IUIAutomationElementArray CurrentControllerFor {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678318)]
+        new IUIAutomationElementArray CurrentDescribedBy {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678319)]
+        new IUIAutomationElementArray CurrentFlowsTo {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678320)]
+        new string CurrentProviderDescription {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678321)]
+        new int CachedProcessId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678322)]
+        new int CachedControlType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678323)]
+        new string CachedLocalizedControlType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678324)]
+        new string CachedName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678325)]
+        new string CachedAcceleratorKey {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678326)]
+        new string CachedAccessKey {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678327)]
+        new int CachedHasKeyboardFocus {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678328)]
+        new int CachedIsKeyboardFocusable {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678329)]
+        new int CachedIsEnabled {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678330)]
+        new string CachedAutomationId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678331)]
+        new string CachedClassName {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678332)]
+        new string CachedHelpText {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678333)]
+        new int CachedCulture {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678334)]
+        new int CachedIsControlElement {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678335)]
+        new int CachedIsContentElement {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678336)]
+        new int CachedIsPassword {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678337)]
+        new IntPtr CachedNativeWindowHandle {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678338)]
+        new string CachedItemType {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678339)]
+        new int CachedIsOffscreen {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678340)]
+        new OrientationType CachedOrientation {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678341)]
+        new string CachedFrameworkId {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678342)]
+        new int CachedIsRequiredForForm {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678343)]
+        new string CachedItemStatus {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678344)]
+        new tagRECT CachedBoundingRectangle {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678345)]
+        new IUIAutomationElement CachedLabeledBy {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678346)]
+        new string CachedAriaRole {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678347)]
+        new string CachedAriaProperties {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [DispId(dispId: 1610678348)]
+        new int CachedIsDataValidForForm {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610678349)]
+        new IUIAutomationElementArray CachedControllerFor {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678350)]
+        new IUIAutomationElementArray CachedDescribedBy {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678351)]
+        new IUIAutomationElementArray CachedFlowsTo {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610678352)]
+        new string CachedProviderDescription {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.BStr)]
+            get;
+        }
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        new int GetClickablePoint(out tagPOINT clickable);
+
+        [DispId(dispId: 1610743808)]
+        new int CurrentOptimizeForVisualContent {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610743809)]
+        new int CachedOptimizeForVisualContent {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610743810)]
+        new LiveSetting CurrentLiveSetting {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610743811)]
+        new LiveSetting CachedLiveSetting {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610743812)]
+        new IUIAutomationElementArray CurrentFlowsFrom {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610743813)]
+        new IUIAutomationElementArray CachedFlowsFrom {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        new void ShowContextMenu();
+
+        [DispId(dispId: 1610809345)]
+        new int CurrentIsPeripheral {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610809346)]
+        new int CachedIsPeripheral {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874880)]
+        int CurrentPositionInSet {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874881)]
+        int CurrentSizeOfSet {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874882)]
+        int CurrentLevel {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874883)]
+        int[] CurrentAnnotationTypes {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)]
+            get;
+        }
+
+        [DispId(dispId: 1610874884)]
+        IUIAutomationElementArray CurrentAnnotationObjects {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+
+        [DispId(dispId: 1610874885)]
+        int CachedPositionInSet {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874886)]
+        int CachedSizeOfSet {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874887)]
+        int CachedLevel {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        [DispId(dispId: 1610874888)]
+        int[] CachedAnnotationTypes {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_INT)]
+            get;
+        }
+
+        [DispId(dispId: 1610874889)]
+        IUIAutomationElementArray CachedAnnotationObjects {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] [return: MarshalAs(unmanagedType: UnmanagedType.Interface)]
+            get;
+        }
+    }
 }

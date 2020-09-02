@@ -6,23 +6,24 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class DragPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<DragPattern, IUIAutomationDragPattern>(10030, "DragPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationDragPattern, DragPattern>(DragPattern.Wrap));
-    public static readonly AutomationProperty IsGrabbedProperty = new AutomationProperty(30138, "DragPatternIdentifiers.IsGrabbedProperty");
-    public static readonly AutomationProperty DropEffectProperty = new AutomationProperty(30139, "DragPatternIdentifiers.DropEffectProperty");
-    public static readonly AutomationProperty DropEffectsProperty = new AutomationProperty(30140, "DragPatternIdentifiers.DropEffectsProperty");
-    public static readonly AutomationProperty GrabbedItemsProperty = new AutomationProperty(30144, "DragPatternIdentifiers.GrabbedItemsProperty");
-    private readonly IUIAutomationDragPattern _dragPattern;
+namespace System.Windows.Automation {
+    public class DragPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<DragPattern, IUIAutomationDragPattern>(id: 10030, programmaticName: "DragPatternIdentifiers.Pattern", wrap: Wrap);
+        public static readonly AutomationProperty IsGrabbedProperty = new AutomationProperty(id: 30138, programmaticName: "DragPatternIdentifiers.IsGrabbedProperty");
+        public static readonly AutomationProperty DropEffectProperty = new AutomationProperty(id: 30139, programmaticName: "DragPatternIdentifiers.DropEffectProperty");
+        public static readonly AutomationProperty DropEffectsProperty = new AutomationProperty(id: 30140, programmaticName: "DragPatternIdentifiers.DropEffectsProperty");
+        public static readonly AutomationProperty GrabbedItemsProperty = new AutomationProperty(id: 30144, programmaticName: "DragPatternIdentifiers.GrabbedItemsProperty");
+        readonly IUIAutomationDragPattern _dragPattern;
 
-    private DragPattern(AutomationElement element, IUIAutomationDragPattern dragPattern)
-      : base(element)
-      => this._dragPattern = dragPattern;
+        DragPattern(AutomationElement element, IUIAutomationDragPattern dragPattern)
+            : base(el: element) {
+            this._dragPattern = dragPattern;
+        }
 
-    internal static DragPattern Wrap(
-      AutomationElement element,
-      IUIAutomationDragPattern dragPattern) => new DragPattern(element, dragPattern);
-  }
+        internal static DragPattern Wrap(
+            AutomationElement element,
+            IUIAutomationDragPattern dragPattern) {
+            return new DragPattern(element: element, dragPattern: dragPattern);
+        }
+    }
 }

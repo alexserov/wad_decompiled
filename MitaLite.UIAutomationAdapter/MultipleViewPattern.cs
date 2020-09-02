@@ -6,47 +6,58 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class MultipleViewPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = MultipleViewPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty CurrentViewProperty = MultipleViewPatternIdentifiers.CurrentViewProperty;
-    public static readonly AutomationProperty SupportedViewsProperty = MultipleViewPatternIdentifiers.SupportedViewsProperty;
-    private readonly IUIAutomationMultipleViewPattern _multipleViewPattern;
+namespace System.Windows.Automation {
+    public class MultipleViewPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = MultipleViewPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty CurrentViewProperty = MultipleViewPatternIdentifiers.CurrentViewProperty;
+        public static readonly AutomationProperty SupportedViewsProperty = MultipleViewPatternIdentifiers.SupportedViewsProperty;
+        readonly IUIAutomationMultipleViewPattern _multipleViewPattern;
 
-    private MultipleViewPattern(
-      AutomationElement element,
-      IUIAutomationMultipleViewPattern multipleViewPattern)
-      : base(element)
-      => this._multipleViewPattern = multipleViewPattern;
+        MultipleViewPattern(
+            AutomationElement element,
+            IUIAutomationMultipleViewPattern multipleViewPattern)
+            : base(el: element) {
+            this._multipleViewPattern = multipleViewPattern;
+        }
 
-    internal static MultipleViewPattern Wrap(
-      AutomationElement element,
-      IUIAutomationMultipleViewPattern multipleViewPattern) => new MultipleViewPattern(element, multipleViewPattern);
+        public MultipleViewPatternInformation Cached {
+            get { return new MultipleViewPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public string GetViewName(int viewId) => this._multipleViewPattern.GetViewName(viewId);
+        public MultipleViewPatternInformation Current {
+            get { return new MultipleViewPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public void SetCurrentView(int viewId) => this._multipleViewPattern.SetCurrentView(viewId);
+        internal static MultipleViewPattern Wrap(
+            AutomationElement element,
+            IUIAutomationMultipleViewPattern multipleViewPattern) {
+            return new MultipleViewPattern(element: element, multipleViewPattern: multipleViewPattern);
+        }
 
-    public MultipleViewPattern.MultipleViewPatternInformation Cached => new MultipleViewPattern.MultipleViewPatternInformation(this._el, true);
+        public string GetViewName(int viewId) {
+            return this._multipleViewPattern.GetViewName(view: viewId);
+        }
 
-    public MultipleViewPattern.MultipleViewPatternInformation Current => new MultipleViewPattern.MultipleViewPatternInformation(this._el, false);
+        public void SetCurrentView(int viewId) {
+            this._multipleViewPattern.SetCurrentView(view: viewId);
+        }
 
-    public struct MultipleViewPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct MultipleViewPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal MultipleViewPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal MultipleViewPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public int CurrentView => (int) this._el.GetPatternPropertyValue(MultipleViewPattern.CurrentViewProperty, this._useCache);
+            public int CurrentView {
+                get { return (int) this._el.GetPatternPropertyValue(property: CurrentViewProperty, useCache: this._useCache); }
+            }
 
-      public int[] GetSupportedViews() => (int[]) this._el.GetPatternPropertyValue(MultipleViewPattern.SupportedViewsProperty, this._useCache);
+            public int[] GetSupportedViews() {
+                return (int[]) this._el.GetPatternPropertyValue(property: SupportedViewsProperty, useCache: this._useCache);
+            }
+        }
     }
-  }
 }

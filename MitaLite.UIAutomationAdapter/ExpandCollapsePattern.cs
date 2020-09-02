@@ -6,44 +6,53 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ExpandCollapsePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = ExpandCollapsePatternIdentifiers.Pattern;
-    public static readonly AutomationProperty ExpandCollapseStateProperty = ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty;
-    private readonly IUIAutomationExpandCollapsePattern _expandCollapsePattern;
+namespace System.Windows.Automation {
+    public class ExpandCollapsePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = ExpandCollapsePatternIdentifiers.Pattern;
+        public static readonly AutomationProperty ExpandCollapseStateProperty = ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty;
+        readonly IUIAutomationExpandCollapsePattern _expandCollapsePattern;
 
-    private ExpandCollapsePattern(
-      AutomationElement element,
-      IUIAutomationExpandCollapsePattern expandCollapsePattern)
-      : base(element)
-      => this._expandCollapsePattern = expandCollapsePattern;
+        ExpandCollapsePattern(
+            AutomationElement element,
+            IUIAutomationExpandCollapsePattern expandCollapsePattern)
+            : base(el: element) {
+            this._expandCollapsePattern = expandCollapsePattern;
+        }
 
-    internal static ExpandCollapsePattern Wrap(
-      AutomationElement element,
-      IUIAutomationExpandCollapsePattern expandCollapsePattern) => new ExpandCollapsePattern(element, expandCollapsePattern);
+        public ExpandCollapsePatternInformation Cached {
+            get { return new ExpandCollapsePatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void Expand() => this._expandCollapsePattern.Expand();
+        public ExpandCollapsePatternInformation Current {
+            get { return new ExpandCollapsePatternInformation(el: this._el, useCache: false); }
+        }
 
-    public void Collapse() => this._expandCollapsePattern.Collapse();
+        internal static ExpandCollapsePattern Wrap(
+            AutomationElement element,
+            IUIAutomationExpandCollapsePattern expandCollapsePattern) {
+            return new ExpandCollapsePattern(element: element, expandCollapsePattern: expandCollapsePattern);
+        }
 
-    public ExpandCollapsePattern.ExpandCollapsePatternInformation Cached => new ExpandCollapsePattern.ExpandCollapsePatternInformation(this._el, true);
+        public void Expand() {
+            this._expandCollapsePattern.Expand();
+        }
 
-    public ExpandCollapsePattern.ExpandCollapsePatternInformation Current => new ExpandCollapsePattern.ExpandCollapsePatternInformation(this._el, false);
+        public void Collapse() {
+            this._expandCollapsePattern.Collapse();
+        }
 
-    public struct ExpandCollapsePatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct ExpandCollapsePatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal ExpandCollapsePatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal ExpandCollapsePatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public ExpandCollapseState ExpandCollapseState => (ExpandCollapseState) this._el.GetPatternPropertyValue(ExpandCollapsePattern.ExpandCollapseStateProperty, this._useCache);
+            public ExpandCollapseState ExpandCollapseState {
+                get { return (ExpandCollapseState) this._el.GetPatternPropertyValue(property: ExpandCollapseStateProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

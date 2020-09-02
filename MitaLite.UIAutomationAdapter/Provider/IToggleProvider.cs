@@ -6,15 +6,11 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation.Provider
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [Guid("56d00bd0-c4f4-433c-a836-1a52a57e0892")]
-  [ComImport]
-  public interface IToggleProvider
-  {
-    void Toggle();
+namespace System.Windows.Automation.Provider {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), Guid(guid: "56d00bd0-c4f4-433c-a836-1a52a57e0892"), ComImport]
+    public interface IToggleProvider {
+        void Toggle();
 
-    ToggleState ToggleState { get; }
-  }
+        ToggleState ToggleState { get; }
+    }
 }

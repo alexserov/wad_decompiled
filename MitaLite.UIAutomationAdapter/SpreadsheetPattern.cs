@@ -6,21 +6,22 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class SpreadsheetPattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<SpreadsheetPattern, IUIAutomationSpreadsheetPattern>(10026, "SpreadsheetPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationSpreadsheetPattern, SpreadsheetPattern>(SpreadsheetPattern.Wrap));
-    private readonly IUIAutomationSpreadsheetPattern _spreadsheetPattern;
+namespace System.Windows.Automation {
+    public class SpreadsheetPattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<SpreadsheetPattern, IUIAutomationSpreadsheetPattern>(id: 10026, programmaticName: "SpreadsheetPatternIdentifiers.Pattern", wrap: Wrap);
+        readonly IUIAutomationSpreadsheetPattern _spreadsheetPattern;
 
-    private SpreadsheetPattern(
-      AutomationElement element,
-      IUIAutomationSpreadsheetPattern spreadsheetPattern)
-      : base(element)
-      => this._spreadsheetPattern = spreadsheetPattern;
+        SpreadsheetPattern(
+            AutomationElement element,
+            IUIAutomationSpreadsheetPattern spreadsheetPattern)
+            : base(el: element) {
+            this._spreadsheetPattern = spreadsheetPattern;
+        }
 
-    internal static SpreadsheetPattern Wrap(
-      AutomationElement element,
-      IUIAutomationSpreadsheetPattern spreadsheetPattern) => new SpreadsheetPattern(element, spreadsheetPattern);
-  }
+        internal static SpreadsheetPattern Wrap(
+            AutomationElement element,
+            IUIAutomationSpreadsheetPattern spreadsheetPattern) {
+            return new SpreadsheetPattern(element: element, spreadsheetPattern: spreadsheetPattern);
+        }
+    }
 }

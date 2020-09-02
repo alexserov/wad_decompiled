@@ -6,11 +6,9 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class DockPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<DockPattern, IUIAutomationDockPattern>(10011, "DockPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationDockPattern, DockPattern>(DockPattern.Wrap));
-    public static readonly AutomationProperty DockPositionProperty = new AutomationProperty(30069, "DockPatternIdentifiers.DockPositionProperty");
-  }
+namespace System.Windows.Automation {
+    public static class DockPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<DockPattern, IUIAutomationDockPattern>(id: 10011, programmaticName: "DockPatternIdentifiers.Pattern", wrap: DockPattern.Wrap);
+        public static readonly AutomationProperty DockPositionProperty = new AutomationProperty(id: 30069, programmaticName: "DockPatternIdentifiers.DockPositionProperty");
+    }
 }

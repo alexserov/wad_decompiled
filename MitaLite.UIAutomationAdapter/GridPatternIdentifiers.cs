@@ -6,12 +6,10 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class GridPatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<GridPattern, IUIAutomationGridPattern>(10006, "GridPatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationGridPattern, GridPattern>(GridPattern.Wrap));
-    public static readonly AutomationProperty ColumnCountProperty = new AutomationProperty(30063, "GridPatternIdentifiers.ColumnCountProperty");
-    public static readonly AutomationProperty RowCountProperty = new AutomationProperty(30062, "GridPatternIdentifiers.RowCountProperty");
-  }
+namespace System.Windows.Automation {
+    public static class GridPatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<GridPattern, IUIAutomationGridPattern>(id: 10006, programmaticName: "GridPatternIdentifiers.Pattern", wrap: GridPattern.Wrap);
+        public static readonly AutomationProperty ColumnCountProperty = new AutomationProperty(id: 30063, programmaticName: "GridPatternIdentifiers.ColumnCountProperty");
+        public static readonly AutomationProperty RowCountProperty = new AutomationProperty(id: 30062, programmaticName: "GridPatternIdentifiers.RowCountProperty");
+    }
 }

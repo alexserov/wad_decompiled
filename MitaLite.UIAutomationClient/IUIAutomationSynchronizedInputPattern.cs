@@ -7,17 +7,13 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("2233BE0B-AFB7-448B-9FDA-3B378AA5EAE1")]
-  [ComImport]
-  public interface IUIAutomationSynchronizedInputPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void StartListening([In] SynchronizedInputType inputType);
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "2233BE0B-AFB7-448B-9FDA-3B378AA5EAE1"), ComImport]
+    public interface IUIAutomationSynchronizedInputPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void StartListening([In] SynchronizedInputType inputType);
 
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void Cancel();
-  }
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void Cancel();
+    }
 }

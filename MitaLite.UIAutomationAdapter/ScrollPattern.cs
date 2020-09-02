@@ -6,62 +6,85 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class ScrollPattern : BasePattern
-  {
-    public const double NoScroll = -1.0;
-    public static readonly AutomationPattern Pattern = ScrollPatternIdentifiers.Pattern;
-    public static readonly AutomationProperty HorizontallyScrollableProperty = ScrollPatternIdentifiers.HorizontallyScrollableProperty;
-    public static readonly AutomationProperty HorizontalScrollPercentProperty = ScrollPatternIdentifiers.HorizontalScrollPercentProperty;
-    public static readonly AutomationProperty HorizontalViewSizeProperty = ScrollPatternIdentifiers.HorizontalViewSizeProperty;
-    public static readonly AutomationProperty VerticallyScrollableProperty = ScrollPatternIdentifiers.VerticallyScrollableProperty;
-    public static readonly AutomationProperty VerticalScrollPercentProperty = ScrollPatternIdentifiers.VerticalScrollPercentProperty;
-    public static readonly AutomationProperty VerticalViewSizeProperty = ScrollPatternIdentifiers.VerticalViewSizeProperty;
-    private readonly IUIAutomationScrollPattern _scrollPattern;
+namespace System.Windows.Automation {
+    public class ScrollPattern : BasePattern {
+        public const double NoScroll = -1.0;
+        public static readonly AutomationPattern Pattern = ScrollPatternIdentifiers.Pattern;
+        public static readonly AutomationProperty HorizontallyScrollableProperty = ScrollPatternIdentifiers.HorizontallyScrollableProperty;
+        public static readonly AutomationProperty HorizontalScrollPercentProperty = ScrollPatternIdentifiers.HorizontalScrollPercentProperty;
+        public static readonly AutomationProperty HorizontalViewSizeProperty = ScrollPatternIdentifiers.HorizontalViewSizeProperty;
+        public static readonly AutomationProperty VerticallyScrollableProperty = ScrollPatternIdentifiers.VerticallyScrollableProperty;
+        public static readonly AutomationProperty VerticalScrollPercentProperty = ScrollPatternIdentifiers.VerticalScrollPercentProperty;
+        public static readonly AutomationProperty VerticalViewSizeProperty = ScrollPatternIdentifiers.VerticalViewSizeProperty;
+        readonly IUIAutomationScrollPattern _scrollPattern;
 
-    private ScrollPattern(AutomationElement element, IUIAutomationScrollPattern scrollPattern)
-      : base(element)
-      => this._scrollPattern = scrollPattern;
+        ScrollPattern(AutomationElement element, IUIAutomationScrollPattern scrollPattern)
+            : base(el: element) {
+            this._scrollPattern = scrollPattern;
+        }
 
-    internal static ScrollPattern Wrap(
-      AutomationElement element,
-      IUIAutomationScrollPattern scrollPattern) => new ScrollPattern(element, scrollPattern);
+        public ScrollPatternInformation Cached {
+            get { return new ScrollPatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void SetScrollPercent(double horizontalPercent, double verticalPercent) => this._scrollPattern.SetScrollPercent(horizontalPercent, verticalPercent);
+        public ScrollPatternInformation Current {
+            get { return new ScrollPatternInformation(el: this._el, useCache: false); }
+        }
 
-    public void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount) => this._scrollPattern.Scroll(UiaConvert.Convert(horizontalAmount), UiaConvert.Convert(verticalAmount));
+        internal static ScrollPattern Wrap(
+            AutomationElement element,
+            IUIAutomationScrollPattern scrollPattern) {
+            return new ScrollPattern(element: element, scrollPattern: scrollPattern);
+        }
 
-    public void ScrollHorizontal(ScrollAmount amount) => this._scrollPattern.Scroll(UiaConvert.Convert(amount), UiaConvert.Convert(ScrollAmount.NoAmount));
+        public void SetScrollPercent(double horizontalPercent, double verticalPercent) {
+            this._scrollPattern.SetScrollPercent(horizontalPercent: horizontalPercent, verticalPercent: verticalPercent);
+        }
 
-    public void ScrollVertical(ScrollAmount amount) => this._scrollPattern.Scroll(UiaConvert.Convert(ScrollAmount.NoAmount), UiaConvert.Convert(amount));
+        public void Scroll(ScrollAmount horizontalAmount, ScrollAmount verticalAmount) {
+            this._scrollPattern.Scroll(horizontalAmount: UiaConvert.Convert(scrollAmount: horizontalAmount), verticalAmount: UiaConvert.Convert(scrollAmount: verticalAmount));
+        }
 
-    public ScrollPattern.ScrollPatternInformation Cached => new ScrollPattern.ScrollPatternInformation(this._el, true);
+        public void ScrollHorizontal(ScrollAmount amount) {
+            this._scrollPattern.Scroll(horizontalAmount: UiaConvert.Convert(scrollAmount: amount), verticalAmount: UiaConvert.Convert(scrollAmount: ScrollAmount.NoAmount));
+        }
 
-    public ScrollPattern.ScrollPatternInformation Current => new ScrollPattern.ScrollPatternInformation(this._el, false);
+        public void ScrollVertical(ScrollAmount amount) {
+            this._scrollPattern.Scroll(horizontalAmount: UiaConvert.Convert(scrollAmount: ScrollAmount.NoAmount), verticalAmount: UiaConvert.Convert(scrollAmount: amount));
+        }
 
-    public struct ScrollPatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct ScrollPatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal ScrollPatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal ScrollPatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public double HorizontalScrollPercent => (double) this._el.GetPatternPropertyValue(ScrollPattern.HorizontalScrollPercentProperty, this._useCache);
+            public double HorizontalScrollPercent {
+                get { return (double) this._el.GetPatternPropertyValue(property: HorizontalScrollPercentProperty, useCache: this._useCache); }
+            }
 
-      public double VerticalScrollPercent => (double) this._el.GetPatternPropertyValue(ScrollPattern.VerticalScrollPercentProperty, this._useCache);
+            public double VerticalScrollPercent {
+                get { return (double) this._el.GetPatternPropertyValue(property: VerticalScrollPercentProperty, useCache: this._useCache); }
+            }
 
-      public double HorizontalViewSize => (double) this._el.GetPatternPropertyValue(ScrollPattern.HorizontalViewSizeProperty, this._useCache);
+            public double HorizontalViewSize {
+                get { return (double) this._el.GetPatternPropertyValue(property: HorizontalViewSizeProperty, useCache: this._useCache); }
+            }
 
-      public double VerticalViewSize => (double) this._el.GetPatternPropertyValue(ScrollPattern.VerticalViewSizeProperty, this._useCache);
+            public double VerticalViewSize {
+                get { return (double) this._el.GetPatternPropertyValue(property: VerticalViewSizeProperty, useCache: this._useCache); }
+            }
 
-      public bool HorizontallyScrollable => (bool) this._el.GetPatternPropertyValue(ScrollPattern.HorizontallyScrollableProperty, this._useCache);
+            public bool HorizontallyScrollable {
+                get { return (bool) this._el.GetPatternPropertyValue(property: HorizontallyScrollableProperty, useCache: this._useCache); }
+            }
 
-      public bool VerticallyScrollable => (bool) this._el.GetPatternPropertyValue(ScrollPattern.VerticallyScrollableProperty, this._useCache);
+            public bool VerticallyScrollable {
+                get { return (bool) this._el.GetPatternPropertyValue(property: VerticallyScrollableProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

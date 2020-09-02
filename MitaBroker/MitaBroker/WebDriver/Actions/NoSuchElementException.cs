@@ -6,13 +6,10 @@
 
 using System;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal class NoSuchElementException : Exception
-  {
-    public NoSuchElementException(string message)
-      : base(message)
-    {
+namespace MitaBroker.WebDriver.Actions {
+    internal class NoSuchElementException : Exception {
+        public NoSuchElementException(string message)
+            : base(message: message) {
+        }
     }
-  }
 }

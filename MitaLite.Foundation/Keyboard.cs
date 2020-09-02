@@ -10,478 +10,450 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public class Keyboard : ITextInput
-  {
-    private bool turnOffToggleKeys = true;
-    private static int sendKeysDelay = 20;
-    private const string specialChars = "+^%~(){}";
-    private static Regex specialCharacterPattern = new Regex("(?<specialChar>[" + Regex.Escape("+^%~(){}") + "])", RegexOptions.Compiled);
-    private static object sendKeysLock = new object();
-    private KeyTranslator keyTranslator = KeyTranslator.Instance;
-    private static object classLock = new object();
-    private static Keyboard singletonInstance;
-    internal static INativeMethods nativeMethods = (INativeMethods) null;
-    private IInputQueue inputQueue;
-    private IInputDevice inputDevice;
-
-    protected Keyboard()
-    {
-      Keyboard.nativeMethods = (INativeMethods) new NativeMethods();
-      this.inputQueue = (IInputQueue) new InputQueue();
-      this.inputDevice = new InputDeviceFactory().Get(INPUT_DEVICE_TYPE.KEYBOARD);
-    }
-
-    public static Keyboard Instance
-    {
-      get
-      {
-        if (Keyboard.singletonInstance == null)
-        {
-          lock (Keyboard.classLock)
-          {
-            if (Keyboard.singletonInstance == null)
-              Keyboard.singletonInstance = new Keyboard();
-          }
+namespace MS.Internal.Mita.Foundation {
+    public class Keyboard : ITextInput {
+        public enum KeyState {
+            Up,
+            Down,
+            Toggled
         }
-        return Keyboard.singletonInstance;
-      }
-    }
 
-    public void SendText(string text) => this.SendKeys(text);
+        const string specialChars = "+^%~(){}";
+        static readonly Regex specialCharacterPattern = new Regex(pattern: "(?<specialChar>[" + Regex.Escape(str: "+^%~(){}") + "])", options: RegexOptions.Compiled);
+        static readonly object sendKeysLock = new object();
+        static readonly object classLock = new object();
+        static Keyboard singletonInstance;
+        internal static INativeMethods nativeMethods;
+        readonly IInputDevice inputDevice;
+        readonly IInputQueue inputQueue;
+        readonly KeyTranslator keyTranslator = KeyTranslator.Instance;
 
-    private void SendKeys(string text)
-    {
-      lock (Keyboard.sendKeysLock)
-      {
-        List<IInputAction> inputs;
-        if (!this.ParseText(text, out inputs))
-          throw new ArgumentException(StringResource.Get("SendKeysStringMalformed"), nameof (text));
-        if (this.turnOffToggleKeys)
-        {
-          List<IInputAction> turnOffLockInputs;
-          List<IInputAction> restoreLockInputs;
-          this.GetLockToggleInputs(out turnOffLockInputs, out restoreLockInputs);
-          inputs.InsertRange(0, (IEnumerable<IInputAction>) turnOffLockInputs);
-          inputs.AddRange((IEnumerable<IInputAction>) restoreLockInputs);
+        protected Keyboard() {
+            nativeMethods = new NativeMethods();
+            this.inputQueue = new InputQueue();
+            this.inputDevice = new InputDeviceFactory().Get(type: INPUT_DEVICE_TYPE.KEYBOARD);
         }
-        this.inputQueue.Process(this.inputDevice, (IList<IInputAction>) inputs);
-      }
-    }
 
-    public static Keyboard.KeyState GetKeyState(VirtualKey virtualKeyCode)
-    {
-      byte[] keyState1 = new byte[256];
-      Keyboard.KeyState keyState2 = Keyboard.KeyState.Up;
-      Keyboard.nativeMethods.GetKeyboardState(keyState1);
-      byte num = keyState1[(int) virtualKeyCode];
-      if (((int) num & 1) == 1)
-        keyState2 = Keyboard.KeyState.Toggled;
-      else if (((int) num & 128) == 128)
-        keyState2 = Keyboard.KeyState.Down;
-      return keyState2;
-    }
+        public static Keyboard Instance {
+            get {
+                if (singletonInstance == null)
+                    lock (classLock) {
+                        if (singletonInstance == null)
+                            singletonInstance = new Keyboard();
+                    }
 
-    public static string EscapeSpecialCharacters(string text) => Keyboard.specialCharacterPattern.Replace(text, "{${specialChar}}");
+                return singletonInstance;
+            }
+        }
 
-    public bool TurnOffToggleKeys
-    {
-      get => this.turnOffToggleKeys;
-      set => this.turnOffToggleKeys = value;
-    }
+        public bool TurnOffToggleKeys { get; set; } = true;
 
-    public static int SendKeysDelay
-    {
-      get => Keyboard.sendKeysDelay;
-      set => Keyboard.sendKeysDelay = value;
-    }
+        public static int SendKeysDelay { get; set; } = 20;
 
-    private void GetLockToggleInputs(
-      out List<IInputAction> turnOffLockInputs,
-      out List<IInputAction> restoreLockInputs)
-    {
-      turnOffLockInputs = new List<IInputAction>();
-      restoreLockInputs = new List<IInputAction>();
-      if (Keyboard.GetKeyState(VirtualKey.VK_NUMLOCK) == Keyboard.KeyState.Toggled)
-      {
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_NUMLOCK, KeyAction.Press, Keyboard.sendKeysDelay));
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_NUMLOCK, KeyAction.Release, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_NUMLOCK, KeyAction.Press, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_NUMLOCK, KeyAction.Release, Keyboard.sendKeysDelay));
-      }
-      if (Keyboard.GetKeyState(VirtualKey.VK_CAPITAL) == Keyboard.KeyState.Toggled)
-      {
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CAPITAL, KeyAction.Press, Keyboard.sendKeysDelay));
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CAPITAL, KeyAction.Release, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CAPITAL, KeyAction.Press, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CAPITAL, KeyAction.Release, Keyboard.sendKeysDelay));
-      }
-      if (Keyboard.GetKeyState(VirtualKey.VK_SCROLL) == Keyboard.KeyState.Toggled)
-      {
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SCROLL, KeyAction.Press, Keyboard.sendKeysDelay));
-        turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SCROLL, KeyAction.Release, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SCROLL, KeyAction.Press, Keyboard.sendKeysDelay));
-        restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SCROLL, KeyAction.Release, Keyboard.sendKeysDelay));
-      }
-      if (Keyboard.GetKeyState(VirtualKey.VK_KANA) != Keyboard.KeyState.Toggled)
-        return;
-      turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_KANA, KeyAction.Press, Keyboard.sendKeysDelay));
-      turnOffLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_KANA, KeyAction.Release, Keyboard.sendKeysDelay));
-      restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_KANA, KeyAction.Press, Keyboard.sendKeysDelay));
-      restoreLockInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_KANA, KeyAction.Release, Keyboard.sendKeysDelay));
-    }
+        public void SendText(string text) {
+            SendKeys(text: text);
+        }
 
-    private bool IsChar(char character, string characterSet) => character != char.MinValue && characterSet.IndexOf(character) != -1;
+        void SendKeys(string text) {
+            lock (sendKeysLock) {
+                List<IInputAction> inputs;
+                if (!ParseText(text: text, inputs: out inputs))
+                    throw new ArgumentException(message: StringResource.Get(id: "SendKeysStringMalformed"), paramName: nameof(text));
+                if (TurnOffToggleKeys) {
+                    List<IInputAction> turnOffLockInputs;
+                    List<IInputAction> restoreLockInputs;
+                    GetLockToggleInputs(turnOffLockInputs: out turnOffLockInputs, restoreLockInputs: out restoreLockInputs);
+                    inputs.InsertRange(index: 0, collection: turnOffLockInputs);
+                    inputs.AddRange(collection: restoreLockInputs);
+                }
 
-    private bool IsSpecial(char character) => this.IsChar(character, "+^%~(){}");
+                this.inputQueue.Process(inputDevice: this.inputDevice, inputList: inputs);
+            }
+        }
 
-    private bool ParseEOS(Keyboard.ParsePosition position) => position.ReachedEnd;
+        public static KeyState GetKeyState(VirtualKey virtualKeyCode) {
+            var keyState1 = new byte[256];
+            var keyState2 = KeyState.Up;
+            nativeMethods.GetKeyboardState(keyState: keyState1);
+            var num = keyState1[(int) virtualKeyCode];
+            if ((num & 1) == 1)
+                keyState2 = KeyState.Toggled;
+            else if ((num & 128) == 128)
+                keyState2 = KeyState.Down;
+            return keyState2;
+        }
 
-    private bool ParseWhitespace(Keyboard.ParsePosition position)
-    {
-      if (!char.IsWhiteSpace(position.CurrentChar))
-        return false;
-      position.MoveNext();
-      return true;
-    }
+        public static string EscapeSpecialCharacters(string text) {
+            return specialCharacterPattern.Replace(input: text, replacement: "{${specialChar}}");
+        }
 
-    private bool ParseWhitespaces(Keyboard.ParsePosition position)
-    {
-      if (!this.ParseWhitespace(position))
-        return false;
-      do
-        ;
-      while (this.ParseWhitespace(position));
-      return true;
-    }
+        void GetLockToggleInputs(
+            out List<IInputAction> turnOffLockInputs,
+            out List<IInputAction> restoreLockInputs) {
+            turnOffLockInputs = new List<IInputAction>();
+            restoreLockInputs = new List<IInputAction>();
+            if (GetKeyState(virtualKeyCode: VirtualKey.VK_NUMLOCK) == KeyState.Toggled) {
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_NUMLOCK, action: KeyAction.Press, duration: SendKeysDelay));
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_NUMLOCK, action: KeyAction.Release, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_NUMLOCK, action: KeyAction.Press, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_NUMLOCK, action: KeyAction.Release, duration: SendKeysDelay));
+            }
 
-    private bool ParseDigit(Keyboard.ParsePosition position, out int digit)
-    {
-      digit = 0;
-      if (!char.IsDigit(position.CurrentChar))
-        return false;
-      digit = (int) Convert.ToByte(position.CurrentChar) - (int) Convert.ToByte('0');
-      position.MoveNext();
-      return true;
-    }
+            if (GetKeyState(virtualKeyCode: VirtualKey.VK_CAPITAL) == KeyState.Toggled) {
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CAPITAL, action: KeyAction.Press, duration: SendKeysDelay));
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CAPITAL, action: KeyAction.Release, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CAPITAL, action: KeyAction.Press, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CAPITAL, action: KeyAction.Release, duration: SendKeysDelay));
+            }
 
-    private bool ParseNumber(Keyboard.ParsePosition position, ref int number)
-    {
-      Keyboard.ParsePosition position1 = (Keyboard.ParsePosition) position.Clone();
-      int num = 1;
-      if (position1.CurrentChar == '+' || position1.CurrentChar == '-')
-      {
-        num = position1.CurrentChar == '+' ? 1 : -1;
-        position1.MoveNext();
-      }
-      int digit = 0;
-      if (!this.ParseDigit(position1, out digit))
-        return false;
-      number = digit;
-      position.Skip(position1.CurrentIndex);
-      while (this.ParseDigit(position, out digit))
-        number = 10 * number + digit;
-      number *= num;
-      return true;
-    }
+            if (GetKeyState(virtualKeyCode: VirtualKey.VK_SCROLL) == KeyState.Toggled) {
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SCROLL, action: KeyAction.Press, duration: SendKeysDelay));
+                turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SCROLL, action: KeyAction.Release, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SCROLL, action: KeyAction.Press, duration: SendKeysDelay));
+                restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SCROLL, action: KeyAction.Release, duration: SendKeysDelay));
+            }
 
-    private bool ParseDownUp(Keyboard.ParsePosition position, ref KeyAction keyAction)
-    {
-      if (position.GetRightString(4) == "DOWN")
-      {
-        keyAction = KeyAction.Press;
-        position.Skip(4);
-        return true;
-      }
-      if (!(position.GetRightString(2) == "UP"))
-        return false;
-      keyAction = KeyAction.Release;
-      position.Skip(2);
-      return true;
-    }
+            if (GetKeyState(virtualKeyCode: VirtualKey.VK_KANA) != KeyState.Toggled)
+                return;
+            turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_KANA, action: KeyAction.Press, duration: SendKeysDelay));
+            turnOffLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_KANA, action: KeyAction.Release, duration: SendKeysDelay));
+            restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_KANA, action: KeyAction.Press, duration: SendKeysDelay));
+            restoreLockInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_KANA, action: KeyAction.Release, duration: SendKeysDelay));
+        }
 
-    private bool ParseCurlyPostfix(
-      Keyboard.ParsePosition position,
-      ref int repetitionCount,
-      ref KeyAction keyAction) => this.ParseNumber(position, ref repetitionCount) || this.ParseDownUp(position, ref keyAction);
+        bool IsChar(char character, string characterSet) {
+            return character != char.MinValue && characterSet.IndexOf(value: character) != -1;
+        }
 
-    private bool ParseSpecialChar(Keyboard.ParsePosition position, List<IInputAction> pressInputs)
-    {
-      if (!this.IsSpecial(position.CurrentChar))
-        return false;
-      pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(position.CurrentChar, Keyboard.sendKeysDelay));
-      position.MoveNext();
-      return true;
-    }
+        bool IsSpecial(char character) {
+            return IsChar(character: character, characterSet: "+^%~(){}");
+        }
 
-    private bool ParsePrintable(
-      Keyboard.ParsePosition position,
-      List<IInputAction> pressInputs,
-      List<IInputAction> releaseInputs)
-    {
-      if (position.CurrentChar == char.MinValue || position.CurrentChar != '~' && this.IsSpecial(position.CurrentChar))
-        return false;
-      if (position.CurrentChar == '~')
-      {
-        pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_RETURN, KeyAction.Press, Keyboard.sendKeysDelay));
-        releaseInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_RETURN, KeyAction.Release, Keyboard.sendKeysDelay));
-      }
-      else
-      {
-        VirtualKey virtualAlphaNumericKey = this.keyTranslator.GetVirtualAlphaNumericKey(position.CurrentChar);
-        if (virtualAlphaNumericKey != VirtualKey.VK_NONE)
-          pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(virtualAlphaNumericKey, KeyAction.PressAndRelease, Keyboard.sendKeysDelay));
-        else
-          pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(position.CurrentChar, Keyboard.sendKeysDelay));
-      }
-      position.MoveNext();
-      return true;
-    }
+        bool ParseEOS(ParsePosition position) {
+            return position.ReachedEnd;
+        }
 
-    private bool ParseNonPrintable(
-      Keyboard.ParsePosition position,
-      List<IInputAction> pressInputs,
-      List<IInputAction> releaseInputs)
-    {
-      char[] separator = new char[1]{ '}' };
-      string[] strArray1 = position.ToString().Split((char[]) null, StringSplitOptions.RemoveEmptyEntries);
-      if (strArray1.Length != 0)
-      {
-        string[] strArray2 = strArray1[0].Split(separator, StringSplitOptions.RemoveEmptyEntries);
-        if (strArray2.Length != 0)
-        {
-          string str = strArray2[0];
-          if (this.keyTranslator.IsNonPrintableName(str))
-          {
-            pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(this.keyTranslator.GetVirtualKey(str), KeyAction.Press, Keyboard.sendKeysDelay));
-            releaseInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(this.keyTranslator.GetVirtualKey(str), KeyAction.Release, Keyboard.sendKeysDelay));
-            position.Skip(str.Length);
+        bool ParseWhitespace(ParsePosition position) {
+            if (!char.IsWhiteSpace(c: position.CurrentChar))
+                return false;
+            position.MoveNext();
             return true;
-          }
         }
-      }
-      return false;
-    }
 
-    private bool ParseCurly(Keyboard.ParsePosition position, List<IInputAction> inputs)
-    {
-      if (position.CurrentChar != '{')
-        return false;
-      Keyboard.ParsePosition position1 = (Keyboard.ParsePosition) position.Clone();
-      position1.MoveNext();
-      List<IInputAction> pressInputs = new List<IInputAction>();
-      List<IInputAction> releaseInputs = new List<IInputAction>();
-      if (!this.ParseSpecialChar(position1, pressInputs) && !this.ParseNonPrintable(position1, pressInputs, releaseInputs) && !this.ParsePrintable(position1, pressInputs, releaseInputs))
-        return false;
-      int repetitionCount = 1;
-      KeyAction keyAction = KeyAction.PressAndRelease;
-      if (this.ParseWhitespaces(position1) && !this.ParseCurlyPostfix(position1, ref repetitionCount, ref keyAction) || position1.CurrentChar != '}')
-        return false;
-      position1.MoveNext();
-      position.Skip(position1.CurrentIndex);
-      for (int index = 0; index < repetitionCount; ++index)
-      {
-        switch (keyAction)
-        {
-          case KeyAction.Press:
-            inputs.AddRange((IEnumerable<IInputAction>) pressInputs);
-            break;
-          case KeyAction.Release:
-            inputs.AddRange((IEnumerable<IInputAction>) releaseInputs);
-            break;
-          case KeyAction.PressAndRelease:
-            inputs.AddRange((IEnumerable<IInputAction>) pressInputs);
-            inputs.AddRange((IEnumerable<IInputAction>) releaseInputs);
-            break;
+        bool ParseWhitespaces(ParsePosition position) {
+            if (!ParseWhitespace(position: position))
+                return false;
+            do {
+                ;
+            } while (ParseWhitespace(position: position));
+
+            return true;
         }
-      }
-      return true;
-    }
 
-    private bool ParseBlock(Keyboard.ParsePosition position, List<IInputAction> inputs)
-    {
-      if (position.CurrentChar != '(')
-        return false;
-      Keyboard.ParsePosition position1 = (Keyboard.ParsePosition) position.Clone();
-      position1.MoveNext();
-      List<IInputAction> inputs1 = new List<IInputAction>();
-      this.ParseInnerText(position1, inputs1);
-      if (position1.CurrentChar != ')')
-        return false;
-      position1.MoveNext();
-      position.Skip(position1.CurrentIndex);
-      inputs.AddRange((IEnumerable<IInputAction>) inputs1);
-      return true;
-    }
-
-    private bool ParseInnerText(Keyboard.ParsePosition position, List<IInputAction> inputs)
-    {
-      do
-      {
-        do
-          ;
-        while (this.ParseModifiers(position, inputs));
-        List<IInputAction> pressInputs = new List<IInputAction>();
-        List<IInputAction> releaseInputs = new List<IInputAction>();
-        if (this.ParsePrintable(position, pressInputs, releaseInputs))
-        {
-          inputs.AddRange((IEnumerable<IInputAction>) pressInputs);
-          inputs.AddRange((IEnumerable<IInputAction>) releaseInputs);
+        bool ParseDigit(ParsePosition position, out int digit) {
+            digit = 0;
+            if (!char.IsDigit(c: position.CurrentChar))
+                return false;
+            digit = Convert.ToByte(value: position.CurrentChar) - Convert.ToByte(value: '0');
+            position.MoveNext();
+            return true;
         }
-      }
-      while (this.ParseCurly(position, inputs) || this.ParseBlock(position, inputs));
-      return true;
-    }
 
-    private bool ParseModifier(
-      Keyboard.ParsePosition position,
-      List<IInputAction> pressInputs,
-      List<IInputAction> releaseInputs)
-    {
-      switch (position.CurrentChar)
-      {
-        case '%':
-          pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_MENU, KeyAction.Press, Keyboard.sendKeysDelay));
-          releaseInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_MENU, KeyAction.Release, Keyboard.sendKeysDelay));
-          break;
-        case '+':
-          pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SHIFT, KeyAction.Press, Keyboard.sendKeysDelay));
-          releaseInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_SHIFT, KeyAction.Release, Keyboard.sendKeysDelay));
-          break;
-        case '^':
-          pressInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CONTROL, KeyAction.Press, Keyboard.sendKeysDelay));
-          releaseInputs.AddRange((IEnumerable<IInputAction>) Input.CreateKeyInput(VirtualKey.VK_CONTROL, KeyAction.Release, Keyboard.sendKeysDelay));
-          break;
-        default:
-          return false;
-      }
-      position.MoveNext();
-      return true;
-    }
+        bool ParseNumber(ParsePosition position, ref int number) {
+            var position1 = (ParsePosition) position.Clone();
+            var num = 1;
+            if (position1.CurrentChar == '+' || position1.CurrentChar == '-') {
+                num = position1.CurrentChar == '+' ? 1 : -1;
+                position1.MoveNext();
+            }
 
-    private bool ParseModifiers(Keyboard.ParsePosition position, List<IInputAction> inputs)
-    {
-      Keyboard.ParsePosition position1 = (Keyboard.ParsePosition) position.Clone();
-      List<IInputAction> inputActionList = new List<IInputAction>();
-      List<IInputAction> releaseInputs = new List<IInputAction>();
-      if (!this.ParseModifier(position1, inputActionList, releaseInputs))
-        return false;
-      position.Skip(position1.CurrentIndex);
-      do
-        ;
-      while (this.ParseModifier(position, inputActionList, releaseInputs));
-      if (!this.ParsePrintable(position, inputActionList, releaseInputs) && !this.ParseCurly(position, inputActionList))
-        this.ParseBlock(position, inputActionList);
-      inputs.AddRange((IEnumerable<IInputAction>) inputActionList);
-      inputs.AddRange((IEnumerable<IInputAction>) releaseInputs);
-      return true;
-    }
+            var digit = 0;
+            if (!ParseDigit(position: position1, digit: out digit))
+                return false;
+            number = digit;
+            position.Skip(count: position1.CurrentIndex);
+            while (ParseDigit(position: position, digit: out digit))
+                number = 10 * number + digit;
+            number *= num;
+            return true;
+        }
 
-    internal bool ParseText(string text, out List<IInputAction> inputs)
-    {
-      using (Keyboard.ParsePosition position = new Keyboard.ParsePosition(text))
-      {
-        position.MoveNext();
-        inputs = new List<IInputAction>();
-        this.ParseInnerText(position, inputs);
-        return this.ParseEOS(position);
-      }
-    }
+        bool ParseDownUp(ParsePosition position, ref KeyAction keyAction) {
+            if (position.GetRightString(length: 4) == "DOWN") {
+                keyAction = KeyAction.Press;
+                position.Skip(count: 4);
+                return true;
+            }
 
-    public enum KeyState
-    {
-      Up,
-      Down,
-      Toggled,
-    }
+            if (!(position.GetRightString(length: 2) == "UP"))
+                return false;
+            keyAction = KeyAction.Release;
+            position.Skip(count: 2);
+            return true;
+        }
 
-    internal class ParsePosition : IEnumerator, IDisposable
-    {
-      private string parseText = string.Empty;
-      private IEnumerator<char> charEnumerator;
-      private bool currentValid;
-      private int currentIndex = -1;
+        bool ParseCurlyPostfix(
+            ParsePosition position,
+            ref int repetitionCount,
+            ref KeyAction keyAction) {
+            return ParseNumber(position: position, number: ref repetitionCount) || ParseDownUp(position: position, keyAction: ref keyAction);
+        }
 
-      private ParsePosition()
-      {
-      }
+        bool ParseSpecialChar(ParsePosition position, List<IInputAction> pressInputs) {
+            if (!IsSpecial(character: position.CurrentChar))
+                return false;
+            pressInputs.AddRange(collection: Input.CreateKeyInput(character: position.CurrentChar, duration: SendKeysDelay));
+            position.MoveNext();
+            return true;
+        }
 
-      public ParsePosition(string parseText)
-      {
-        this.parseText = parseText;
-        this.charEnumerator = ((IEnumerable<char>) parseText.ToCharArray()).GetEnumerator();
-      }
+        bool ParsePrintable(
+            ParsePosition position,
+            List<IInputAction> pressInputs,
+            List<IInputAction> releaseInputs) {
+            if (position.CurrentChar == char.MinValue || position.CurrentChar != '~' && IsSpecial(character: position.CurrentChar))
+                return false;
+            if (position.CurrentChar == '~') {
+                pressInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_RETURN, action: KeyAction.Press, duration: SendKeysDelay));
+                releaseInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_RETURN, action: KeyAction.Release, duration: SendKeysDelay));
+            } else {
+                var virtualAlphaNumericKey = this.keyTranslator.GetVirtualAlphaNumericKey(alphaNumKey: position.CurrentChar);
+                if (virtualAlphaNumericKey != VirtualKey.VK_NONE)
+                    pressInputs.AddRange(collection: Input.CreateKeyInput(key: virtualAlphaNumericKey, action: KeyAction.PressAndRelease, duration: SendKeysDelay));
+                else
+                    pressInputs.AddRange(collection: Input.CreateKeyInput(character: position.CurrentChar, duration: SendKeysDelay));
+            }
 
-      private ParsePosition(string parseText, bool currentValid, int currentIndex)
-        : this(parseText)
-      {
-        this.currentValid = currentValid;
-        if (currentValid)
-          this.charEnumerator.MoveNext();
-        this.currentIndex = currentIndex == -1 ? -1 : 0;
-      }
+            position.MoveNext();
+            return true;
+        }
 
-      public void Dispose() => this.charEnumerator.Dispose();
+        bool ParseNonPrintable(
+            ParsePosition position,
+            List<IInputAction> pressInputs,
+            List<IInputAction> releaseInputs) {
+            var separator = new char[1] {'}'};
+            var strArray1 = position.ToString().Split(separator: (char[]) null, options: StringSplitOptions.RemoveEmptyEntries);
+            if (strArray1.Length != 0) {
+                var strArray2 = strArray1[0].Split(separator: separator, options: StringSplitOptions.RemoveEmptyEntries);
+                if (strArray2.Length != 0) {
+                    var str = strArray2[0];
+                    if (this.keyTranslator.IsNonPrintableName(name: str)) {
+                        pressInputs.AddRange(collection: Input.CreateKeyInput(key: this.keyTranslator.GetVirtualKey(keyName: str), action: KeyAction.Press, duration: SendKeysDelay));
+                        releaseInputs.AddRange(collection: Input.CreateKeyInput(key: this.keyTranslator.GetVirtualKey(keyName: str), action: KeyAction.Release, duration: SendKeysDelay));
+                        position.Skip(count: str.Length);
+                        return true;
+                    }
+                }
+            }
 
-      public bool MoveNext()
-      {
-        if (this.currentValid || this.currentIndex == -1)
-          ++this.currentIndex;
-        this.currentValid = this.charEnumerator.MoveNext();
-        return this.currentValid;
-      }
-
-      public object Current => (object) this.CurrentChar;
-
-      public char CurrentChar => !this.currentValid ? char.MinValue : this.charEnumerator.Current;
-
-      public int CurrentIndex => this.currentIndex;
-
-      public void Reset()
-      {
-        this.charEnumerator.Reset();
-        this.currentValid = false;
-        this.currentIndex = -1;
-      }
-
-      public bool ReachedEnd => !this.currentValid;
-
-      public object Clone() => this.currentIndex == -1 ? (object) new Keyboard.ParsePosition(this.parseText, this.currentValid, this.currentIndex) : (object) new Keyboard.ParsePosition(this.parseText.Substring(this.currentIndex), this.currentValid, this.currentIndex);
-
-      public bool Skip(int count)
-      {
-        for (int index = 0; index < count; ++index)
-        {
-          if (!this.MoveNext())
             return false;
         }
-        return true;
-      }
 
-      public string GetRightString(int length) => this.GetRightString(0, length);
+        bool ParseCurly(ParsePosition position, List<IInputAction> inputs) {
+            if (position.CurrentChar != '{')
+                return false;
+            var position1 = (ParsePosition) position.Clone();
+            position1.MoveNext();
+            var pressInputs = new List<IInputAction>();
+            var releaseInputs = new List<IInputAction>();
+            if (!ParseSpecialChar(position: position1, pressInputs: pressInputs) && !ParseNonPrintable(position: position1, pressInputs: pressInputs, releaseInputs: releaseInputs) && !ParsePrintable(position: position1, pressInputs: pressInputs, releaseInputs: releaseInputs))
+                return false;
+            var repetitionCount = 1;
+            var keyAction = KeyAction.PressAndRelease;
+            if (ParseWhitespaces(position: position1) && !ParseCurlyPostfix(position: position1, repetitionCount: ref repetitionCount, keyAction: ref keyAction) || position1.CurrentChar != '}')
+                return false;
+            position1.MoveNext();
+            position.Skip(count: position1.CurrentIndex);
+            for (var index = 0; index < repetitionCount; ++index)
+                switch (keyAction) {
+                    case KeyAction.Press:
+                        inputs.AddRange(collection: pressInputs);
+                        break;
+                    case KeyAction.Release:
+                        inputs.AddRange(collection: releaseInputs);
+                        break;
+                    case KeyAction.PressAndRelease:
+                        inputs.AddRange(collection: pressInputs);
+                        inputs.AddRange(collection: releaseInputs);
+                        break;
+                }
 
-      public string GetRightString(int startIndex, int length)
-      {
-        StringBuilder stringBuilder = new StringBuilder(length);
-        Keyboard.ParsePosition parsePosition = (Keyboard.ParsePosition) this.Clone();
-        parsePosition.Skip(startIndex);
-        for (int index = 0; index < length && !parsePosition.ReachedEnd; ++index)
-        {
-          stringBuilder.Append(parsePosition.CurrentChar);
-          parsePosition.MoveNext();
+            return true;
         }
-        return stringBuilder.ToString();
-      }
 
-      public char GetRightCharacter(int index)
-      {
-        Keyboard.ParsePosition parsePosition = (Keyboard.ParsePosition) this.Clone();
-        parsePosition.Skip(index);
-        return parsePosition.CurrentChar;
-      }
+        bool ParseBlock(ParsePosition position, List<IInputAction> inputs) {
+            if (position.CurrentChar != '(')
+                return false;
+            var position1 = (ParsePosition) position.Clone();
+            position1.MoveNext();
+            var inputs1 = new List<IInputAction>();
+            ParseInnerText(position: position1, inputs: inputs1);
+            if (position1.CurrentChar != ')')
+                return false;
+            position1.MoveNext();
+            position.Skip(count: position1.CurrentIndex);
+            inputs.AddRange(collection: inputs1);
+            return true;
+        }
 
-      public override string ToString() => this.currentIndex == -1 ? this.parseText.Substring(0) : this.parseText.Substring(this.currentIndex);
+        bool ParseInnerText(ParsePosition position, List<IInputAction> inputs) {
+            do {
+                do {
+                    ;
+                } while (ParseModifiers(position: position, inputs: inputs));
+
+                var pressInputs = new List<IInputAction>();
+                var releaseInputs = new List<IInputAction>();
+                if (ParsePrintable(position: position, pressInputs: pressInputs, releaseInputs: releaseInputs)) {
+                    inputs.AddRange(collection: pressInputs);
+                    inputs.AddRange(collection: releaseInputs);
+                }
+            } while (ParseCurly(position: position, inputs: inputs) || ParseBlock(position: position, inputs: inputs));
+
+            return true;
+        }
+
+        bool ParseModifier(
+            ParsePosition position,
+            List<IInputAction> pressInputs,
+            List<IInputAction> releaseInputs) {
+            switch (position.CurrentChar) {
+                case '%':
+                    pressInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_MENU, action: KeyAction.Press, duration: SendKeysDelay));
+                    releaseInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_MENU, action: KeyAction.Release, duration: SendKeysDelay));
+                    break;
+                case '+':
+                    pressInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SHIFT, action: KeyAction.Press, duration: SendKeysDelay));
+                    releaseInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_SHIFT, action: KeyAction.Release, duration: SendKeysDelay));
+                    break;
+                case '^':
+                    pressInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CONTROL, action: KeyAction.Press, duration: SendKeysDelay));
+                    releaseInputs.AddRange(collection: Input.CreateKeyInput(key: VirtualKey.VK_CONTROL, action: KeyAction.Release, duration: SendKeysDelay));
+                    break;
+                default:
+                    return false;
+            }
+
+            position.MoveNext();
+            return true;
+        }
+
+        bool ParseModifiers(ParsePosition position, List<IInputAction> inputs) {
+            var position1 = (ParsePosition) position.Clone();
+            var inputActionList = new List<IInputAction>();
+            var releaseInputs = new List<IInputAction>();
+            if (!ParseModifier(position: position1, pressInputs: inputActionList, releaseInputs: releaseInputs))
+                return false;
+            position.Skip(count: position1.CurrentIndex);
+            do {
+                ;
+            } while (ParseModifier(position: position, pressInputs: inputActionList, releaseInputs: releaseInputs));
+
+            if (!ParsePrintable(position: position, pressInputs: inputActionList, releaseInputs: releaseInputs) && !ParseCurly(position: position, inputs: inputActionList))
+                ParseBlock(position: position, inputs: inputActionList);
+            inputs.AddRange(collection: inputActionList);
+            inputs.AddRange(collection: releaseInputs);
+            return true;
+        }
+
+        internal bool ParseText(string text, out List<IInputAction> inputs) {
+            using (var position = new ParsePosition(parseText: text)) {
+                position.MoveNext();
+                inputs = new List<IInputAction>();
+                ParseInnerText(position: position, inputs: inputs);
+                return ParseEOS(position: position);
+            }
+        }
+
+        internal class ParsePosition : IEnumerator, IDisposable {
+            readonly IEnumerator<char> charEnumerator;
+            bool currentValid;
+            readonly string parseText = string.Empty;
+
+            ParsePosition() {
+            }
+
+            public ParsePosition(string parseText) {
+                this.parseText = parseText;
+                this.charEnumerator = ((IEnumerable<char>) parseText.ToCharArray()).GetEnumerator();
+            }
+
+            ParsePosition(string parseText, bool currentValid, int currentIndex)
+                : this(parseText: parseText) {
+                this.currentValid = currentValid;
+                if (currentValid)
+                    this.charEnumerator.MoveNext();
+                CurrentIndex = currentIndex == -1 ? -1 : 0;
+            }
+
+            public char CurrentChar {
+                get { return !this.currentValid ? char.MinValue : this.charEnumerator.Current; }
+            }
+
+            public int CurrentIndex { get; set; } = -1;
+
+            public bool ReachedEnd {
+                get { return !this.currentValid; }
+            }
+
+            public void Dispose() {
+                this.charEnumerator.Dispose();
+            }
+
+            public bool MoveNext() {
+                if (this.currentValid || CurrentIndex == -1)
+                    ++CurrentIndex;
+                this.currentValid = this.charEnumerator.MoveNext();
+                return this.currentValid;
+            }
+
+            public object Current {
+                get { return CurrentChar; }
+            }
+
+            public void Reset() {
+                this.charEnumerator.Reset();
+                this.currentValid = false;
+                CurrentIndex = -1;
+            }
+
+            public object Clone() {
+                return CurrentIndex == -1 ? new ParsePosition(parseText: this.parseText, currentValid: this.currentValid, currentIndex: CurrentIndex) : (object) new ParsePosition(parseText: this.parseText.Substring(startIndex: CurrentIndex), currentValid: this.currentValid, currentIndex: CurrentIndex);
+            }
+
+            public bool Skip(int count) {
+                for (var index = 0; index < count; ++index)
+                    if (!MoveNext())
+                        return false;
+                return true;
+            }
+
+            public string GetRightString(int length) {
+                return GetRightString(startIndex: 0, length: length);
+            }
+
+            public string GetRightString(int startIndex, int length) {
+                var stringBuilder = new StringBuilder(capacity: length);
+                var parsePosition = (ParsePosition) Clone();
+                parsePosition.Skip(count: startIndex);
+                for (var index = 0; index < length && !parsePosition.ReachedEnd; ++index) {
+                    stringBuilder.Append(value: parsePosition.CurrentChar);
+                    parsePosition.MoveNext();
+                }
+
+                return stringBuilder.ToString();
+            }
+
+            public char GetRightCharacter(int index) {
+                var parsePosition = (ParsePosition) Clone();
+                parsePosition.Skip(count: index);
+                return parsePosition.CurrentChar;
+            }
+
+            public override string ToString() {
+                return CurrentIndex == -1 ? this.parseText.Substring(startIndex: 0) : this.parseText.Substring(startIndex: CurrentIndex);
+            }
+        }
     }
-  }
 }

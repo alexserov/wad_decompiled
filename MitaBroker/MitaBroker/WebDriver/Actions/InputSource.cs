@@ -6,12 +6,10 @@
 
 using MitaBroker.WebDriver.Actions.Enums;
 
-namespace MitaBroker.WebDriver.Actions
-{
-  internal abstract class InputSource
-  {
-    public string Id { get; protected set; }
+namespace MitaBroker.WebDriver.Actions {
+    internal abstract class InputSource {
+        public string Id { get; protected set; }
 
-    public InputSourceType Type { get; protected set; }
-  }
+        public InputSourceType Type { get; protected set; }
+    }
 }

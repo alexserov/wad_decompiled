@@ -7,19 +7,15 @@
 using System;
 using System.Collections.Generic;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class InputQueue : IInputQueue
-  {
-    public void Process(IInputDevice inputDevice, IList<IInputAction> inputList)
-    {
-      long ticks = DateTime.Now.Ticks;
-      int elapsedMs = 0;
-      foreach (IInputAction input in (IEnumerable<IInputAction>) inputList)
-      {
-        input.Execute(inputDevice, elapsedMs);
-        elapsedMs = (int) ((DateTime.Now.Ticks - ticks) / 10000L);
-      }
+namespace MS.Internal.Mita.Foundation {
+    internal class InputQueue : IInputQueue {
+        public void Process(IInputDevice inputDevice, IList<IInputAction> inputList) {
+            var ticks = DateTime.Now.Ticks;
+            var elapsedMs = 0;
+            foreach (var input in inputList) {
+                input.Execute(inputDevice: inputDevice, elapsedMs: elapsedMs);
+                elapsedMs = (int) ((DateTime.Now.Ticks - ticks) / 10000L);
+            }
+        }
     }
-  }
 }

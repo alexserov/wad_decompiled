@@ -5,26 +5,25 @@
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Collections
-{
-  internal class PatternPresentFilter : IFilter<AutomationElement>
-  {
-    private AutomationPattern _pattern;
+namespace MS.Internal.Mita.Foundation.Collections {
+    internal class PatternPresentFilter : IFilter<AutomationElement> {
+        readonly AutomationPattern _pattern;
 
-    public PatternPresentFilter(AutomationPattern pattern)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) pattern, nameof (pattern));
-      this._pattern = pattern;
+        public PatternPresentFilter(AutomationPattern pattern) {
+            Validate.ArgumentNotNull(parameter: pattern, parameterName: nameof(pattern));
+            this._pattern = pattern;
+        }
+
+        public bool Matches(AutomationElement item) {
+            Validate.ArgumentNotNull(parameter: item, parameterName: nameof(item));
+            object patternObject = null;
+            return item.TryGetCurrentPattern(pattern: this._pattern, patternObject: out patternObject);
+        }
+
+        public override string ToString() {
+            return StringResource.Get(id: "PatternPresentFilter_ToString_1", (object) this._pattern.ToString());
+        }
     }
-
-    public bool Matches(AutomationElement item)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) item, nameof (item));
-      object patternObject = (object) null;
-      return item.TryGetCurrentPattern(this._pattern, out patternObject);
-    }
-
-    public override string ToString() => StringResource.Get("PatternPresentFilter_ToString_1", (object) this._pattern.ToString());
-  }
 }

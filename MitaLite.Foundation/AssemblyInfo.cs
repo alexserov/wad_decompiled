@@ -1,4 +1,3 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("MitaLite.Foundation.UnitTests")]
+[assembly: InternalsVisibleTo(assemblyName: "MitaLite.Foundation.UnitTests")]

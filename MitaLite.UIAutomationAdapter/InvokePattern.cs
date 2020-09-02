@@ -6,22 +6,25 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class InvokePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = InvokePatternIdentifiers.Pattern;
-    public static readonly AutomationEvent InvokedEvent = InvokePatternIdentifiers.InvokedEvent;
-    private readonly IUIAutomationInvokePattern _invokePattern;
+namespace System.Windows.Automation {
+    public class InvokePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = InvokePatternIdentifiers.Pattern;
+        public static readonly AutomationEvent InvokedEvent = InvokePatternIdentifiers.InvokedEvent;
+        readonly IUIAutomationInvokePattern _invokePattern;
 
-    private InvokePattern(AutomationElement element, IUIAutomationInvokePattern invokePattern)
-      : base(element)
-      => this._invokePattern = invokePattern;
+        InvokePattern(AutomationElement element, IUIAutomationInvokePattern invokePattern)
+            : base(el: element) {
+            this._invokePattern = invokePattern;
+        }
 
-    internal static InvokePattern Wrap(
-      AutomationElement element,
-      IUIAutomationInvokePattern invokePattern) => new InvokePattern(element, invokePattern);
+        internal static InvokePattern Wrap(
+            AutomationElement element,
+            IUIAutomationInvokePattern invokePattern) {
+            return new InvokePattern(element: element, invokePattern: invokePattern);
+        }
 
-    public void Invoke() => this._invokePattern.Invoke();
-  }
+        public void Invoke() {
+            this._invokePattern.Invoke();
+        }
+    }
 }

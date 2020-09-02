@@ -6,40 +6,47 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class TogglePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = TogglePatternIdentifiers.Pattern;
-    public static readonly AutomationProperty ToggleStateProperty = TogglePatternIdentifiers.ToggleStateProperty;
-    private readonly IUIAutomationTogglePattern _togglePattern;
+namespace System.Windows.Automation {
+    public class TogglePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = TogglePatternIdentifiers.Pattern;
+        public static readonly AutomationProperty ToggleStateProperty = TogglePatternIdentifiers.ToggleStateProperty;
+        readonly IUIAutomationTogglePattern _togglePattern;
 
-    private TogglePattern(AutomationElement element, IUIAutomationTogglePattern togglePattern)
-      : base(element)
-      => this._togglePattern = togglePattern;
+        TogglePattern(AutomationElement element, IUIAutomationTogglePattern togglePattern)
+            : base(el: element) {
+            this._togglePattern = togglePattern;
+        }
 
-    internal static TogglePattern Wrap(
-      AutomationElement element,
-      IUIAutomationTogglePattern pattern) => new TogglePattern(element, pattern);
+        public TogglePatternInformation Cached {
+            get { return new TogglePatternInformation(el: this._el, useCache: true); }
+        }
 
-    public void Toggle() => this._togglePattern.Toggle();
+        public TogglePatternInformation Current {
+            get { return new TogglePatternInformation(el: this._el, useCache: false); }
+        }
 
-    public TogglePattern.TogglePatternInformation Cached => new TogglePattern.TogglePatternInformation(this._el, true);
+        internal static TogglePattern Wrap(
+            AutomationElement element,
+            IUIAutomationTogglePattern pattern) {
+            return new TogglePattern(element: element, togglePattern: pattern);
+        }
 
-    public TogglePattern.TogglePatternInformation Current => new TogglePattern.TogglePatternInformation(this._el, false);
+        public void Toggle() {
+            this._togglePattern.Toggle();
+        }
 
-    public struct TogglePatternInformation
-    {
-      private AutomationElement _el;
-      private bool _useCache;
+        public struct TogglePatternInformation {
+            readonly AutomationElement _el;
+            readonly bool _useCache;
 
-      internal TogglePatternInformation(AutomationElement el, bool useCache)
-      {
-        this._el = el;
-        this._useCache = useCache;
-      }
+            internal TogglePatternInformation(AutomationElement el, bool useCache) {
+                this._el = el;
+                this._useCache = useCache;
+            }
 
-      public ToggleState ToggleState => (ToggleState) this._el.GetPatternPropertyValue(TogglePattern.ToggleStateProperty, this._useCache);
+            public ToggleState ToggleState {
+                get { return (ToggleState) this._el.GetPatternPropertyValue(property: ToggleStateProperty, useCache: this._useCache); }
+            }
+        }
     }
-  }
 }

@@ -6,20 +6,18 @@
 
 using System.Windows.Automation.Text;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public interface IText
-  {
-    bool SupportsTextSelection { get; }
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public interface IText {
+        bool SupportsTextSelection { get; }
 
-    TextPatternRange DocumentRange { get; }
+        TextPatternRange DocumentRange { get; }
 
-    TextPatternRange GetSelection();
+        TextPatternRange GetSelection();
 
-    TextPatternRange RangeFromPoint(PointI screenLocation);
+        TextPatternRange RangeFromPoint(PointI screenLocation);
 
-    TextPatternRange RangeFromChild(UIObject childElement);
+        TextPatternRange RangeFromChild(UIObject childElement);
 
-    TextPatternRange GetVisibleRange();
-  }
+        TextPatternRange GetVisibleRange();
+    }
 }

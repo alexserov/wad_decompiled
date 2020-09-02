@@ -6,31 +6,32 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public class LegacyIAccessiblePattern : BasePattern
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<LegacyIAccessiblePattern, IUIAutomationLegacyIAccessiblePattern>(10018, "LegacyIAccessiblePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationLegacyIAccessiblePattern, LegacyIAccessiblePattern>(LegacyIAccessiblePattern.Wrap));
-    public static readonly AutomationProperty ChildIdProperty = new AutomationProperty(30091, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleChildIdPropertyId");
-    public static readonly AutomationProperty DefaultActionProperty = new AutomationProperty(30100, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleDefaultActionPropertyId");
-    public static readonly AutomationProperty DescriptionProperty = new AutomationProperty(30094, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleDescriptionPropertyId");
-    public static readonly AutomationProperty HelpProperty = new AutomationProperty(30097, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleHelpPropertyId");
-    public static readonly AutomationProperty KeyboardShortcutProperty = new AutomationProperty(30098, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleKeyboardShortcutPropertyId");
-    public static readonly AutomationProperty NameProperty = new AutomationProperty(30092, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleNamePropertyId");
-    public static readonly AutomationProperty RoleProperty = new AutomationProperty(30095, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleRolePropertyId");
-    public static readonly AutomationProperty SelectionProperty = new AutomationProperty(30099, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleSelectionPropertyId");
-    public static readonly AutomationProperty StateProperty = new AutomationProperty(30096, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleStatePropertyId");
-    public static readonly AutomationProperty ValueProperty = new AutomationProperty(30093, "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleValuePropertyId");
-    private readonly IUIAutomationLegacyIAccessiblePattern _legacyIAccessiblePattern;
+namespace System.Windows.Automation {
+    public class LegacyIAccessiblePattern : BasePattern {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<LegacyIAccessiblePattern, IUIAutomationLegacyIAccessiblePattern>(id: 10018, programmaticName: "LegacyIAccessiblePatternIdentifiers.Pattern", wrap: Wrap);
+        public static readonly AutomationProperty ChildIdProperty = new AutomationProperty(id: 30091, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleChildIdPropertyId");
+        public static readonly AutomationProperty DefaultActionProperty = new AutomationProperty(id: 30100, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleDefaultActionPropertyId");
+        public static readonly AutomationProperty DescriptionProperty = new AutomationProperty(id: 30094, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleDescriptionPropertyId");
+        public static readonly AutomationProperty HelpProperty = new AutomationProperty(id: 30097, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleHelpPropertyId");
+        public static readonly AutomationProperty KeyboardShortcutProperty = new AutomationProperty(id: 30098, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleKeyboardShortcutPropertyId");
+        public static readonly AutomationProperty NameProperty = new AutomationProperty(id: 30092, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleNamePropertyId");
+        public static readonly AutomationProperty RoleProperty = new AutomationProperty(id: 30095, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleRolePropertyId");
+        public static readonly AutomationProperty SelectionProperty = new AutomationProperty(id: 30099, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleSelectionPropertyId");
+        public static readonly AutomationProperty StateProperty = new AutomationProperty(id: 30096, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleStatePropertyId");
+        public static readonly AutomationProperty ValueProperty = new AutomationProperty(id: 30093, programmaticName: "LegacyIAccessiblePatternIdentifiers.LegacyIAccessibleValuePropertyId");
+        readonly IUIAutomationLegacyIAccessiblePattern _legacyIAccessiblePattern;
 
-    private LegacyIAccessiblePattern(
-      AutomationElement element,
-      IUIAutomationLegacyIAccessiblePattern legacyIAccessiblePattern)
-      : base(element)
-      => this._legacyIAccessiblePattern = legacyIAccessiblePattern;
+        LegacyIAccessiblePattern(
+            AutomationElement element,
+            IUIAutomationLegacyIAccessiblePattern legacyIAccessiblePattern)
+            : base(el: element) {
+            this._legacyIAccessiblePattern = legacyIAccessiblePattern;
+        }
 
-    internal static LegacyIAccessiblePattern Wrap(
-      AutomationElement element,
-      IUIAutomationLegacyIAccessiblePattern legacyIAccessiblePattern) => new LegacyIAccessiblePattern(element, legacyIAccessiblePattern);
-  }
+        internal static LegacyIAccessiblePattern Wrap(
+            AutomationElement element,
+            IUIAutomationLegacyIAccessiblePattern legacyIAccessiblePattern) {
+            return new LegacyIAccessiblePattern(element: element, legacyIAccessiblePattern: legacyIAccessiblePattern);
+        }
+    }
 }

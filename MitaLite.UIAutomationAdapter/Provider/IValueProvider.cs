@@ -6,17 +6,13 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Automation.Provider
-{
-  [Guid("c7935180-6fb3-4201-b174-7df73adbf64a")]
-  [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  [ComImport]
-  public interface IValueProvider
-  {
-    void SetValue(string value);
+namespace System.Windows.Automation.Provider {
+    [Guid(guid: "c7935180-6fb3-4201-b174-7df73adbf64a"), InterfaceType(interfaceType: ComInterfaceType.InterfaceIsIUnknown), ComImport]
+    public interface IValueProvider {
+        void SetValue(string value);
 
-    string Value { get; }
+        string Value { get; }
 
-    bool IsReadOnly { get; }
-  }
+        bool IsReadOnly { get; }
+    }
 }

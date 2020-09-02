@@ -4,80 +4,81 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
+using System.Windows.Automation;
 using MS.Internal.Mita.Foundation.Patterns;
 using MS.Internal.Mita.Foundation.Waiters;
-using System.Windows.Automation;
 
-namespace MS.Internal.Mita.Foundation.Controls
-{
-  public abstract class ListItem<C> : UIObject, IScrollItem, IVirtualizedItem, ISelectionItem<C>
-    where C : UIObject
-  {
-    private ISelectionItem<C> _selectionItemPattern;
-    private IScrollItem _scrollItemPattern;
-    private IVirtualizedItem _virtualizedItemPattern;
+namespace MS.Internal.Mita.Foundation.Controls {
+    public abstract class ListItem<C> : UIObject, IScrollItem, IVirtualizedItem, ISelectionItem<C>
+        where C : UIObject {
+        protected ListItem(UIObject uiObject, IFactory<C> containerFactory)
+            : base(uiObject: uiObject) {
+            Initialize(containerFactory: containerFactory);
+        }
 
-    protected ListItem(UIObject uiObject, IFactory<C> containerFactory)
-      : base(uiObject)
-      => this.Initialize(containerFactory);
+        internal ListItem(AutomationElement element, IFactory<C> containerFactory)
+            : base(element: element) {
+            Initialize(containerFactory: containerFactory);
+        }
 
-    internal ListItem(AutomationElement element, IFactory<C> containerFactory)
-      : base(element)
-      => this.Initialize(containerFactory);
+        public bool IsSelectionItemPatternAvailable {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: this, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsSelectionItemPatternAvailable)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : (bool) AutomationElement.GetCurrentPropertyValue(property: AutomationElement.IsSelectionItemPatternAvailableProperty, ignoreDefaultValue: false);
+            }
+        }
 
-    private void Initialize(IFactory<C> containerFactory)
-    {
-      this.SelectionItemProvider = (ISelectionItem<C>) new SelectionItemImplementation<C>((UIObject) this, containerFactory);
-      this.ScrollItemProvider = (IScrollItem) new ScrollItemImplementation((UIObject) this);
-      this.VirtualizedItemProvider = (IVirtualizedItem) new VirtualizedItemImplementation((UIObject) this);
+        protected ISelectionItem<C> SelectionItemProvider { get; set; }
+
+        protected IScrollItem ScrollItemProvider { get; set; }
+
+        protected IVirtualizedItem VirtualizedItemProvider { get; set; }
+
+        public void ScrollIntoView() {
+            ScrollItemProvider.ScrollIntoView();
+        }
+
+        public virtual void Select() {
+            SelectionItemProvider.Select();
+        }
+
+        public virtual void AddToSelection() {
+            SelectionItemProvider.AddToSelection();
+        }
+
+        public UIEventWaiter GetAddedToSelectionWaiter() {
+            return SelectionItemProvider.GetAddedToSelectionWaiter();
+        }
+
+        public UIEventWaiter GetRemovedFromSelectionWaiter() {
+            return SelectionItemProvider.GetRemovedFromSelectionWaiter();
+        }
+
+        public UIEventWaiter GetSelectedWaiter() {
+            return SelectionItemProvider.GetSelectedWaiter();
+        }
+
+        public virtual void RemoveFromSelection() {
+            SelectionItemProvider.RemoveFromSelection();
+        }
+
+        public virtual bool IsSelected {
+            get { return SelectionItemProvider.IsSelected; }
+        }
+
+        public virtual C SelectionContainer {
+            get { return SelectionItemProvider.SelectionContainer; }
+        }
+
+        public void Realize() {
+            VirtualizedItemProvider.Realize();
+        }
+
+        void Initialize(IFactory<C> containerFactory) {
+            SelectionItemProvider = new SelectionItemImplementation<C>(uiObject: this, containerFactory: containerFactory);
+            ScrollItemProvider = new ScrollItemImplementation(uiObject: this);
+            VirtualizedItemProvider = new VirtualizedItemImplementation(uiObject: this);
+        }
     }
-
-    public virtual void Select() => this.SelectionItemProvider.Select();
-
-    public virtual void AddToSelection() => this.SelectionItemProvider.AddToSelection();
-
-    public UIEventWaiter GetAddedToSelectionWaiter() => this.SelectionItemProvider.GetAddedToSelectionWaiter();
-
-    public UIEventWaiter GetRemovedFromSelectionWaiter() => this.SelectionItemProvider.GetRemovedFromSelectionWaiter();
-
-    public UIEventWaiter GetSelectedWaiter() => this.SelectionItemProvider.GetSelectedWaiter();
-
-    public virtual void RemoveFromSelection() => this.SelectionItemProvider.RemoveFromSelection();
-
-    public virtual bool IsSelected => this.SelectionItemProvider.IsSelected;
-
-    public virtual C SelectionContainer => this.SelectionItemProvider.SelectionContainer;
-
-    public void ScrollIntoView() => this.ScrollItemProvider.ScrollIntoView();
-
-    public void Realize() => this.VirtualizedItemProvider.Realize();
-
-    public bool IsSelectionItemPatternAvailable
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke((UIObject) this, ActionEventArgs.GetDefault(nameof (IsSelectionItemPatternAvailable)), out overridden) == ActionResult.Handled ? (bool) overridden : (bool) this.AutomationElement.GetCurrentPropertyValue(AutomationElement.IsSelectionItemPatternAvailableProperty, false);
-      }
-    }
-
-    protected ISelectionItem<C> SelectionItemProvider
-    {
-      get => this._selectionItemPattern;
-      set => this._selectionItemPattern = value;
-    }
-
-    protected IScrollItem ScrollItemProvider
-    {
-      get => this._scrollItemPattern;
-      set => this._scrollItemPattern = value;
-    }
-
-    protected IVirtualizedItem VirtualizedItemProvider
-    {
-      get => this._virtualizedItemPattern;
-      set => this._virtualizedItemPattern = value;
-    }
-  }
 }

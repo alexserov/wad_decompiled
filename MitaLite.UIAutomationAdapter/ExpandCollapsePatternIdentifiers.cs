@@ -6,11 +6,9 @@
 
 using UIAutomationClient;
 
-namespace System.Windows.Automation
-{
-  public static class ExpandCollapsePatternIdentifiers
-  {
-    public static readonly AutomationPattern Pattern = (AutomationPattern) new AutomationPattern<ExpandCollapsePattern, IUIAutomationExpandCollapsePattern>(10005, "ExpandCollapsePatternIdentifiers.Pattern", new Func<AutomationElement, IUIAutomationExpandCollapsePattern, ExpandCollapsePattern>(ExpandCollapsePattern.Wrap));
-    public static readonly AutomationProperty ExpandCollapseStateProperty = new AutomationProperty(30070, "ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty");
-  }
+namespace System.Windows.Automation {
+    public static class ExpandCollapsePatternIdentifiers {
+        public static readonly AutomationPattern Pattern = new AutomationPattern<ExpandCollapsePattern, IUIAutomationExpandCollapsePattern>(id: 10005, programmaticName: "ExpandCollapsePatternIdentifiers.Pattern", wrap: ExpandCollapsePattern.Wrap);
+        public static readonly AutomationProperty ExpandCollapseStateProperty = new AutomationProperty(id: 30070, programmaticName: "ExpandCollapsePatternIdentifiers.ExpandCollapseStateProperty");
+    }
 }

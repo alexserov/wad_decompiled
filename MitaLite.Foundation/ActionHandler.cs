@@ -4,210 +4,199 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation
-{
-  public static class ActionHandler
-  {
-    private static bool _halted;
-    private static readonly object _lock = new object();
-    private static readonly Dictionary<string, ActionHandler.ActionSet> _registeredEvents = new Dictionary<string, ActionHandler.ActionSet>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-    private static ActionEvent _prefixEvents = (ActionEvent) null;
-    private static bool _activeAction = false;
-    private static bool _activePrefix = false;
+namespace MS.Internal.Mita.Foundation {
+    public static class ActionHandler {
+        static bool _halted;
+        static readonly object _lock = new object();
+        static readonly Dictionary<string, ActionSet> _registeredEvents = new Dictionary<string, ActionSet>(comparer: StringComparer.OrdinalIgnoreCase);
+        static ActionEvent _prefixEvents;
+        static bool _activeAction;
+        static bool _activePrefix;
 
-    private static void InvokeList(ActionEvent handler, UIObject sender, ActionEventArgs args)
-    {
-      foreach (ActionEvent invocation in handler.GetInvocationList())
-      {
-        invocation(sender, args);
-        if (ActionHandler._halted)
-          break;
-      }
-    }
-
-    private static void RemoveAction(string action)
-    {
-      if (ActionHandler._registeredEvents.Count <= 0)
-        return;
-      ActionHandler._registeredEvents.Remove(action);
-      if (ActionHandler._registeredEvents.Count != 0)
-        return;
-      ActionHandler._activeAction = false;
-    }
-
-    public static void Halt()
-    {
-      if (!Monitor.TryEnter(ActionHandler._lock))
-        throw new HaltingException(StringResource.Get("IncorrectThreadAttemptingToHalt"));
-      ActionHandler._halted = true;
-      Monitor.Exit(ActionHandler._lock);
-    }
-
-    public static void Subscribe(string action, ActionEvent handler) => ActionHandler.Subscribe(action, handler, true);
-
-    public static void Subscribe(string action, ActionEvent handler, bool addToEnd)
-    {
-      Validate.StringNeitherNullNorEmpty(action, nameof (action));
-      Validate.ArgumentNotNull((object) handler, nameof (handler));
-      lock (ActionHandler._lock)
-      {
-        ActionHandler._activeAction = true;
-        ActionHandler.ActionSet actionSet;
-        if (ActionHandler._registeredEvents.TryGetValue(action, out actionSet))
-          actionSet.Actions = addToEnd ? actionSet.Actions + handler : handler + actionSet.Actions;
-        else
-          ActionHandler._registeredEvents.Add(action, new ActionHandler.ActionSet(handler, (ActionOverrideEvent) null, addToEnd));
-      }
-    }
-
-    public static void Remove(string action, ActionEvent handler)
-    {
-      Validate.StringNeitherNullNorEmpty(action, nameof (action));
-      Validate.ArgumentNotNull((object) handler, nameof (handler));
-      lock (ActionHandler._lock)
-      {
-        ActionHandler.ActionSet actionSet;
-        if (!ActionHandler._registeredEvents.TryGetValue(action, out actionSet))
-          return;
-        actionSet.Actions -= handler;
-        if (actionSet.Actions != null || actionSet.Override != null)
-          return;
-        ActionHandler.RemoveAction(action);
-      }
-    }
-
-    public static void SubscribeToAll(ActionEvent handler) => ActionHandler.SubscribeToAll(handler, true);
-
-    public static void SubscribeToAll(ActionEvent handler, bool addToEnd)
-    {
-      lock (ActionHandler._lock)
-      {
-        ActionHandler._activePrefix = true;
-        ActionHandler._prefixEvents = addToEnd ? ActionHandler._prefixEvents + handler : handler + ActionHandler._prefixEvents;
-      }
-    }
-
-    public static void RemoveFromAll(ActionEvent handler)
-    {
-      Validate.ArgumentNotNull((object) handler, nameof (handler));
-      lock (ActionHandler._lock)
-      {
-        ActionHandler._prefixEvents -= handler;
-        if (ActionHandler._prefixEvents != null)
-          return;
-        ActionHandler._activePrefix = false;
-      }
-    }
-
-    public static ActionOverrideEvent SubscribeForOverride(
-      string action,
-      ActionOverrideEvent replacement) => ActionHandler.SubscribeForOverride(action, replacement, true);
-
-    public static ActionOverrideEvent SubscribeForOverride(
-      string action,
-      ActionOverrideEvent replacement,
-      bool executeOverrideLast)
-    {
-      Validate.StringNeitherNullNorEmpty(action, nameof (action));
-      lock (ActionHandler._lock)
-      {
-        ActionHandler.ActionSet actionSet;
-        bool flag = ActionHandler._registeredEvents.TryGetValue(action, out actionSet);
-        if (!flag)
-        {
-          if (replacement == null)
-            return (ActionOverrideEvent) null;
-          actionSet = new ActionHandler.ActionSet();
+        public static ICollection<string> RegisteredActions {
+            get { return _registeredEvents.Keys; }
         }
-        ActionOverrideEvent actionOverrideEvent = actionSet.Override;
-        actionSet.Override = replacement;
-        actionSet.RunOverrideAtEnd = executeOverrideLast;
-        if (actionSet.Actions == null && actionSet.Override == null)
-          ActionHandler.RemoveAction(action);
-        else if (!flag)
-        {
-          ActionHandler._activeAction = true;
-          ActionHandler._registeredEvents.Add(action, actionSet);
+
+        static void InvokeList(ActionEvent handler, UIObject sender, ActionEventArgs args) {
+            foreach (ActionEvent invocation in handler.GetInvocationList()) {
+                invocation(sender: sender, actionInfo: args);
+                if (_halted)
+                    break;
+            }
         }
-        return actionOverrideEvent;
-      }
-    }
 
-    public static ActionOverrideEvent RemoveFromOverride(string action) => ActionHandler.SubscribeForOverride(action, (ActionOverrideEvent) null);
-
-    public static ActionResult Invoke(UIObject sender, ActionEventArgs actionInfo) => ActionHandler.Invoke(sender, actionInfo, out object _);
-
-    public static ActionResult Invoke(
-      UIObject sender,
-      ActionEventArgs actionInfo,
-      out object overridden)
-    {
-      Validate.ArgumentNotNull((object) actionInfo, nameof (actionInfo));
-      string actionString = actionInfo.ActionString;
-      overridden = (object) null;
-      object overridden1 = (object) null;
-      if (!ActionHandler._activePrefix && !ActionHandler._activeAction)
-        return ActionResult.Unhandled;
-      lock (ActionHandler._lock)
-      {
-        ActionResult actionResult = ActionResult.Unhandled;
-        ActionHandler.ActionSet actionSet;
-        if (ActionHandler._registeredEvents.TryGetValue(actionString, out actionSet))
-        {
-          if (!actionSet.RunOverrideAtEnd && actionSet.Override != null)
-            actionResult = actionSet.Override(sender, actionInfo, out overridden1);
-          if (ActionHandler._activePrefix)
-            ActionHandler.InvokeList(ActionHandler._prefixEvents, sender, actionInfo);
-          if (!ActionHandler._halted && actionSet.Actions != null)
-            ActionHandler.InvokeList(actionSet.Actions, sender, actionInfo);
-          if (actionSet.RunOverrideAtEnd && actionSet.Override != null && !ActionHandler._halted)
-            actionResult = actionSet.Override(sender, actionInfo, out overridden1);
+        static void RemoveAction(string action) {
+            if (_registeredEvents.Count <= 0)
+                return;
+            _registeredEvents.Remove(key: action);
+            if (_registeredEvents.Count != 0)
+                return;
+            _activeAction = false;
         }
-        else if (!ActionHandler._halted && ActionHandler._activePrefix)
-          ActionHandler.InvokeList(ActionHandler._prefixEvents, sender, actionInfo);
-        if (overridden1 != null)
-          overridden = overridden1;
-        return actionResult;
-      }
+
+        public static void Halt() {
+            if (!Monitor.TryEnter(obj: _lock))
+                throw new HaltingException(message: StringResource.Get(id: "IncorrectThreadAttemptingToHalt"));
+            _halted = true;
+            Monitor.Exit(obj: _lock);
+        }
+
+        public static void Subscribe(string action, ActionEvent handler) {
+            Subscribe(action: action, handler: handler, addToEnd: true);
+        }
+
+        public static void Subscribe(string action, ActionEvent handler, bool addToEnd) {
+            Validate.StringNeitherNullNorEmpty(parameter: action, parameterName: nameof(action));
+            Validate.ArgumentNotNull(parameter: handler, parameterName: nameof(handler));
+            lock (_lock) {
+                _activeAction = true;
+                ActionSet actionSet;
+                if (_registeredEvents.TryGetValue(key: action, value: out actionSet))
+                    actionSet.Actions = addToEnd ? actionSet.Actions + handler : handler + actionSet.Actions;
+                else
+                    _registeredEvents.Add(key: action, value: new ActionSet(actions: handler, overrideDelegate: null, addtoEnd: addToEnd));
+            }
+        }
+
+        public static void Remove(string action, ActionEvent handler) {
+            Validate.StringNeitherNullNorEmpty(parameter: action, parameterName: nameof(action));
+            Validate.ArgumentNotNull(parameter: handler, parameterName: nameof(handler));
+            lock (_lock) {
+                ActionSet actionSet;
+                if (!_registeredEvents.TryGetValue(key: action, value: out actionSet))
+                    return;
+                actionSet.Actions -= handler;
+                if (actionSet.Actions != null || actionSet.Override != null)
+                    return;
+                RemoveAction(action: action);
+            }
+        }
+
+        public static void SubscribeToAll(ActionEvent handler) {
+            SubscribeToAll(handler: handler, addToEnd: true);
+        }
+
+        public static void SubscribeToAll(ActionEvent handler, bool addToEnd) {
+            lock (_lock) {
+                _activePrefix = true;
+                _prefixEvents = addToEnd ? _prefixEvents + handler : handler + _prefixEvents;
+            }
+        }
+
+        public static void RemoveFromAll(ActionEvent handler) {
+            Validate.ArgumentNotNull(parameter: handler, parameterName: nameof(handler));
+            lock (_lock) {
+                _prefixEvents -= handler;
+                if (_prefixEvents != null)
+                    return;
+                _activePrefix = false;
+            }
+        }
+
+        public static ActionOverrideEvent SubscribeForOverride(
+            string action,
+            ActionOverrideEvent replacement) {
+            return SubscribeForOverride(action: action, replacement: replacement, executeOverrideLast: true);
+        }
+
+        public static ActionOverrideEvent SubscribeForOverride(
+            string action,
+            ActionOverrideEvent replacement,
+            bool executeOverrideLast) {
+            Validate.StringNeitherNullNorEmpty(parameter: action, parameterName: nameof(action));
+            lock (_lock) {
+                ActionSet actionSet;
+                var flag = _registeredEvents.TryGetValue(key: action, value: out actionSet);
+                if (!flag) {
+                    if (replacement == null)
+                        return null;
+                    actionSet = new ActionSet();
+                }
+
+                var actionOverrideEvent = actionSet.Override;
+                actionSet.Override = replacement;
+                actionSet.RunOverrideAtEnd = executeOverrideLast;
+                if (actionSet.Actions == null && actionSet.Override == null) {
+                    RemoveAction(action: action);
+                } else if (!flag) {
+                    _activeAction = true;
+                    _registeredEvents.Add(key: action, value: actionSet);
+                }
+
+                return actionOverrideEvent;
+            }
+        }
+
+        public static ActionOverrideEvent RemoveFromOverride(string action) {
+            return SubscribeForOverride(action: action, replacement: null);
+        }
+
+        public static ActionResult Invoke(UIObject sender, ActionEventArgs actionInfo) {
+            return Invoke(sender: sender, actionInfo: actionInfo, overridden: out var _);
+        }
+
+        public static ActionResult Invoke(
+            UIObject sender,
+            ActionEventArgs actionInfo,
+            out object overridden) {
+            Validate.ArgumentNotNull(parameter: actionInfo, parameterName: nameof(actionInfo));
+            var actionString = actionInfo.ActionString;
+            overridden = null;
+            object overridden1 = null;
+            if (!_activePrefix && !_activeAction)
+                return ActionResult.Unhandled;
+            lock (_lock) {
+                var actionResult = ActionResult.Unhandled;
+                ActionSet actionSet;
+                if (_registeredEvents.TryGetValue(key: actionString, value: out actionSet)) {
+                    if (!actionSet.RunOverrideAtEnd && actionSet.Override != null)
+                        actionResult = actionSet.Override(sender: sender, actionInfo: actionInfo, overridden: out overridden1);
+                    if (_activePrefix)
+                        InvokeList(handler: _prefixEvents, sender: sender, args: actionInfo);
+                    if (!_halted && actionSet.Actions != null)
+                        InvokeList(handler: actionSet.Actions, sender: sender, args: actionInfo);
+                    if (actionSet.RunOverrideAtEnd && actionSet.Override != null && !_halted)
+                        actionResult = actionSet.Override(sender: sender, actionInfo: actionInfo, overridden: out overridden1);
+                } else if (!_halted && _activePrefix) {
+                    InvokeList(handler: _prefixEvents, sender: sender, args: actionInfo);
+                }
+
+                if (overridden1 != null)
+                    overridden = overridden1;
+                return actionResult;
+            }
+        }
+
+        public static ActionEvent GetHandler(string action) {
+            Validate.StringNeitherNullNorEmpty(parameter: action, parameterName: nameof(action));
+            ActionSet actionSet;
+            return !_registeredEvents.TryGetValue(key: action, value: out actionSet) ? null : new ActionEvent(actionSet.Actions.Invoke);
+        }
+
+        public static ActionOverrideEvent GetOverride(string action) {
+            Validate.StringNeitherNullNorEmpty(parameter: action, parameterName: nameof(action));
+            ActionSet actionSet;
+            return !_registeredEvents.TryGetValue(key: action, value: out actionSet) ? null : new ActionOverrideEvent(actionSet.Override.Invoke);
+        }
+
+        class ActionSet {
+            public ActionEvent Actions;
+            public ActionOverrideEvent Override;
+            public bool RunOverrideAtEnd;
+
+            public ActionSet() {
+            }
+
+            public ActionSet(ActionEvent actions, ActionOverrideEvent overrideDelegate, bool addtoEnd) {
+                this.Actions = actions;
+                this.Override = overrideDelegate;
+                this.RunOverrideAtEnd = addtoEnd;
+            }
+        }
     }
-
-    public static ActionEvent GetHandler(string action)
-    {
-      Validate.StringNeitherNullNorEmpty(action, nameof (action));
-      ActionHandler.ActionSet actionSet;
-      return !ActionHandler._registeredEvents.TryGetValue(action, out actionSet) ? (ActionEvent) null : new ActionEvent(actionSet.Actions.Invoke);
-    }
-
-    public static ActionOverrideEvent GetOverride(string action)
-    {
-      Validate.StringNeitherNullNorEmpty(action, nameof (action));
-      ActionHandler.ActionSet actionSet;
-      return !ActionHandler._registeredEvents.TryGetValue(action, out actionSet) ? (ActionOverrideEvent) null : new ActionOverrideEvent(actionSet.Override.Invoke);
-    }
-
-    public static ICollection<string> RegisteredActions => (ICollection<string>) ActionHandler._registeredEvents.Keys;
-
-    private class ActionSet
-    {
-      public ActionEvent Actions;
-      public ActionOverrideEvent Override;
-      public bool RunOverrideAtEnd;
-
-      public ActionSet()
-      {
-      }
-
-      public ActionSet(ActionEvent actions, ActionOverrideEvent overrideDelegate, bool addtoEnd)
-      {
-        this.Actions = actions;
-        this.Override = overrideDelegate;
-        this.RunOverrideAtEnd = addtoEnd;
-      }
-    }
-  }
 }

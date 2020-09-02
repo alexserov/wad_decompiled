@@ -4,58 +4,43 @@
 // MVID: D55104E9-B4F1-4494-96EC-27213A277E13
 // Assembly location: C:\Program Files (x86)\Windows Application Driver\MitaLite.Foundation.dll
 
-using MS.Internal.Mita.Foundation.Collections;
-using System.Collections;
 using System.Windows.Automation;
+using MS.Internal.Mita.Foundation.Collections;
+using MS.Internal.Mita.Foundation.Utilities;
 
-namespace MS.Internal.Mita.Foundation.Patterns
-{
-  public class SelectionImplementation<I> : PatternImplementation<SelectionPattern>, ISelection<I>
-    where I : UIObject
-  {
-    private IFactory<I> _itemFactory;
+namespace MS.Internal.Mita.Foundation.Patterns {
+    public class SelectionImplementation<I> : PatternImplementation<SelectionPattern>, ISelection<I>
+        where I : UIObject {
+        public SelectionImplementation(UIObject uiObject, IFactory<I> itemFactory)
+            : base(uiObject: uiObject, patternIdentifier: SelectionPattern.Pattern) {
+            Validate.ArgumentNotNull(parameter: itemFactory, parameterName: nameof(itemFactory));
+            ItemFactory = itemFactory;
+        }
 
-    public SelectionImplementation(UIObject uiObject, IFactory<I> itemFactory)
-      : base(uiObject, SelectionPattern.Pattern)
-    {
-      MS.Internal.Mita.Foundation.Utilities.Validate.ArgumentNotNull((object) itemFactory, nameof (itemFactory));
-      this.ItemFactory = itemFactory;
+        protected IFactory<I> ItemFactory { get; set; }
+
+        public UICollection<I> Selection {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(Selection)), overridden: out overridden) == ActionResult.Handled ? (UICollection<I>) overridden : new UICollection<I>(navigator: new EnumerableNavigator(enumerable: Pattern.Current.GetSelection()), factory: ItemFactory);
+            }
+        }
+
+        public bool CanSelectMultiple {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(CanSelectMultiple)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.CanSelectMultiple;
+            }
+        }
+
+        public bool IsSelectionRequired {
+            get {
+                var num = (int) ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: "WaitForReady"));
+                object overridden;
+                return ActionHandler.Invoke(sender: UIObject, actionInfo: ActionEventArgs.GetDefault(action: nameof(IsSelectionRequired)), overridden: out overridden) == ActionResult.Handled ? (bool) overridden : Pattern.Current.IsSelectionRequired;
+            }
+        }
     }
-
-    public UICollection<I> Selection
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (Selection)), out overridden) == ActionResult.Handled ? (UICollection<I>) overridden : new UICollection<I>((UINavigator) new EnumerableNavigator((IEnumerable) this.Pattern.Current.GetSelection()), this.ItemFactory);
-      }
-    }
-
-    public bool CanSelectMultiple
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (CanSelectMultiple)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.CanSelectMultiple;
-      }
-    }
-
-    public bool IsSelectionRequired
-    {
-      get
-      {
-        int num = (int) ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault("WaitForReady"));
-        object overridden;
-        return ActionHandler.Invoke(this.UIObject, ActionEventArgs.GetDefault(nameof (IsSelectionRequired)), out overridden) == ActionResult.Handled ? (bool) overridden : this.Pattern.Current.IsSelectionRequired;
-      }
-    }
-
-    protected IFactory<I> ItemFactory
-    {
-      get => this._itemFactory;
-      set => this._itemFactory = value;
-    }
-  }
 }

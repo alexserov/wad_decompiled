@@ -6,21 +6,22 @@
 
 using System.Text;
 
-namespace MS.Internal.Mita.Foundation.QueryLanguage
-{
-  internal class PropertyExpression : Expression
-  {
-    private PropertyName _propertyName;
-    private Value _propertyValue;
+namespace MS.Internal.Mita.Foundation.QueryLanguage {
+    internal class PropertyExpression : Expression {
+        readonly PropertyName _propertyName;
+        readonly Value _propertyValue;
 
-    public PropertyExpression(PropertyName propertyName, Value propertyValue)
-    {
-      this._propertyName = propertyName;
-      this._propertyValue = propertyValue;
+        public PropertyExpression(PropertyName propertyName, Value propertyValue) {
+            this._propertyName = propertyName;
+            this._propertyValue = propertyValue;
+        }
+
+        public override GlobalizableCondition GetCondition() {
+            return new GlobalizablePropertyCondition(property: this._propertyName.GetUIProperty().Property, value: this._propertyValue.GetValueObject(requiredType: this._propertyName.GetUIProperty().Type));
+        }
+
+        public override bool Validate(StringBuilder errors) {
+            return this._propertyName.Validate(errors: errors) & this._propertyValue.Validate(requiredType: this._propertyName.GetUIProperty().Type, errors: errors);
+        }
     }
-
-    public override GlobalizableCondition GetCondition() => (GlobalizableCondition) new GlobalizablePropertyCondition(this._propertyName.GetUIProperty().Property, this._propertyValue.GetValueObject(this._propertyName.GetUIProperty().Type));
-
-    public override bool Validate(StringBuilder errors) => this._propertyName.Validate(errors) & this._propertyValue.Validate(this._propertyName.GetUIProperty().Type, errors);
-  }
 }

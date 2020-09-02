@@ -6,21 +6,20 @@
 
 using System.Threading;
 
-namespace MS.Internal.Mita.Foundation
-{
-  internal class RelativeWaitInputAction : IInputAction
-  {
-    public int start;
-    public int duration;
+namespace MS.Internal.Mita.Foundation {
+    internal class RelativeWaitInputAction : IInputAction {
+        public int duration;
+        public int start;
 
-    public void Execute(IInputDevice inputDevice, int elapsedMs)
-    {
-      int millisecondsTimeout = this.start + this.duration - elapsedMs;
-      if (millisecondsTimeout <= 0)
-        return;
-      Thread.Sleep(millisecondsTimeout);
+        public void Execute(IInputDevice inputDevice, int elapsedMs) {
+            var millisecondsTimeout = this.start + this.duration - elapsedMs;
+            if (millisecondsTimeout <= 0)
+                return;
+            Thread.Sleep(millisecondsTimeout: millisecondsTimeout);
+        }
+
+        public InputActionType GetActionType() {
+            return InputActionType.RelativeWaitInputAction;
+        }
     }
-
-    public InputActionType GetActionType() => InputActionType.RelativeWaitInputAction;
-  }
 }

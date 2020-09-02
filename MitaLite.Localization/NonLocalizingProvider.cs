@@ -6,25 +6,28 @@
 
 using System.Globalization;
 
-namespace MS.Internal.Mita.Localization
-{
-  public class NonLocalizingProvider : ILocalizationProvider
-  {
-    public virtual IStringResourceData LoadExplicit(
-      string resourceKey,
-      string context,
-      int processId,
-      CultureInfo culture) => (IStringResourceData) new StringResourceData(string.Empty);
+namespace MS.Internal.Mita.Localization {
+    public class NonLocalizingProvider : ILocalizationProvider {
+        public virtual IStringResourceData LoadExplicit(
+            string resourceKey,
+            string context,
+            int processId,
+            CultureInfo culture) {
+            return new StringResourceData(rawText: string.Empty);
+        }
 
-    public virtual IStringResourceData[] RetrieveSimilarStrings(
-      string nativeText,
-      string context,
-      int processId,
-      CultureInfo culture) => new IStringResourceData[1]
-    {
-      (IStringResourceData) new StringResourceData(nativeText)
-    };
+        public virtual IStringResourceData[] RetrieveSimilarStrings(
+            string nativeText,
+            string context,
+            int processId,
+            CultureInfo culture) {
+            return new IStringResourceData[1] {
+                new StringResourceData(rawText: nativeText)
+            };
+        }
 
-    public virtual bool FoundSimilarMatch(string nativeText, string context, long index) => false;
-  }
+        public virtual bool FoundSimilarMatch(string nativeText, string context, long index) {
+            return false;
+        }
+    }
 }

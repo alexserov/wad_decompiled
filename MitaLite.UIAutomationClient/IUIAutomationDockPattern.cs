@@ -7,20 +7,22 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace UIAutomationClient
-{
-  [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-  [Guid("FDE5EF97-1464-48F6-90BF-43D0948E86EC")]
-  [ComImport]
-  public interface IUIAutomationDockPattern
-  {
-    [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-    void SetDockPosition([In] DockPosition dockPos);
+namespace UIAutomationClient {
+    [InterfaceType(interfaceType: ComInterfaceType.InterfaceIsDual), Guid(guid: "FDE5EF97-1464-48F6-90BF-43D0948E86EC"), ComImport]
+    public interface IUIAutomationDockPattern {
+        [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void SetDockPosition([In] DockPosition dockPos);
 
-    [DispId(1610678273)]
-    DockPosition CurrentDockPosition { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
+        [DispId(dispId: 1610678273)]
+        DockPosition CurrentDockPosition {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
 
-    [DispId(1610678274)]
-    DockPosition CachedDockPosition { [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)] get; }
-  }
+        [DispId(dispId: 1610678274)]
+        DockPosition CachedDockPosition {
+            [MethodImpl(methodImplOptions: MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+    }
 }
